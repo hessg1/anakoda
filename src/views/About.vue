@@ -1,5 +1,13 @@
 <template>
-  <div class="about">
-    <h1>This is an about page Gabriel</h1>
-  </div>
+  <HelloWorld />
 </template>
+
+<script>
+  import HelloWorld from '../components/HelloWorld'
+
+  export default {
+    components: {
+      HelloWorld
+    }
+  }
+</script>
