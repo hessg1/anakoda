@@ -20,8 +20,9 @@ export default {
   data() {
     return {
       serviceUri: "http://test.midata.coop/fhir",
-      redirectUri: "http://localhost:8080/midataplain/",
       conformanceUri: "http://test.midata.coop/fhir/metadata",
+      redirectUri: "http://localhost:8080/midataplain/",
+      tokenUri: "https://test.midata.coop/v1/token", // should not be hardcoded but got from conformanceUri
       client: "migrEnTest",
       scope: "",
       state: "",
@@ -142,8 +143,26 @@ export default {
     if ((typeof this.getUrlParameter("state") !== 'undefined') && (typeof this.getUrlParameter("code") !== 'undefined')){
       // TODO: check if state is correct
       this.state = this.getUrlParameter("state");
-      this.token = this.getUrlParameter("code");
-      this.log("token set to " + this.token);
+      var code = this.getUrlParameter("code");
+
+      this.log("got code: " + code + " and now try ajaxing for token");
+      var that = this; // this and that again
+      $.ajax({
+        url: that.tokenUri,
+        type: 'POST',
+        data: {
+        code: code,
+        grant_type: 'authorization_code',
+        redirect_uri: that.redirectUri,
+        client_id: that.client
+        }
+      }).done(res => {
+        that.token = res.access_token;
+        that.log("token set to " + this.token);
+      }).catch(err => {
+        that.log("ups: ");
+        that.log(err)
+      });
     }
     else {
       this.log("parameters undefined");
