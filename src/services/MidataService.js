@@ -159,6 +159,9 @@ export default class MidataService {
       console.log(err)
     });
 
+    // remove the parameters from the url
+     window.history.pushState('',document.title,window.location.toString().split("?")[0]);
+
   }
 
   /*
