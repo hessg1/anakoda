@@ -12,15 +12,15 @@ export default class MidataService {
 */
   constructor(serviceUri, client){
     if(localStorage.getItem("oauth-client") == client){ // load midata information from storage
-      console.log("loading midata");
       this.uri = JSON.parse(localStorage.getItem("oauth-uri"));
       this.resources = JSON.parse(localStorage.getItem("oauth-resources"));
       this.state = Number(localStorage.getItem("oauth-state"));
       this.lang = "de";
       this.token = localStorage.getItem("oauth-token") || "";
-      this.refreshtoken = localStorage.getItem("oauth-refreshtoken") || "";
+      this.refreshToken = localStorage.getItem("oauth-refreshtoken") || "";
       this.tokenEOL = Number(localStorage.getItem("oauth-tokeneol") || Date.now());
       this.client = client;
+      this.patient = localStorage.getItem("patientId") || "";
 
     }
     else { // create completely new midata object
@@ -33,10 +33,10 @@ export default class MidataService {
         };
       this.resources = ""
       this.state = "",
-      this.ready = false;
       this.lang = "de";
       this.token = "";
       this.refreshToken = "";
+      this.patient = "";
 
       // set up given pameters
       this.uri.service = (serviceUri.charAt(serviceUri.length - 1) == "/") ? serviceUri.substring(0, serviceUri.length - 1) : serviceUri;
@@ -67,9 +67,6 @@ export default class MidataService {
 
         // save URIS to localstorage
         localStorage.setItem("oauth-uri", JSON.stringify(that.uri));
-
-      //  that.ready = true;
-        console.log("new MIDATA created and saved");
       });
     }
   }
@@ -107,7 +104,6 @@ export default class MidataService {
     version     2019-03-13
   */
   fetchToken(){
-    console.log("we are on " + window.location.search);
     let state = "";
     let code = "";
     state + code; // this is for no other purpose than to prevent a faulty warning of "state" and "code" never being used
@@ -136,7 +132,6 @@ export default class MidataService {
     }
 
     // ajaxing to MIDATA for getting the token
-    console.log("ajax token to " + this.uri.token);
     var that = this; // so "this" is available inside the
     $.ajax({
       url: this.uri.token,
@@ -153,13 +148,14 @@ export default class MidataService {
       this.token = res.access_token;
       this.refreshToken = res.refresh_token;
       this.tokenEOL = Date.now() + (1000 * res.expires_in);
+      this.patient = res.patient;
       localStorage.setItem("oauth-token", res.access_token);
       localStorage.setItem("oauth-refreshtoken", res.refresh_token);
       localStorage.setItem("oauth-tokeneol", this.tokenEOL);
-      this.log("token set to " + this.token);
+      localStorage.setItem("patientId", res.patient);
 
     }).catch(err => {
-      console.log("ups: ");
+      console.log("error retrieving token:");
       console.log(err)
     });
 
@@ -183,8 +179,7 @@ export default class MidataService {
       // TODO: handle missing token (e.g. get authorization)
     }
     else {
-    console.log("url: " + url + " header: " + header);
-      // ajax-request zu midata
+      // ajax-request to midata
       $.ajax({
         url: url,
         type: "GET",
@@ -197,27 +192,79 @@ export default class MidataService {
         console.log(res.entry[0].resource);
       })
       .catch(err => {
-        console.log("Fehler: " + err.responseText);
+        console.log("Error: " + err.responseText);
       });
     }
   }
 
   /*
-    Convenience function for parsing of URL parameters
-    from SMART on FHIR: http://docs.smarthealthit.org/tutorials/authorization/,
-    based on http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
+    Saves data to MIDATA.
+    Requires a completely set up MIDATA environment, with token etc.
+    parameters  - data: the data object, as a valid FHIR ressource or a FHIR bundle
+                        cave: no validation of input!
+    returns     nothing
+    throws      an error, if resourceType is not Bundle or Observation
+    author      hessg1
+    version     2019-03-19
   */
-  getUrlParameter(sParam){
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++)
-    {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) {
-            var res = sParameterName[1].replace(/\+/g, '%20');
-            return decodeURIComponent(res);
-        }
+  saveData(data){
+    if(this.token == ""){
+      throw("No token set, check authorization.");
+    }
+    //TODO: validate data for FHIR specs?
+
+    // prepare settings
+    var ajaxSettings = {
+      "async": true,
+      "crossDomain": true,
+      "url": this.uri.service,
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/fhir+json",
+        "Authorization": "Bearer " + this.token,
+        "cache-control": "no-cache"
+      },
+      "data": JSON.stringify(data)
+    }
+
+    if(data.resourceType == "Bundle"){
+      console.log("bundle detected");
+      $.ajax(ajaxSettings).done(function (response) {
+        console.log("saved to midata");
+        console.log(response);
+      });
+
+    }
+    else if(data.resourceType == "Observation"){
+      console.log("single observation detected");
+      // if we have an Observation, we have to adjust the service URI
+      ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
+      $.ajax(ajaxSettings).done(function (response) {
+        console.log("success: " + response);
+      });
+
+    }
+    else {
+      throw("Error: can not handle datatype " + data.resourceType + " yet.");
     }
   }
 
+  /*
+    Removes the MIDATA related data from localstorage and thus logs out the user.
+    parameters  none
+    returns     nothing, just clears the memory and does a reload
+    author      hessg1
+    version     2019-03-19
+  */
+  logout(){
+    localStorage.removeItem("oauth-client");
+    localStorage.removeItem("oauth-refreshtoken");
+    localStorage.removeItem("oauth-resources");
+    localStorage.removeItem("oauth-state");
+    localStorage.removeItem("oauth-token");
+    localStorage.removeItem("oauth-tokeneol");
+    localStorage.removeItem("oauth-uri");
+    localStorage.removeItem("patient");
+    location.reload();
+  }
 }
