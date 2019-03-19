@@ -1,18 +1,17 @@
 <template>
   <div>
     <v-tabs
-    v-model="active"
     color="#0a967a"
     slider-color="#a3f7b5"
     >
       <v-tab>
-        Tägliche-Daten
+        Dein Tag
       </v-tab>
       <v-tab-item>
         <DailyRecording></DailyRecording>
       </v-tab-item>
       <v-tab>
-        Verlaufs-Daten
+        Deine Symptome
       </v-tab>
       <v-tab-item>
         <ProgressiveSymptoms></ProgressiveSymptoms>

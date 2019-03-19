@@ -30,12 +30,12 @@ export default new Router({
       component: () => import(/* webpackChunkName: "midataplain" */'./views/MidataTest.vue')
     },
     {
-      path: '/datacollection',
-      name: 'datacollection',
+      path: '/yourdata',
+      name: 'yourdata',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "midataplain" */'./views/DataCollection.vue')
+      component: () => import(/* webpackChunkName: "midataplain" */'./views/YourData.vue')
     }
   ]
 })
