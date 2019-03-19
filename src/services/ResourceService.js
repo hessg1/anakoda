@@ -6,7 +6,7 @@ parameters  none
 author      hessg1
 version     2019-03-19
 */
-export class FhirResource {
+class FhirResource {
   // creates a default FHIR resource with category coding of "Survey",
   // if necessary this can be overwritten
   constructor(){
@@ -25,8 +25,10 @@ export class FhirResource {
 /*
 EatingHabit is a ressource that describes the eating habit of a given day.
 parameters  - date: the date of the given day (2019-03-19T15:30:00+01:00)
-            - code: the SNOMED CT code of the value (225526009, 289141003 or 702970004)
-            - display: the correscponding display value to the SCT code ("Eats irregularly", "Eats regularly" or "Eating habit unknown")
+            - code: the SNOMED CT code of the value
+              225526009 = "Eats irregularly"
+              289141003 = "Eats regularly"
+              702970004 (or anything else) = "Eating habit unknown"
 author      hessg1
 version     2019-03-19
 */
@@ -87,6 +89,6 @@ export class SleepPattern extends FhirResource {
         },
         "valueQuantity": {
           "value": quality
-        }}];
+    }}];
   }
 }
