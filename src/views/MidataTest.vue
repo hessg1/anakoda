@@ -12,6 +12,7 @@
 
 <script>
 import MidataService from '@/services/MidataService';
+import { EatingHabit, SleepPattern } from '@/services/ResourceService';
 
 export default {
   name: 'midata-plain',
@@ -35,10 +36,8 @@ export default {
     },
 
     saveResource(){
-      let myObservation = {"resourceType":"Observation","status":"preliminary","code":{"coding":[{"system":"http://loinc.org","code":"65554-8","display":"How many hours and minutes does it take for you to become fully awake from regular sleep, after first opening your eyes in the morning [PhenX]"}]},"category":[{"coding":[{"system":"http://hl7.org/fhir/observation-category","display":"Survey","code":"survey"}]}],
-                            "effectivePeriod":{"start":"2019-03-18T20:45:00+01:00","end":new Date().toISOString().substring(0,19) + "+01:00"},
-                            "component":[{"code":{"coding":[{"system":"http://snomed.info/sct","code":"248254009","display":"Sleep pattern finding"}]},"valueQuantity":{"value":"8"}}]};
-
+      let myObservation = new EatingHabit("2019-03-19", "289141003");
+      myObservation = new SleepPattern(new Date().toISOString().substring(0,11) + "00:15:20+01:00" , new Date().toISOString().substring(0,19) + "+01:00", 9);
       try{
         this.midata.saveData(myObservation);
       }
@@ -70,7 +69,6 @@ export default {
     }
 
     if(window.location.search){
-      console.log("we have a searchstring, we going to fetch");
       this.midata.fetchToken();
     }
     else {
