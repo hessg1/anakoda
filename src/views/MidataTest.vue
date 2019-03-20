@@ -6,12 +6,14 @@
     <v-btn v-if="midata.token != ''" @click="getData()">Date lade (siehe Konsole)</v-btn><br />
     <v-btn v-if="midata.token != ''" @click="saveResource()">einzelni Ressource speichere</v-btn>
     <v-btn v-if="midata.token != ''" @click="saveBundle()">es Bundle speichere</v-btn><br /><br />
-    <v-btn v-if="midata.token != ''" @click="midata.logout()">logout</v-btn>
+    <v-btn v-if="midata.token != ''" @click="midata.logout()">logout</v-btn><br />
+    <v-btn @click="snomed()">test snomed (console)</v-btn>
   </v-container>
 </template>
 
 <script>
 import MidataService from '@/services/MidataService';
+import SnomedService from '@/services/SnomedService';
 import { EatingHabit, SleepPattern } from '@/services/ResourceService';
 
 export default {
@@ -27,6 +29,18 @@ export default {
   },
 
   methods: {
+    snomed(){
+      const sct = new SnomedService(); // initialisieren des snomedservices
+      console.log(sct.getEnglish(73905001)); // gibt den englischen Begriff des Codes 73905001 aus
+      console.log(sct.getCode("Flimmersehen"));  // gibt den SCT Code von "Flimmersehen" aus
+      let test = sct.getFilteredProp(x => x.category == "EatingHabit", "code"); // gibt ein Array der Codes der Kategorie "EatingHabit" aus
+      console.log(test);
+      test = sct.getFilteredProp(x => x == x, "en") // Auflistung aller englischen Begriffe
+      console.log(test);
+      test = sct.getFiltered(x => x.category == "Headache") // gibt ein Array aller _objekte_ der Kategorie Headache zurück
+      console.log(test);
+    },
+
     auth(){
       this.midata.requestAuth("http://localhost:8080/midatatest/");
     },
