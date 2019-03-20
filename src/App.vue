@@ -6,7 +6,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn flat to="/">home</v-btn>
-      <v-btn flat to="/datacollection">Daten erfassen</v-btn>
+      <v-btn flat to="/yourdata">Daten erfassen</v-btn>
       <v-btn flat to="/midatatest">MIDATA</v-btn>
     </v-toolbar>
 
