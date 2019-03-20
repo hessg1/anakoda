@@ -1,3 +1,8 @@
+// SCT codes to be accepted by EatingHabit resource
+const validEatingHabits = [225526009, 289141003, 702970004];
+// range of quality accepted by SleepPattern resource (lowest to highest)
+const sleepQualityRange = [0,10];
+
 /*
 This is the default type of a FhirResource, that should not be initialized. It
 is an Observation with the category-coding of "Survey", which suits most Resources,
@@ -34,7 +39,12 @@ version     2019-03-19
 */
 export class EatingHabit extends FhirResource {
   constructor(date, code){
+    // check if code is valid
     code = Number(code);
+    if(!validEatingHabits.includes(code)){
+      throw("Illegal argument, invalid SCT code.");
+    }
+
     let display = "Eating habit unkown";
     switch(code){
       case 225526009:
@@ -72,6 +82,10 @@ version     2019-03-19
 export class SleepPattern extends FhirResource {
   constructor(startTime, endTime, quality){
     super();
+    // check if quality is valid
+    if(quality < sleepQualityRange[0] || quality > sleepQualityRange[1]){
+      throw("Invalid argument: quality must be at least " + sleepQualityRange[0] + " and at maximum " + sleepQualityRange[1]);
+    }
     this.code = {
       "coding": [{
         "system": "http://loinc.org",
