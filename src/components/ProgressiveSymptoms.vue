@@ -79,7 +79,10 @@
 
 <v-stepper-content step="2">
   <v-card>
-    <v-subheader>Klicke auf dein erfasstes Symptom um genauere Angaben zu erfassen.</v-subheader>
+      <v-subheader>
+        <v-icon color="red">warning</v-icon>&nbsp;
+        Klicke auf dein erfasstes Symptom um alle Angaben zu erfassen.
+      </v-subheader>
     <v-card-text>
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on }">
@@ -94,17 +97,29 @@
           multiple
           >
           <template v-slot:selection="data">
-            <v-chip
-            :selected="data.selected.name"
-            close
-            @input="remove(data.item)"
-            @click="setCurrent(data.item)"
-            v-on="on"
-            >
-            <strong>{{ data.item.name }}</strong>&nbsp;
-            <span>{{data.item.intens}}</span>&nbsp;
-            <span>({{data.item.start}} - {{data.item.end}})</span>
-          </v-chip>
+            <v-badge color="red" overlap left>
+              <template v-slot:badge v-if="data.item.start === null || data.item.end === null || data.item.intens === 0">
+                <v-icon
+                  dark
+                  small
+                >
+                  warning
+                </v-icon>
+              </template>
+              <v-chip
+              :selected="data.selected.name"
+              close
+              @input="remove(data.item)"
+              @click="setCurrent(data.item)"
+              v-on="on"
+              outline
+              color="#0a967a"
+              >
+              <strong>{{ data.item.name }}</strong>&nbsp;
+              <span>{{data.item.intens}}</span>&nbsp;
+              <span>({{data.item.start}} - {{data.item.end}})</span>
+            </v-chip>
+          </v-badge>
         </template>
       </v-combobox>
     </template>
@@ -211,9 +226,9 @@
   <v-btn
   color="#0a967a"
   class="white--text"
-  @click="pos = 3"
   >
-  Weiter
+  Speichern
+  <v-icon right dark>save</v-icon>
 </v-btn>
 </v-card-actions>
 </v-card>
