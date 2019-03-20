@@ -304,7 +304,18 @@ export default {
     menutimeend: false,
     quality: 5
   }),
+<<<<<<< HEAD
   
+=======
+
+  computed: {
+    // computedDateFormatted () {
+    //   return this.formateDate(this.date)
+    // }
+
+  },
+
+>>>>>>> f3c44923b1f5337803dc247b5d8169339d4d38b5
   watch: {
     date () {
       this.dateFormatted = this.formateDate(this.date)
