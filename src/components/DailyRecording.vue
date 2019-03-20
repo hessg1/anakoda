@@ -381,7 +381,7 @@ export default {
         })
         .catch(err => {
           this.snackbartext = "Da ist etwas schiefgegangen:\n" + err;
-          this.snackbarcolor = red;
+          this.snackbarcolor = "red";
           this.snackbar = true;
           console.log(err);
         });
