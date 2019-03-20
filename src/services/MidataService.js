@@ -304,4 +304,18 @@ export default class MidataService {
     localStorage.removeItem("patient");
     location.reload();
   }
+
+  /*
+    Checks if MIDATA environment is ready, with a token set
+    parameters  none
+    returns     - true, if a token is set and not expired (cave: token can still be invalid!)
+                - false, if no token is set or token has expired
+    author      hessg1
+    version     2019-03-20
+  */
+  isReady(){
+    if(this.token == "" || (this.tokenEOL < Number(Date.now()) - 60000))
+      return false;
+    return true;
+  }
 }
