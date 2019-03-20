@@ -290,6 +290,11 @@
         </v-card>
       </v-stepper-content>
     </v-stepper>
+    <v-snackbar v-model="snackbar" :color="snackbarcolor" :timeout="5000" :vertical="true">
+      {{ snackbartext }}
+      <v-btn v-if="snackbarcolor=='red'" dark flat @click="snackbar = false">schliessen</v-btn>
+      <v-btn v-else dark flat to="/">home</v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -318,7 +323,10 @@ export default {
     timeend: null,
     menutimeend: false,
     quality: 5,
-    midata: null
+    midata: null,
+    snackbartext: "",
+    snackbar: false,
+    snackbarcolor: ''
   }),
 
   watch: {
@@ -364,7 +372,19 @@ export default {
         this.dateend + "T" + this.timeend + ":00+01:00",
         this.quality);
       let bundle = this.midata.bundle([eat,sleep]);
-      this.midata.saveData(bundle);
+      this.midata.saveData(bundle)
+        .then(res => {
+          console.log("Speichern erfolgreich\n" + res);
+          this.snackbartext = "Erfolgreich gespeichert.";
+          this.snackbarcolor = "#0a967a";
+          this.snackbar = true;
+        })
+        .catch(err => {
+          this.snackbartext = "Da ist etwas schiefgegangen:\n" + err;
+          this.snackbarcolor = red;
+          this.snackbar = true;
+          console.log(err);
+        });
 
     },
 

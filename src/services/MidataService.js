@@ -229,25 +229,28 @@ export default class MidataService {
       },
       "data": JSON.stringify(data)
     }
+    return new Promise(function(resolve, reject){
+      if(data.resourceType == "Bundle"){
+        $.ajax(ajaxSettings).done(function (response) {
+          console.log("bundle saved to MIDATA");
+          console.log(response);
+          resolve("bundle saved, id=" + response.id);
+        });
 
-    if(data.resourceType == "Bundle"){
-      $.ajax(ajaxSettings).done(function (response) {
-        console.log("bundle saved to midata");
-        console.log(response);
-      });
+      }
+      else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
+        // if we have an Observation, we have to adjust the service URI
+        ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
+        $.ajax(ajaxSettings).done(function (response) {
+          console.log("single resource saved to midata: " + response);
+          resolve("resource saved to midata: " + response);
+        });
 
-    }
-    else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
-      // if we have an Observation, we have to adjust the service URI
-      ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
-      $.ajax(ajaxSettings).done(function (response) {
-        console.log("single resource saved to midata: " + response);
-      });
-
-    }
-    else {
-      throw("Error: can not handle datatype " + data.resourceType + " yet.");
-    }
+      }
+      else {
+        reject("Error: can not handle datatype " + data.resourceType + " yet.");
+      }
+    });
   }
 
   /*
