@@ -1,172 +1,334 @@
+/*
+SnomedService is a helper class for handling the SNOMED CT (SCT) codes used in this
+project. It offers translation from codes to english and german display values,
+as well as searching codes in different categories defined by the project.
+author      hessg1
+version     2019-03-20
+*/
+
 export default class SnomedService {
   constructor(){
+    /*
+    This large array of JS objects is the "library" of the function. When adding
+    a new SCT code to the project, it should also be added here.
+    */
     this.codes = [
       {
         "code": 73905001,
         "en": "Sees flickering lights",
         "de": "Flimmersehen",
-        "related": "",
-        "category": ""
+        "superCategory": 281004000,
+        "category": "VariousComplaint"
       },
       {
         "code": 162057007,
-        "en": "Nausea",
+        "en": "Nausea present",
         "de": "Übelkeit",
-        "related": "",
-        "category": ""
+        "superCategory": 373573001,
+        "category": "VariousComplaint"
       },
       {
         "code": 409668002,
         "en": "Photophobia",
         "de": "Lichtempfindlichkeit",
-        "related": "",
-        "category": ""
+        "superCategory": 246613004,
+        "category": "VariousComplaint"
       },
       {
         "code": 313387002,
         "en": "Phonophobia",
         "de": "Lärmempfindlichkeit",
-        "related": "",
-        "category": ""
+        "superCategory": 285854004,
+        "category": "VariousComplaint"
       },
       {
-        "code": 420103007,
-        "en": "Watery eye",
+        "code": 267092007,
+        "en": "Has eye discharge",
         "de": "Tränende Augen",
-        "related": "",
-        "category": ""
+        "superCategory": 373573001,
+        "category": "VariousComplaint"
       },
       {
-        "code": 703630003,
-        "en": "Red eye",
+        "code": 267093002,
+        "en": "Has a red eye",
         "de": "Gerötete Augen",
-        "related": "",
-        "category": ""
+        "superCategory": 373573001,
+        "category": "VariousComplaint"
       },
       {
         "code": 276319003,
-        "en": "Menstruation",
+        "en": "Menstruation finding",
         "de": "Menstruation",
-        "related": "",
-        "category": ""
+        "superCategory": 66523006,
+        "category": "Condition"
       },
       {
         "code": 216299002,
         "en": "Attack",
         "de": "Anfall",
-        "related": "",
-        "category": ""
+        "superCategory": 118222006,
+        "category": "VariousComplaint"
       },
       {
         "code": 73595000,
         "en": "Stress",
         "de": "Stress",
-        "related": "",
-        "category": ""
+        "superCategory": 363870007,
+        "category": "Condition"
       },
       {
         "code": 102894008,
-        "en": "Relaxed feeling",
+        "en": "Feeling calm",
         "de": "Entspannt",
-        "related": "",
-        "category": ""
+        "superCategory": 285854004,
+        "category": "Condition"
       },
       {
         "code": 279079003,
-        "en": "Dysaesthesia",
+        "en": "Dysesthesia",
         "de": "Gefühlsstörung",
-        "related": "",
-        "category": ""
+        "superCategory": 247325003,
+        "category": "VariousComplaint"
       },
       {
         "code": 29164008,
-        "en": "Speech impairment",
+        "en": "Speech Impairment",
         "de": "Sprachstörung",
-        "related": "",
-        "category": ""
+        "superCategory": 363918005,
+        "category": "VariousComplaint"
       },
       {
         "code": 64531003,
-        "en": "Nasal discharge",
+        "en": "Nasal discharge present",
         "de": "Nasenlaufen",
-        "related": "",
-        "category": ""
+        "superCategory": 373573001,
+        "category": "VariousComplaint"
       },
       {
         "code": 119711004,
         "en": "Nose closure",
         "de": "Verstopfte Nase",
-        "related": "",
-        "category": ""
+        "superCategory": 373573001,
+        "category": "VariousComplaint"
       },
       {
         "code": 45846002,
         "en": "Hyperosmia",
         "de": "Geruchsempfindlichkeit",
-        "related": "",
-        "category": ""
+        "superCategory": 397686008,
+        "category": "VariousComplaint"
       },
       {
-        "code": 1985008,
-        "en": "Vomitus",
+        "code": 422400008,
+        "en": "Vomiting",
         "de": "Erbrechen",
-        "related": "",
-        "category": ""
+        "superCategory": 405166007,
+        "category": "VariousComplaint"
+      },
+      {
+        "code": 16932000,
+        "en": "Nausea and vomiting",
+        "de": "Übelkeit und Erbrechen",
+        "superCategory": 405166007,
+        "category": "VariousComplaint"
+      },
+      {
+        "code": 248626009,
+        "en": "Yawning",
+        "de": "Gähnen",
+        "superCategory": 37993006,
+        "category": "VariousComplaint"
+      },
+      {
+        "code": 309253009,
+        "en": "Difficulty reading",
+        "de": "Leseschwierigkeiten",
+        "superCategory": 363870007,
+        "category": "Condition"
+      },
+      {
+        "code": 106126000,
+        "en": "Emotional state finding",
+        "de": "???",
+        "superCategory": 285854004,
+        "category": "Condition"
       },
       {
         "code": 162308004,
         "en": "Throbbing Headache",
         "de": "Pulsierende Kopfschmerzen",
-        "related": "",
+        "superCategory": "",
         "category": "Headache"
       },
       {
         "code": 162307009,
         "en": "Aching Headache",
         "de": "Stechende Kopfschmerzen",
-        "related": "",
+        "superCategory": "",
         "category": "Headache"
       },
       {
         "code": 162309007,
         "en": "Shooting Headache",
         "de": "Einschiessende Kopfschmerzen",
-        "related": "",
+        "superCategory": "",
         "category": "Headache"
       },
       {
         "code": 702970004,
         "en": "Eating habit unknown",
         "de": "Unbekanntes Essverhalten",
-        "related": "",
+        "superCategory": "",
         "category": "EatingHabit"
       },
       {
         "code": 289141003,
         "en": "Eats regularly",
         "de": "Regelmässig gegessen",
-        "related": "",
+        "superCategory": "",
         "category": "EatingHabit"
       },
       {
         "code": 225526009,
         "en": "Eats irregularly",
         "de": "Unregelmässig gegessen",
-        "related": "",
+        "superCategory": "",
         "category": "EatingHabit"
-      }
+      },
+      {
+        "code": 29624005,
+        "en": "Right side of head",
+        "de": "Rechte Kopfhälfte",
+        "superCategory": "",
+        "category": "BodySite"
+      },
+      {
+        "code": 64237003,
+        "en": "Left side of head",
+        "de": "Linke Kopfhälfte",
+        "superCategory": "",
+        "category": "BodySite"
+      },
+      {
+        "code": 162301005,
+        "en": "Bilateral headache",
+        "de": "Beidseitige Kopfschmerzen",
+        "superCategory": "",
+        "category": "BodySite"
+      },
+      {
+        "code": 405166007,
+        "en": "Nausea and vomiting status",
+        "de": "Übelkeits- und Erbrechensstatus",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 285854004,
+        "en": "Emotion",
+        "de": "Emotion",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 281004000,
+        "en": "Visual function",
+        "de": "Visuelle Funktion",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 363918005,
+        "en": "Speech observable",
+        "de": "Sprachbeobachtung",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 397686008,
+        "en": "Sense of smell, function",
+        "de": "Geruchssinnfunktion",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 37993006,
+        "en": "Yawning, function",
+        "de": "Gähnfunktion",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 246613004,
+        "en": "General reaction to light",
+        "de": "Generelle Reaktion auf Licht",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 247325003,
+        "en": "Altered sensation of skin",
+        "de": "Verändertes Hautempfinden",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 118222006,
+        "en": "General finding of observation of patient",
+        "de": "Generelle Beobachtung des Patienten",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 373573001,
+        "en": "Clinical finding present",
+        "de": "Klinischer Befund vorhanden",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 363870007,
+        "en": "Mental state, behavior / psychosocial function observable",
+        "de": "Beobachtung psychischer Zustand, psychosoziale Funktion",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 66523006,
+        "en": "Female reproductive function",
+        "de": "Funktion weiblicher Reproduktion",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
     ];
   }
 
+
+  /*
+  This method returns the english display name to a SCT code.
+  parameters  - code: a SCT code used in the project
+  returns     the corresponding display name in english,
+              or "not found" if code is not in the project
+  author      hessg1
+  version     2019-03-20
+  */
   getEnglish(code){
     for(var i in this.codes){
       if(this.codes[i].code == code){
         return this.codes[i].en;
       }
     }
-    return "";
+    return "not found";
   }
 
+  /*
+  This method returns the german display name to a SCT code.
+  parameters  - code: a SCT code used in the project
+  returns     the corresponding display name in german,
+              or "not found" if code is not in the project
+  author      hessg1
+  version     2019-03-20
+  */
   getGerman(code){
     for(var i in this.codes){
       if(this.codes[i].code == code){
@@ -176,15 +338,43 @@ export default class SnomedService {
     return "";
   }
 
+  /*
+  This method returns the SCT code to a given display name (not case sensitive,
+  but otherwise exact)
+  parameters  - code: a display name used in the project
+  returns     the corresponding SCT code, or -1 if not found
+  author      hessg1
+  version     2019-03-20
+  */
   getCode(term){
+    term = term.toLowerCase();
     for(var i in this.codes){
-      if(this.codes[i].de == term || this.codes[i].en == term){
+      if(this.codes[i].de.toLowerCase() == term || this.codes[i].entoLowerCase() == term){
         return this.codes[i].code;
       }
     }
-    return "";
+    return -1;
   }
 
+  /*
+  This method returns an array of JS objects containing the code, categories and
+  display names, that match the filter defined in the function. The objects are
+  structured as following:
+  {
+    code: "the SCT code",
+    en:  "english display name",
+    de: "german display name",
+    superCategory: "SCT of the super category"
+    category: "category in the project, e.g. Headache, VariousComplaint or SleepPattern"
+  }
+  parameters  - filter: a function that takes an object (as described above) as
+                an argument and returns a boolean
+                example: "x => x.category == SleepPattern"
+  returns     an array of objects (as described above) that evaluate in the given
+              filter function to TRUE
+  author      hessg1
+  version     2019-03-20
+  */
   getFiltered(filter){
     let res = [];
     for(var i in this.codes){
@@ -195,6 +385,18 @@ export default class SnomedService {
     return res;
   }
 
+  /*
+  This method returns an array of a given proposition from the objects that match
+  the filter defined in the function.
+  parameters  - filter: a function that takes an object as
+                an argument and returns a boolean
+              - prop: the name of a proposition to be returned
+                (code, en, de, supercategory or category)
+  returns     an array of values from the given proposition from objects
+              that evaluate in the given filter function to TRUE
+  author      hessg1
+  version     2019-03-20
+  */
   getFilteredProp(filter, prop){
     let res = [];
     for(var i in this.codes){
@@ -204,5 +406,4 @@ export default class SnomedService {
     }
     return res;
   }
-
 }

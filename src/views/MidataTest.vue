@@ -14,7 +14,7 @@
 <script>
 import MidataService from '@/services/MidataService';
 import SnomedService from '@/services/SnomedService';
-import { EatingHabit, SleepPattern } from '@/services/ResourceService';
+import { EatingHabit, SleepPattern, Complaint } from '@/services/ResourceService';
 
 export default {
   name: 'midata-test',
@@ -50,13 +50,16 @@ export default {
     },
 
     saveResource(){
-      let myObservation = new EatingHabit("2019-03-19", "289141003");
-      try{
-        this.midata.saveData(myObservation);
-      }
-      catch(err){
-        console.log(err);
-      }
+      let myObservation = new Complaint("2019-01-01T08:30:00+01:00", "2019-01-01T12:30:00+01:00", 8, 73905001);
+      console.log(myObservation);
+      this.midata.saveData(myObservation)
+      .then(x=>{
+        console.log("saved: " + x);
+      })
+      .catch(err=>{
+        console.log("error saving: " + err);
+      });
+
     },
 
     saveBundle(){
