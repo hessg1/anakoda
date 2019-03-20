@@ -231,19 +231,17 @@ export default class MidataService {
     }
 
     if(data.resourceType == "Bundle"){
-      console.log("bundle detected");
       $.ajax(ajaxSettings).done(function (response) {
-        console.log("saved to midata");
+        console.log("bundle saved to midata");
         console.log(response);
       });
 
     }
-    else if(data.resourceType == "Observation"){
-      console.log("single observation detected");
+    else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
       // if we have an Observation, we have to adjust the service URI
       ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
       $.ajax(ajaxSettings).done(function (response) {
-        console.log("success: " + response);
+        console.log("single resource saved to midata: " + response);
       });
 
     }
@@ -251,6 +249,42 @@ export default class MidataService {
       throw("Error: can not handle datatype " + data.resourceType + " yet.");
     }
   }
+
+  /*
+    Packs single resources into a FHIR bundle
+    parameters  - an array of resources to be bundled (as valid FHIR / JSON)
+    returns     a bundle in JSON
+    author      hessg1
+    version     2019-03-20
+  */
+  bundle(resources){
+    if(Array.isArray(resources) && resources.length > 1){
+      // initialize the bundle
+      let bundle = {
+        "resourceType": "Bundle",
+        "type": "transaction",
+        "id": "bundle-transaction",
+        "entry": []
+      }
+      for(var i in resources){
+      // build the objects wrapping the individual resources
+        let res = {
+          "request": {
+            "method": "POST",
+            "url": resources[i].resourceType,
+          },
+          "resource": resources[i]
+        }
+        // and put them into the bundle
+        bundle.entry.push(res);
+      }
+      return bundle;
+    }
+    else{
+      throw("Invalid argument: \"resources\" must be an Array with at least one element");
+    }
+  }
+
 
   /*
     Removes the MIDATA related data from localstorage and thus logs out the user.
