@@ -86,12 +86,13 @@ export default {
       console.log("save bundle:");
       console.log(myBundle);
 
-      try{
-        this.midata.saveData(myBundle);
-      }
-      catch(err){
-        console.log(err);
-      }
+      this.midata.saveData(myBundle)
+      .then(x=>{
+        console.log("saved: " + x);
+      })
+      .catch(err=>{
+        console.log("error saving: " + err);
+      });
     }
 
 

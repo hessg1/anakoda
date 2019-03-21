@@ -205,46 +205,53 @@ export default class MidataService {
     Requires a completely set up MIDATA environment, with token etc.
     parameters  - data: the data object, as a valid FHIR ressource or a FHIR bundle
                         cave: no validation of input!
-    returns     nothing
+    returns     a promise with the servers response
     throws      an error, if resourceType is not Bundle or Observation
     author      hessg1
     version     2019-03-19
   */
   saveData(data){
-    if(this.token == ""){
-      throw("No token set, check authorization.");
-    }
-    //TODO: validate data for FHIR specs?
 
-    // prepare settings
-    var ajaxSettings = {
-      "async": true,
-      "crossDomain": true,
-      "url": this.uri.service,
-      "method": "POST",
-      "headers": {
-        "Content-Type": "application/fhir+json",
-        "Authorization": "Bearer " + this.token,
-        "cache-control": "no-cache"
-      },
-      "data": JSON.stringify(data)
-    }
+    //TODO: validate data for FHIR specs?
+    let that = this;
     return new Promise(function(resolve, reject){
+      if(that.token == ""){
+        reject("No token set, check authorization.");
+      }
+
+      // prepare settings
+      var ajaxSettings = {
+        "async": true,
+        "crossDomain": true,
+        "url": that.uri.service,
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/fhir+json",
+          "Authorization": "Bearer " + that.token,
+          "cache-control": "no-cache"
+        },
+        "data": JSON.stringify(data),
+        "error": function(err){
+          //console.log(err);
+          reject("An error occured (" + err.status + "): " + err.statusText );
+        },
+        "success": function(response){
+          //console.log(response);
+          resolve("saved to midata: " + response);
+        }
+      }
+
       if(data.resourceType == "Bundle"){
-        $.ajax(ajaxSettings).done(function (response) {
-          console.log("bundle saved to MIDATA");
-          console.log(response);
+        ajaxSettings.success = function(response){
           resolve("bundle saved, id=" + response.id);
-        });
+        }
+        $.ajax(ajaxSettings);
 
       }
       else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
         // if we have an Observation, we have to adjust the service URI
         ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
-        $.ajax(ajaxSettings).done(function (response) {
-          console.log("single resource saved to midata: " + response);
-          resolve("resource saved to midata: " + response);
-        });
+        $.ajax(ajaxSettings);
 
       }
       else {
