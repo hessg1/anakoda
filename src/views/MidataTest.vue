@@ -5,6 +5,7 @@
     <v-btn v-if="midata.token == ''" @click="auth()">klick do zum verbinde</v-btn>
     <v-btn v-if="midata.token != ''" @click="getData()">Date lade (siehe Konsole)</v-btn><br />
     <v-btn v-if="midata.token != ''" @click="saveResource()">einzelni Ressource speichere</v-btn>
+    <v-btn v-if="midata.token != ''" @click="saveDiagnosis()">Diagnose speichere</v-btn>
     <v-btn v-if="midata.token != ''" @click="saveBundle()">es Bundle speichere</v-btn><br /><br />
     <v-btn v-if="midata.token != ''" @click="midata.logout()">logout</v-btn><br />
     <v-btn @click="snomed()">test snomed (console)</v-btn>
@@ -14,7 +15,7 @@
 <script>
 import MidataService from '@/services/MidataService';
 import SnomedService from '@/services/SnomedService';
-import { EatingHabit, SleepPattern, Complaint, Condition } from '@/services/ResourceService';
+import { EatingHabit, SleepPattern, Complaint, Condition, Diagnosis } from '@/services/ResourceService';
 
 export default {
   name: 'midata-test',
@@ -54,6 +55,19 @@ export default {
       myObservation = new Condition("2019-05-01T08:30:00+01:00", "2019-05-01T12:30:00+01:00", 102894008);
       console.log(myObservation);
       this.midata.saveData(myObservation)
+      .then(x=>{
+        console.log("saved: " + x);
+      })
+      .catch(err=>{
+        console.log("error saving: " + err);
+      });
+
+    },
+
+    saveDiagnosis(){
+      let diagnosis = new Diagnosis("2017-10-01", 56097005); // valid code: 56097005
+      console.log(diagnosis);
+      this.midata.saveData(diagnosis)
       .then(x=>{
         console.log("saved: " + x);
       })

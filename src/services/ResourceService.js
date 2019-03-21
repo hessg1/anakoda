@@ -11,6 +11,8 @@ const validBodySites = sct.getFilteredProp(x => x.category == "BodySite", "code"
 const validVarComplaints = sct.getFilteredProp(x => x.category == "VariousComplaint", "code");
 // SCT codes to be accepted by Condition collective resource
 const validConditions = sct.getFilteredProp(x => x.category == "Condition", "code");
+// SCT codes to be accepted by Diagnosis resource
+const validDiagnoses = sct.getFilteredProp(x => x.category == "Diagnosis", "code");
 
 // range of quality accepted by SleepPattern resource (lowest to highest)
 const sleepQualityRange = [0,10];
@@ -50,6 +52,7 @@ parameters  - date: the date of the given day (2019-03-19T15:30:00+01:00)
               225526009 = "Eats irregularly"
               289141003 = "Eats regularly"
               702970004 (or anything else) = "Eating habit unknown"
+throws:     - an error if a SCT is entered that is not in the projects list for EatingHabits
 author      hessg1
 version     2019-03-19
 */
@@ -83,6 +86,8 @@ SleepPattern is a resource that describes the eating habit of a given day.
 parameters  - startTime: date and time when subject went to bed (2019-03-19T15:30:00+01:00)
             - endTime: date and time when subject left bed (2019-03-19T15:30:00+01:00)
             - quality: the subjective quality of sleep, on a scale from 0 to 10
+throws:     - an error if a SCT is entered that is not in the projects list for SleepPattern
+            - an error if the quality is not in the preset range
 author      hessg1
 version     2019-03-19
 */
@@ -121,6 +126,8 @@ parameters  - startTime: date and time of beginning of the complaint (2019-03-19
             - endTime: date and time when the complaint ended (2019-03-19T15:30:00+01:00)
             - code: the type of the complaint as SCT
             - intensity: the intensity of the complaint, on a scale from 0 to 10
+throws:     - an error if a SCT is entered that is not in the projects list for complaints
+            - an error if the intensity is not in the preset range
 author      hessg1
 version     2019-03-20
 */
@@ -183,6 +190,7 @@ of the "VariousComplaint" category.
 parameters  - startTime: date and time of beginning of the complaint (2019-03-19T15:30:00+01:00)
             - endTime: date and time when the complaint ended (2019-03-19T15:30:00+01:00)
             - code: the type of the complaint as SCT
+throws:     - an error if a SCT is entered that is not in the projects list for conditions
 author      hessg1
 version     2019-03-21
 */
@@ -223,6 +231,8 @@ parameters  - startTime: date and time when headache started (2019-03-19T15:30:0
             - intensity: the intensity of the headache, on a scale from 0 to 10
             - code: the type of the headache (throbbing, aching, ...) as SCT
             - bodysite: the site of the headache (left, right, bilateral), as SCT
+throws:     - an error if a SCT is entered that is not in the projects list for headaches
+            - an error if the intensity is not in the preset range
 author      hessg1
 version     2019-03-20
 */
@@ -254,5 +264,47 @@ export class Headache extends Complaint {
         "display": sct.getEnglish(bodysite)
     }]};
 
+  }
+}
+
+
+/*
+Diagnosis is the resource for saving a migraine or headache diagnosis
+as diagnosed by a medical doctor (but entered by the patient).
+parameters  - date: the date when the diagnosis was made (YYYY-MM-DD)
+            - diagnosis: the diagnosis as SCT code
+throws:     - an error if a SCT is entered that is not in the projects list for diagnoses
+author      hessg1
+version     2019-03-21
+*/
+export class Diagnosis extends FhirResource {
+  constructor(date, diagnosis){
+    let code = Number(diagnosis);
+    if(!validDiagnoses.includes(code)){
+      throw("Illegal argument: invalid SCT code for Diagnosis");
+    }
+    super();
+    this.effectiveDateTime = date;
+
+    let superCode = sct.getFilteredProp(x=>x.code == code, "superCategory")[0];
+    this.code = {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": superCode, // could be hardcoded with 128187005, but this leaves more flexibility for later
+          "display": sct.getEnglish(superCode) // could be hardcoded with "Vascular Headache", but this leaves more flexibility for later
+        }
+      ]
+    };
+
+    this.valueCodeableConcept = {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": code,
+          "display": sct.getEnglish(code)
+        }
+      ]
+    };
   }
 }

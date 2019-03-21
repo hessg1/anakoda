@@ -300,6 +300,35 @@ export default class SnomedService {
         "superCategory": "",
         "category": "SuperCategory"
       },
+      {
+        "code": 128187005,
+        "en": "Vascular headache",
+        "de": "Vaskuläre Kopfschmerzen",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
+        "code": 37796009,
+        "en": "Migraine",
+        "de": "Migräne",
+        "superCategory": 128187005,
+        "category": "Diagnosis"
+      },
+      {
+        "code": 56097005,
+        "en": "Migraine without aura",
+        "de": "Migräne ohne Aura",
+        "superCategory": 128187005,
+        "category": "Diagnosis"
+      },
+      {
+        "code": 4473006,
+        "en": "Migraine with aura",
+        "de": "Migräne mit Aura",
+        "superCategory": 128187005,
+        "category": "Diagnosis"
+      }
+      // more diagnoses to come
     ];
   }
 
