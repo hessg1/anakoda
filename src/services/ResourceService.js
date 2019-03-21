@@ -7,8 +7,10 @@ const validHeadaches = sct.getFilteredProp(x => x.category == "Headache", "code"
 const validEatingHabits = sct.getFilteredProp(x => x.category == "EatingHabit", "code");
 // SCT codes to be accepted by resources using bodysite
 const validBodySites = sct.getFilteredProp(x => x.category == "BodySite", "code");
-// SCT codes to be accepted by VariousComplaint collecttive resource
+// SCT codes to be accepted by VariousComplaint collective resource
 const validVarComplaints = sct.getFilteredProp(x => x.category == "VariousComplaint", "code");
+// SCT codes to be accepted by Condition collective resource
+const validConditions = sct.getFilteredProp(x => x.category == "Condition", "code");
 
 // range of quality accepted by SleepPattern resource (lowest to highest)
 const sleepQualityRange = [0,10];
@@ -172,6 +174,45 @@ export class Complaint extends FhirResource {
     else if (!validHeadaches.includes(code)){
       throw("Illegal argument: Invalid SCT code for VariousComplaint.");
     }
+  }
+}
+
+/*
+This is the default type of Condition resources. It can be initialized with codes
+of the "VariousComplaint" category.
+parameters  - startTime: date and time of beginning of the complaint (2019-03-19T15:30:00+01:00)
+            - endTime: date and time when the complaint ended (2019-03-19T15:30:00+01:00)
+            - code: the type of the complaint as SCT
+author      hessg1
+version     2019-03-21
+*/
+export class Condition extends FhirResource {
+  constructor(startTime, endTime, code){
+    code = Number(code);
+    if(!validConditions.includes(code)){
+      throw("Illegal argument: Invalid SCT code for Condition.");
+    }
+    super();
+    this.effectivePeriod = {"start": startTime, "end": endTime};
+    this.valueCodeableConcept = {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": code,
+          "display": sct.getEnglish(code)
+        }
+      ]
+    };
+    let superCode = sct.getFilteredProp(x=>x.code == code, "superCategory")[0];
+    this.code = {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": superCode,
+          "display": sct.getEnglish(superCode)
+        }
+      ]
+    };
   }
 }
 
