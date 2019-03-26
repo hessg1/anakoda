@@ -309,14 +309,14 @@ export default {
     items: ['heute', 'gestern', 'vorgestern', 'einen anderen Tag'],
     entry: "heute",
     date: new Date().toISOString().substr(0, 10),
-    dateFormatted: app.formateDate(new Date().toISOString().substr(0, 10)),
+    dateFormatted: app.formatDate(new Date().toISOString().substr(0, 10)),
     menudate: false,
     eating: '702970004', // default: unbekannt
     datestart: new Date().toISOString().substr(0, 10),
-    datestartFormatted: app.formateDate(new Date().toISOString().substr(0, 10)),
+    datestartFormatted: app.formatDate(new Date().toISOString().substr(0, 10)),
     menudatestart: false,
     dateend: new Date().toISOString().substr(0, 10),
-    dateendFormatted:app.formateDate(new Date().toISOString().substr(0, 10)),
+    dateendFormatted:app.formatDate(new Date().toISOString().substr(0, 10)),
     menudateend: false,
     timestart: null,
     menutimestart: false,
@@ -331,15 +331,15 @@ export default {
 
   watch: {
     date () {
-      this.dateFormatted = this.formateDate(this.date)
+      this.dateFormatted = this.formatDate(this.date)
       this.datestart = this.date;
       this.dateend = this.date;
     },
     datestart () {
-      this.datestartFormatted = this.formateDate(this.datestart)
+      this.datestartFormatted = this.formatDate(this.datestart)
     },
     dateend () {
-      this.dateendFormatted = this.formateDate(this.dateend)
+      this.dateendFormatted = this.formatDate(this.dateend)
     },
     entry() {
       if(this.entry === 'gestern'){
@@ -364,7 +364,13 @@ export default {
   },
 
   methods: {
-    // persist the entered data to MIDATA
+    /*
+    Saves the entered information to MIDATA. Needs a set up MIDATA object, of course.
+    parameters: none
+    returns:    none, displays the result to the user in a Snackbox
+    author:     hessg1
+    version:    2019-03-20
+    */
     save(){
       let eat = new EatingHabit(this.date, this.eating);
       let sleep = new SleepPattern(
@@ -388,15 +394,27 @@ export default {
 
     },
 
-    //Form Date to Swiss standard DD.MM.YYYY
-    formateDate (date) {
+    /*
+    Format a Date to string in Swiss standard DD.MM.YYYY
+    parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
+    returns:    - a date string in the format DD.MM.YYYY
+    author:     schwf3
+    version:    2019-03-26
+    */
+    formatDate (date) {
       if (!date) return null
 
       const [year, month, day] = date.split('-')
       return `${day}.${month}.${year}`
     },
 
-    //Parse Date to ISO 8601 format
+    /*
+    Format a Date to string to ISO8601 (YYYY-MM-DD)
+    parameters: - date: a date string in the format DD.MM.YYYY
+    returns:    - a date as ISO-string (YYYY-MM-DD)
+    author:     schwf3
+    version:    2019-03-26
+    */
     parseDate (date) {
       if (!date) return null
 
@@ -404,14 +422,31 @@ export default {
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
 
-    //Correct the day of the date and parse to ISO 8601 format
+    /*
+    Corrects the day of a date (as iso-string) by a given value, taking into account
+    parameters: - date: the original date, as a string compatible to the Date()
+                        constructor (e.g ISO8601: YYYY-MM-DD)
+                - val: the number of days to correct the date by (e.g. -1 for
+                       yesterday)
+    returns:    - a date as a string in ISO8601 (YYYY-MM-DD)
+    author:     schwf3, refactoring hessg1
+    version:    2019-03-26
+    */
     generateDate (date, val) {
-      var d = date.substr(0, 8);
-      var dt = parseInt(date.substr(8, 10)) + val;
-      if (dt < 10) {
-        dt = '0' + dt;
-      }
-      return d + dt;
+
+      // ok, this is going to be a bit ugly with converting the date from string
+      // to numbers to date to string, but it ain't stupid if it works:
+
+      // first, convert the string into a date object and get the milliseconds since 1/1/1970
+      date = new Date(date).getTime();
+
+      // add or substract the according number of milliseconds and convert into date again
+      date = new Date(date + (val * 24 * 60 * 60 * 1000));
+
+      // finally, convert the date object to a string again
+      date = date.toISOString().substr(0, 10),
+
+      return date;
     },
 
     //Lower the quality of sleep when pressing the icon
