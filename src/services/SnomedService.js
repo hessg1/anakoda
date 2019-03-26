@@ -337,9 +337,9 @@ export default class SnomedService {
   This method returns the english display name to a SCT code.
   parameters  - code: a SCT code used in the project
   returns     the corresponding display name in english,
-              or "not found" if code is not in the project
+  throws      "not found" if code is not in the project
   author      hessg1
-  version     2019-03-20
+  version     2019-03-26
   */
   getEnglish(code){
     for(var i in this.codes){
@@ -347,16 +347,16 @@ export default class SnomedService {
         return this.codes[i].en;
       }
     }
-    return "not found";
+    throw "code " + code + " not found";
   }
 
   /*
   This method returns the german display name to a SCT code.
   parameters  - code: a SCT code used in the project
   returns     the corresponding display name in german,
-              or "not found" if code is not in the project
+  throws      "not found" if code is not in the project
   author      hessg1
-  version     2019-03-20
+  version     2019-03-26
   */
   getGerman(code){
     for(var i in this.codes){
@@ -364,25 +364,26 @@ export default class SnomedService {
         return this.codes[i].de;
       }
     }
-    return "";
+    throw "code " + code + " not found";
   }
 
   /*
   This method returns the SCT code to a given display name (not case sensitive,
   but otherwise exact)
   parameters  - code: a display name used in the project
-  returns     the corresponding SCT code, or -1 if not found
+  returns     the corresponding SCT code
+  throws      "not found" if term is not in the project
   author      hessg1
-  version     2019-03-20
+  version     2019-03-26
   */
   getCode(term){
     term = term.toLowerCase();
     for(var i in this.codes){
-      if(this.codes[i].de.toLowerCase() == term || this.codes[i].entoLowerCase() == term){
+      if(this.codes[i].de.toLowerCase() == term || this.codes[i].en.toLowerCase() == term){
         return this.codes[i].code;
       }
     }
-    return -1;
+      throw "term <" + term + "> not found";
   }
 
   /*
@@ -427,6 +428,11 @@ export default class SnomedService {
   version     2019-03-20
   */
   getFilteredProp(filter, prop){
+    // catch invalid prop arguments
+    if(!prop || !['code', 'en', 'de', 'superCategory', 'category'].includes(prop)){
+      throw("Illegal argument: prop <" + prop + "> not available");
+    }
+    
     let res = [];
     for(var i in this.codes){
       if(filter(this.codes[i])){
