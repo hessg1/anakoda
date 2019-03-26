@@ -444,7 +444,11 @@ export default {
       date = new Date(date + (val * 24 * 60 * 60 * 1000));
 
       // finally, convert the date object to a string again
+<<<<<<< HEAD
       date = date.toISOString().substr(0, 10);
+=======
+      date = date.toISOString().substr(0, 10),
+>>>>>>> fa644508446cf56e49179033fb790680150d80d3
 
       return date;
     },
