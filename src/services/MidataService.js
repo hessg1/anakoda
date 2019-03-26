@@ -196,6 +196,7 @@ export default class MidataService {
       })
       .catch(err => {
         console.log("Error: " + err.responseText);
+        throw(err);
       });
     }
   }
@@ -268,7 +269,7 @@ export default class MidataService {
     version     2019-03-20
   */
   bundle(resources){
-    if(Array.isArray(resources) && resources.length > 1){
+    if(Array.isArray(resources) && resources.length > 0){
       // initialize the bundle
       let bundle = {
         "resourceType": "Bundle",
