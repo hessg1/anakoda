@@ -5,7 +5,7 @@ const sct = new SnomedService();
 const validHeadaches = sct.getFilteredProp(x => x.category == "Headache", "code");
 // SCT codes to be accepted by EatingHabit resource
 const validEatingHabits = sct.getFilteredProp(x => x.category == "EatingHabit", "code");
-// SCT codes to be accepted by resources using bodysite
+// SCT codes to be accepted by SleepPattern resource
 const validBodySites = sct.getFilteredProp(x => x.category == "BodySite", "code");
 // SCT codes to be accepted by VariousComplaint collective resource
 const validVarComplaints = sct.getFilteredProp(x => x.category == "VariousComplaint", "code");
@@ -58,6 +58,12 @@ version     2019-03-19
 */
 export class EatingHabit extends FhirResource {
   constructor(date, code){
+
+    // check for undefined values
+    if(!date || !code){
+      throw("Invalid argument: must not be null / undefined");
+    }
+
     // check if code is valid
     code = Number(code);
     if(!validEatingHabits.includes(code)){
@@ -82,7 +88,7 @@ export class EatingHabit extends FhirResource {
 }
 
 /*
-SleepPattern is a resource that describes the eating habit of a given day.
+SleepPattern is a resource that describes the sleep pattern of a given day.
 parameters  - startTime: date and time when subject went to bed (2019-03-19T15:30:00+01:00)
             - endTime: date and time when subject left bed (2019-03-19T15:30:00+01:00)
             - quality: the subjective quality of sleep, on a scale from 0 to 10
@@ -98,6 +104,17 @@ export class SleepPattern extends FhirResource {
     if(quality < sleepQualityRange[0] || quality > sleepQualityRange[1]){
       throw("Invalid argument: quality must be at least " + sleepQualityRange[0] + " and at maximum " + sleepQualityRange[1]);
     }
+
+    // check for undefined values
+    if(!startTime || !endTime || !quality){
+      throw("Invalid argument: must not be null / undefined");
+    }
+
+    // throw an error if endTime is before startTime
+    if(new Date(endTime) < new Date(startTime)){
+      throw("Invalid argument: startTime must be before endTime");
+    }
+
     this.code = {
       "coding": [{
         "system": "http://loinc.org",
@@ -134,6 +151,16 @@ version     2019-03-20
 export class Complaint extends FhirResource {
   constructor(startTime, endTime, intensity, code){
 
+    // check for undefined values
+    if(!startTime || !endTime || !intensity || !code){
+      throw("Invalid argument: must not be null / undefined");
+    }
+
+    // throw an error if endTime is before startTime
+    if(new Date(endTime) < new Date(startTime)){
+      throw("Invalid argument: startTime must be before endTime");
+    }
+
     // the following part is valid for all Complaints, even specific
     super();
     // check if intensity is valid
@@ -155,8 +182,8 @@ export class Complaint extends FhirResource {
         "code": {
           "coding": [{
               "system": "http://snomed.info/sct",
-              "code": "425401001",
-              "display": "Pain intensity rating scale"
+              "code": "425401001", // "code": "425401001",
+              "display": "Pain intensity rating scale" // "display": "Pain intensity"
             }]
         },
         "valueQuantity": {
@@ -196,6 +223,18 @@ version     2019-03-21
 */
 export class Condition extends FhirResource {
   constructor(startTime, endTime, code){
+
+    // check for undefined values
+    if(!startTime || !endTime || !code){
+      throw("Invalid argument: must not be null / undefined");
+    }
+
+    // throw an error if endTime is before startTime
+    if(new Date(endTime) < new Date(startTime)){
+      throw("Invalid argument: startTime must be before endTime");
+    }
+
+
     code = Number(code);
     if(!validConditions.includes(code)){
       throw("Illegal argument: Invalid SCT code for Condition.");
@@ -238,6 +277,11 @@ version     2019-03-20
 */
 export class Headache extends Complaint {
   constructor(startTime, endTime, intensity, code, bodysite){
+    // check for undefined bodysite (others are checked in super)
+    if(!bodysite){
+      throw("Invalid argument: bodysite must not be null / undefined");
+    }
+
     super(startTime, endTime, intensity, code);
     // check if code is valid
     code = Number(code);
@@ -279,6 +323,12 @@ version     2019-03-21
 */
 export class Diagnosis extends FhirResource {
   constructor(date, diagnosis){
+    // check for undefined values
+    if(!date || !diagnosis){
+      throw("Invalid argument: must not be null / undefined");
+    }
+
+
     let code = Number(diagnosis);
     if(!validDiagnoses.includes(code)){
       throw("Illegal argument: invalid SCT code for Diagnosis");
