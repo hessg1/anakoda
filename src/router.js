@@ -5,7 +5,7 @@ import Home from './views/Home.vue'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  mode: 'history', // muss für deployment evtl. ausgeschaltet werden
   base: process.env.BASE_URL,
   routes: [
     {
@@ -22,20 +22,23 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
-      path: '/midatatest',
-      name: 'midatatest',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "midataplain" */'./views/MidataTest.vue')
-    },
-    {
       path: '/yourdata',
       name: 'yourdata',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "midataplain" */'./views/YourData.vue')
+      component: () => import(/* webpackChunkName: "yourdata" */'./views/YourData.vue')
+    },
+
+    // important: the following entry has to be commented for productive build
+
+    {
+      path: '/test',
+      name: 'test',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "test" */'./views/Test.vue')
     }
   ]
 })
