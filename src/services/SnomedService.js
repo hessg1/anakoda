@@ -11,6 +11,7 @@ export default class SnomedService {
     /*
     This large array of JS objects is the "library" of the function. When adding
     a new SCT code to the project, it should also be added here.
+    The value "flag" is used for the individual further processing of a code. (For example UI adaptations)
     */
     this.codes = [
       {
@@ -18,315 +19,360 @@ export default class SnomedService {
         "en": "Sees flickering lights",
         "de": "Flimmersehen",
         "superCategory": 281004000,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 162057007,
         "en": "Nausea present",
         "de": "Übelkeit",
         "superCategory": 373573001,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 409668002,
         "en": "Photophobia",
         "de": "Lichtempfindlichkeit",
         "superCategory": 246613004,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 313387002,
         "en": "Phonophobia",
         "de": "Lärmempfindlichkeit",
         "superCategory": 285854004,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 267092007,
         "en": "Has eye discharge",
         "de": "Tränende Augen",
         "superCategory": 373573001,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 267093002,
         "en": "Has a red eye",
         "de": "Gerötete Augen",
         "superCategory": 373573001,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 276319003,
         "en": "Menstruation finding",
         "de": "Menstruation",
         "superCategory": 66523006,
-        "category": "Condition"
+        "category": "Condition",
+        "flag": false
       },
       {
         "code": 216299002,
         "en": "Attack",
-        "de": "Anfall",
+        "de": "Migräneanfall",
         "superCategory": 118222006,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 73595000,
         "en": "Stress",
         "de": "Stress",
         "superCategory": 363870007,
-        "category": "Condition"
+        "category": "Condition",
+        "flag": false
       },
       {
         "code": 102894008,
         "en": "Feeling calm",
         "de": "Entspannt",
         "superCategory": 285854004,
-        "category": "Condition"
+        "category": "Condition",
+        "flag": false
       },
       {
         "code": 279079003,
         "en": "Dysesthesia",
         "de": "Gefühlsstörung",
         "superCategory": 247325003,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 29164008,
         "en": "Speech Impairment",
         "de": "Sprachstörung",
         "superCategory": 363918005,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 64531003,
         "en": "Nasal discharge present",
         "de": "Nasenlaufen",
         "superCategory": 373573001,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 119711004,
         "en": "Nose closure",
         "de": "Verstopfte Nase",
         "superCategory": 373573001,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 45846002,
         "en": "Hyperosmia",
         "de": "Geruchsempfindlichkeit",
         "superCategory": 397686008,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 422400008,
         "en": "Vomiting",
         "de": "Erbrechen",
         "superCategory": 405166007,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 16932000,
         "en": "Nausea and vomiting",
         "de": "Übelkeit und Erbrechen",
         "superCategory": 405166007,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 248626009,
         "en": "Yawning",
         "de": "Gähnen",
         "superCategory": 37993006,
-        "category": "VariousComplaint"
+        "category": "VariousComplaint",
+        "flag": false
       },
       {
         "code": 309253009,
         "en": "Difficulty reading",
         "de": "Leseschwierigkeiten",
         "superCategory": 363870007,
-        "category": "Condition"
+        "category": "Condition",
+        "flag": false
       },
       {
         "code": 106126000,
         "en": "Emotional state finding",
         "de": "???",
         "superCategory": 285854004,
-        "category": "Condition"
+        "category": "Condition",
+        "flag": false
       },
       {
         "code": 162308004,
         "en": "Throbbing Headache",
         "de": "Pulsierende Kopfschmerzen",
         "superCategory": "",
-        "category": "Headache"
+        "category": "Headache",
+        "flag": false
       },
       {
         "code": 162307009,
         "en": "Aching Headache",
         "de": "Stechende Kopfschmerzen",
         "superCategory": "",
-        "category": "Headache"
+        "category": "Headache",
+        "flag": false
       },
       {
         "code": 162309007,
         "en": "Shooting Headache",
         "de": "Einschiessende Kopfschmerzen",
         "superCategory": "",
-        "category": "Headache"
+        "category": "Headache",
+        "flag": false
       },
       {
         "code": 702970004,
         "en": "Eating habit unknown",
         "de": "Unbekanntes Essverhalten",
         "superCategory": "",
-        "category": "EatingHabit"
+        "category": "EatingHabit",
+        "flag": false
       },
       {
         "code": 289141003,
         "en": "Eats regularly",
         "de": "Regelmässig gegessen",
         "superCategory": "",
-        "category": "EatingHabit"
+        "category": "EatingHabit",
+        "flag": false
       },
       {
         "code": 225526009,
         "en": "Eats irregularly",
         "de": "Unregelmässig gegessen",
         "superCategory": "",
-        "category": "EatingHabit"
+        "category": "EatingHabit",
+        "flag": false
       },
       {
         "code": 29624005,
         "en": "Right side of head",
         "de": "Rechte Kopfhälfte",
         "superCategory": "",
-        "category": "BodySite"
+        "category": "BodySite",
+        "flag": false
       },
       {
         "code": 64237003,
         "en": "Left side of head",
         "de": "Linke Kopfhälfte",
         "superCategory": "",
-        "category": "BodySite"
+        "category": "BodySite",
+        "flag": false
       },
       {
         "code": 162301005,
         "en": "Bilateral headache",
         "de": "Beidseitige Kopfschmerzen",
         "superCategory": "",
-        "category": "BodySite"
+        "category": "BodySite",
+        "flag": false
       },
       {
         "code": 405166007,
         "en": "Nausea and vomiting status",
         "de": "Übelkeits- und Erbrechensstatus",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 285854004,
         "en": "Emotion",
         "de": "Emotion",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 281004000,
         "en": "Visual function",
         "de": "Visuelle Funktion",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 363918005,
         "en": "Speech observable",
         "de": "Sprachbeobachtung",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 397686008,
         "en": "Sense of smell, function",
         "de": "Geruchssinnfunktion",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 37993006,
         "en": "Yawning, function",
         "de": "Gähnfunktion",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 246613004,
         "en": "General reaction to light",
         "de": "Generelle Reaktion auf Licht",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 247325003,
         "en": "Altered sensation of skin",
         "de": "Verändertes Hautempfinden",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 118222006,
         "en": "General finding of observation of patient",
         "de": "Generelle Beobachtung des Patienten",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 373573001,
         "en": "Clinical finding present",
         "de": "Klinischer Befund vorhanden",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 363870007,
         "en": "Mental state, behavior / psychosocial function observable",
         "de": "Beobachtung psychischer Zustand, psychosoziale Funktion",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 66523006,
         "en": "Female reproductive function",
         "de": "Funktion weiblicher Reproduktion",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 128187005,
         "en": "Vascular headache",
         "de": "Vaskuläre Kopfschmerzen",
         "superCategory": "",
-        "category": "SuperCategory"
+        "category": "SuperCategory",
+        "flag": false
       },
       {
         "code": 37796009,
         "en": "Migraine",
         "de": "Migräne",
         "superCategory": 128187005,
-        "category": "Diagnosis"
+        "category": "Diagnosis",
+        "flag": false
       },
       {
         "code": 56097005,
         "en": "Migraine without aura",
         "de": "Migräne ohne Aura",
         "superCategory": 128187005,
-        "category": "Diagnosis"
+        "category": "Diagnosis",
+        "flag": false
       },
       {
         "code": 4473006,
         "en": "Migraine with aura",
         "de": "Migräne mit Aura",
         "superCategory": 128187005,
-        "category": "Diagnosis"
+        "category": "Diagnosis",
+        "flag": false
       }
       // more diagnoses to come
     ];
@@ -432,7 +478,7 @@ export default class SnomedService {
     if(!prop || !['code', 'en', 'de', 'superCategory', 'category'].includes(prop)){
       throw("Illegal argument: prop <" + prop + "> not available");
     }
-    
+
     let res = [];
     for(var i in this.codes){
       if(filter(this.codes[i])){

@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app color="#e5f9e0">
     <v-toolbar app>
       <v-toolbar-title class="headline">
         <span class="font-weight-light">anakoda</span>
@@ -12,6 +12,10 @@
     <v-content>
       <router-view/>
     </v-content>
+    <v-footer class="pa-3">
+    <v-spacer></v-spacer>
+    <div>&copy; {{ new Date().getFullYear() }}</div>
+  </v-footer>
   </v-app>
 </template>
 
