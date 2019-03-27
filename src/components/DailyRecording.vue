@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <h2>Dein Tag</h2>
-    <p>Hier kannst du dein alltägliches Verhalten erfassen.<br>
-      Ein geregelter Alltag kann bereits Migräneanfälle minimieren.
+    <p>
+      Hier kannst du dein alltägliches Befinden erfassen.
     </p>
 
     <v-stepper v-model="pos" vertical>
@@ -256,6 +256,7 @@
           <v-card-text>
             <v-slider
             v-model="quality"
+            always-dirty
             thumb-label="always"
             min="0"
             max="10"
@@ -372,26 +373,52 @@ export default {
     version:    2019-03-20
     */
     save(){
-      let eat = new EatingHabit(this.date, this.eating);
-      let sleep = new SleepPattern(
-        this.datestart + "T" + this.timestart + ":00+01:00",
-        this.dateend + "T" + this.timeend + ":00+01:00",
-        this.quality);
-      let bundle = this.midata.bundle([eat,sleep]);
-      this.midata.saveData(bundle)
-        .then(res => {
-          console.log("Speichern erfolgreich\n" + res);
-          this.snackbartext = "Erfolgreich gespeichert.";
-          this.snackbarcolor = "#0a967a";
-          this.snackbar = true;
-        })
-        .catch(err => {
-          this.snackbartext = "Da ist etwas schiefgegangen:\n" + err;
-          this.snackbarcolor = "red";
-          this.snackbar = true;
-          console.log(err);
-        });
+      if(new Date(this.date).getTime() > Date.now() ||
+          new Date(this.dateend).getTime() > Date.now() ||
+         new Date(this.datestart).getTime() > Date.now()){
+        this.feedback("Das Datum darf nicht in der Zukunft liegen.", true);
+      }
+      else{
+      try{
+        let eat = new EatingHabit(this.date, this.eating);
+        let sleep = new SleepPattern(
+          this.datestart + "T" + this.timestart + ":00+01:00",
+          this.dateend + "T" + this.timeend + ":00+01:00",
+          this.quality);
+        let bundle = this.midata.bundle([eat,sleep]);
 
+        this.midata.saveData(bundle)
+          .then(res => {
+            console.log("Speichern erfolgreich\n" + res);
+            this.feedback("Erfolgreich gespeichert.", false);
+          })
+          .catch(err => {
+            this.feedback("Da ist etwas schiefgegangen: " + err, true);
+            console.log(err);
+          });
+      }
+      catch(err)
+      {
+        this.feedback("Da ist etwas schiefgegangen: " + err, true);
+        this.timestart = null;
+        console.log(err);
+      }
+      }
+    },
+
+    /*
+    Displays a SnackBar to the user. If the error parameter is set to true, the
+    message is displayed in red.
+    parameters: - text: the text displayed to the user
+                - error: boolean, if it is an error message (message in red)
+    returns:    nothing
+    author:     hessg1
+    version:    2019-03-27
+    */
+    feedback(text, error){
+      this.snackbarcolor = error ? "red" : "#0a967a";
+      this.snackbartext = text;
+      this.snackbar = true;
     },
 
     /*
