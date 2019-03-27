@@ -50,8 +50,9 @@ export default {
     return {
       menu_items: [
           { title: 'Home', icon: 'home', target:"/" },
-          { title: 'Dein Tag erfassen', icon: 'today', target:"/yourdata" },
-          { title: 'Symptome erfassen', icon: 'mood', target:"/yourdata" },
+          { title: 'Dashboard', icon: 'dashboard', target:"/dashboard" },
+          { title: 'Einträge erfassen', icon: 'today', target:"/yourdata" },
+          //{ title: 'Symptome erfassen', icon: 'mood', target:"/yourdata" },
           { title: 'Impressum', icon: 'info', target:"/about" },
         ],
       drawer: "true"
