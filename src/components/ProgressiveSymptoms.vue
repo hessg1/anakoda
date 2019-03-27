@@ -562,7 +562,13 @@ export default {
   mounted(){
     this.snomedservice = new SnomedService();
     this.symoption = this.snomedservice.getFiltered(x => x.category == "Headache" || x.category == "VariousComplaint" || x.category == "Condition");
+    for(var i in this.symoption){
+      this.symoption[i].flag = false;
+    }
     this.hsiteoption = this.snomedservice.getFiltered(x => x.category == "BodySite");
+    for(var i in this.hsiteoption){
+      this.hsiteoption[i].flag = false;
+    }
     this.midata = new MidataService("https://test.midata.coop/fhir", "migrEnTest");
   }
 
