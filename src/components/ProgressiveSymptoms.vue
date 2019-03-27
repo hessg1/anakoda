@@ -566,7 +566,7 @@ export default {
       this.symoption[i].flag = false;
     }
     this.hsiteoption = this.snomedservice.getFiltered(x => x.category == "BodySite");
-    for(var i in this.hsiteoption){
+    for(i in this.hsiteoption){
       this.hsiteoption[i].flag = false;
     }
     this.midata = new MidataService("https://test.midata.coop/fhir", "migrEnTest");

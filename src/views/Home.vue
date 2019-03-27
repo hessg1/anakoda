@@ -47,9 +47,6 @@
       if(window.location.search){
         this.midata.fetchToken();
       }
-      else {
-        console.log("no URL parameters given");
-      }
     }
   }
 </script>
