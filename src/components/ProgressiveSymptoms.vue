@@ -238,13 +238,13 @@
   Klicke auf dein erfasstes Symptom um alle Angaben zu erfassen.
 </v-subheader>
 <v-card-actions>
-  <v-btn v-if="controll == false"
+  <v-btn v-if="midata != null && controll == false && midata.isReady()"
   disabled
   class="white--text">
   Daten unvollständig
 </v-btn>
 <v-btn
-v-if="controll == true"
+v-if="midata != null && controll == true && midata.isReady()"
 color="#0a967a"
 class="white--text"
 @click="save()"
