@@ -373,12 +373,6 @@ export default {
     version:    2019-03-20
     */
     save(){
-      if(new Date(this.date).getTime() > Date.now() ||
-          new Date(this.dateend).getTime() > Date.now() ||
-         new Date(this.datestart).getTime() > Date.now()){
-        this.feedback("Das Datum darf nicht in der Zukunft liegen.", true);
-      }
-      else{
       try{
         let eat = new EatingHabit(this.date, this.eating);
         let sleep = new SleepPattern(
@@ -402,7 +396,6 @@ export default {
         this.feedback("Da ist etwas schiefgegangen: " + err, true);
         this.timestart = null;
         console.log(err);
-      }
       }
     },
 

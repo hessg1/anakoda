@@ -61,13 +61,18 @@ export class EatingHabit extends FhirResource {
 
     // check for undefined values
     if(!date || !code){
-      throw("Invalid argument: must not be null / undefined");
+      throw("Fehler: Nullwert eingegeben.");
+    }
+
+    // check if date is in future
+    if(new Date(date).getTime() > Date.now()){
+      throw("Fehler: Kann keine Observation mit zukünftigem Datum erstellen.");
     }
 
     // check if code is valid
     code = Number(code);
     if(!validEatingHabits.includes(code)){
-      throw("Illegal argument: invalid SCT code for EatingHabit.");
+      throw("Fehler: Ungültiger SCT-Code für EatingHabit.");
     }
 
     super();
@@ -102,17 +107,22 @@ export class SleepPattern extends FhirResource {
     super();
     // check if quality is valid
     if(quality < sleepQualityRange[0] || quality > sleepQualityRange[1]){
-      throw("Invalid argument: quality must be at least " + sleepQualityRange[0] + " and at maximum " + sleepQualityRange[1]);
+      throw("Fehler: Qualität muss zwischen " + sleepQualityRange[0] + " und " + sleepQualityRange[1] + " liegen.");
+    }
+
+    // check if date is in future
+    if(new Date(startTime).getTime() > Date.now() || new Date(endTime).getTime() > Date.now()){
+      throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 
     // check for undefined values
     if(!startTime || !endTime || !quality){
-      throw("Invalid argument: must not be null / undefined");
+      throw("Fehler: Nullwert eingegeben.");
     }
 
     // throw an error if endTime is before startTime
     if(new Date(endTime) < new Date(startTime)){
-      throw("Invalid argument: startTime must be before endTime");
+      throw("Fehler: endTime liegt vor startTime.");
     }
 
     this.code = {
@@ -153,19 +163,23 @@ export class Complaint extends FhirResource {
 
     // check for undefined values
     if(!startTime || !endTime || !intensity || !code){
-      throw("Invalid argument: must not be null / undefined");
+      throw("Fehler: Nullwert eingegeben.");
+    }
+
+    if(new Date(startTime).getTime() > Date.now() || new Date(endTime).getTime() > Date.now()){
+      throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 
     // throw an error if endTime is before startTime
     if(new Date(endTime) < new Date(startTime)){
-      throw("Invalid argument: startTime must be before endTime");
+      throw("Fehler: endTime liegt vor startTime.");
     }
 
     // the following part is valid for all Complaints, even specific
     super();
     // check if intensity is valid
     if(intensity < intensityRange[0] || intensity > intensityRange[1]){
-      throw("Invalid argument: intensity must be at least " + intensityRange[0] + " and at maximum " + intensityRange[1]);
+      throw("Fehler: Intensität muss zwischen " + intensityRange[0] + " und " + intensityRange[1] + " liegen.");
     }
 
     this.effectivePeriod = {"start": startTime, "end": endTime};
@@ -206,7 +220,7 @@ export class Complaint extends FhirResource {
     }
     // if its neither a VariousComplaint nor a Headache, something is wrong:
     else if (!validHeadaches.includes(code)){
-      throw("Illegal argument: Invalid SCT code for VariousComplaint.");
+      throw("Fehler: Ungültiger SCT Code für VariousComplaint.");
     }
   }
 }
@@ -226,18 +240,22 @@ export class Condition extends FhirResource {
 
     // check for undefined values
     if(!startTime || !endTime || !code){
-      throw("Invalid argument: must not be null / undefined");
+      throw("Fehler: Nullwert eingegeben.");
+    }
+
+    if(new Date(startTime).getTime() > Date.now() || new Date(endTime).getTime() > Date.now()){
+      throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 
     // throw an error if endTime is before startTime
     if(new Date(endTime) < new Date(startTime)){
-      throw("Invalid argument: startTime must be before endTime");
+      throw("Fehler: endTime liegt vor startTime.");
     }
 
 
     code = Number(code);
     if(!validConditions.includes(code)){
-      throw("Illegal argument: Invalid SCT code for Condition.");
+      throw("Fehler: Ungültiger SCT Code für Condition.");
     }
     super();
     this.effectivePeriod = {"start": startTime, "end": endTime};
@@ -279,19 +297,19 @@ export class Headache extends Complaint {
   constructor(startTime, endTime, intensity, code, bodysite){
     // check for undefined bodysite (others are checked in super)
     if(!bodysite){
-      throw("Invalid argument: bodysite must not be null / undefined");
+      throw("Fehler: bodySite ist null / undefined");
     }
 
     super(startTime, endTime, intensity, code);
     // check if code is valid
     code = Number(code);
     if(!validHeadaches.includes(code)){
-      throw("Illegal argument: invalid SCT code for Headache.");
+      throw("Fehler: Ungültiger SCT Code für Headache.");
     }
     // check if bodysite is valid
     bodysite = Number(bodysite);
     if(!validBodySites.includes(bodysite)){
-      throw("Illegal argument: invalid SCT code for headache bodysite.");
+      throw("Fehler: Ungültiger SCT Code für headache bodysite.");
     }
 
     this.code = {
@@ -325,13 +343,13 @@ export class Diagnosis extends FhirResource {
   constructor(date, diagnosis){
     // check for undefined values
     if(!date || !diagnosis){
-      throw("Invalid argument: must not be null / undefined");
+      throw("Fehler: Nullwert eingegeben.");
     }
 
 
     let code = Number(diagnosis);
     if(!validDiagnoses.includes(code)){
-      throw("Illegal argument: invalid SCT code for Diagnosis");
+      throw("Fehler: Ungültiger SCT Code für Diagnosis");
     }
     super();
     this.effectiveDateTime = date;
