@@ -32,7 +32,7 @@
     },
     methods: {
       auth(){
-        this.midata.requestAuth("http://localhost:8080/");
+        this.midata.requestAuth(window.location.href);
       }
     },
     // mounted() is executed when the component is mounted
