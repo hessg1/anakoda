@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2>Dein Tag</h2>
+    <h2>Mein Tag</h2>
     <p>
       Hier kannst du dein alltägliches Befinden erfassen.
     </p>

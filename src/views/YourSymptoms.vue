@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2>Deine Symptome</h2>
+    <h2>Meine Auffälligkeiten</h2>
     <p>Hier kannst du deine Symptome erfassen.</p>
 
     <v-stepper v-model="pos" vertical>
