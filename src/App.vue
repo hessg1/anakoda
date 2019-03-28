@@ -6,7 +6,6 @@
       </v-toolbar>
       <v-list>
         <v-list-tile
-        :key="home"
         :to="'/'"
         >
         <v-list-tile-action>
@@ -15,7 +14,6 @@
         <v-list-tile-title>Home</v-list-tile-title>
       </v-list-tile>
       <v-list-tile
-      :key="dashboard"
       :to="'/dashboard'"
       >
       <v-list-tile-action>
@@ -33,7 +31,6 @@
       </v-list-tile>
     </template>
     <v-list-tile
-    :key="yourday"
     :to="'/yourday'"
     >
     <v-list-tile-action>
@@ -42,7 +39,6 @@
     <v-list-tile-title>Mein Tag</v-list-tile-title>
   </v-list-tile>
   <v-list-tile
-  :key="yoursymptoms"
   :to="'/yoursymptoms'"
   >
   <v-list-tile-action>
@@ -52,7 +48,6 @@
 </v-list-tile>
 </v-list-group>
 <v-list-tile
-:key="about"
 :to="'/about'"
 >
 <v-list-tile-action>
@@ -93,19 +88,8 @@ export default {
   },
   data () {
     return {
-      menu_items: [
-        { title: 'Home', icon: 'home', target:"/" },
-        { title: 'Dashboard', icon: 'dashboard', target:"/dashboard" },
-        { title: 'Einträge erfassen', icon: 'today', target:"/yourdata" ,
-        sub_items:[
-          { title: 'Mein Tag', icon: 'today', target:"/yourday" },
-          { title: 'Neuer Eintrag', icon: 'create', target:"/yoursymptoms" },
-        ]
-      },
-      { title: 'Impressum', icon: 'info', target:"/about" },
-    ],
-    drawer: "true"
+      drawer: "true"
+    }
   }
-}
 }
 </script>
