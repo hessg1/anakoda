@@ -71,7 +71,7 @@ export default {
     // utility method for testing midata service
     testBundle(){
       let complaint = new Complaint("2019-01-01T08:30:00+01:00", "2019-01-01T12:30:00+01:00", 2, 248626009);
-      let condition = new Condition("2019-05-01T08:30:00+01:00", "2019-05-01T12:30:00+01:00", 102894008);
+      let condition = new Condition("2019-02-01T08:30:00+01:00", "2019-02-01T12:30:00+01:00", 102894008);
       let headache = new Complaint("2019-01-01T08:30:00+01:00", "2019-01-01T12:30:00+01:00", 8, 162309007, 29624005);
 
       console.log("1.12: bundle with valid input (3 resources):");
@@ -137,7 +137,7 @@ export default {
     // utility method for testing midata service
     testSaveData(){
       let resource = new Complaint("2019-01-01T08:30:00+01:00", "2019-01-01T12:30:00+01:00", 2, 248626009);
-      let bundle = this.midata.bundle([resource, new Condition("2019-05-01T08:30:00+01:00", "2019-05-01T12:30:00+01:00", 102894008)]);
+      let bundle = this.midata.bundle([resource, new Condition("2019-02-01T08:30:00+01:00", "2019-02-01T12:30:00+01:00", 102894008)]);
 
       console.log("try resource:")
       this.midata.saveData(resource)
