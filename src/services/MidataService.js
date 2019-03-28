@@ -1,4 +1,6 @@
 import $ from 'jquery';
+const serviceUri = "https://test.midata.coop/fhir/";
+const client = "migrEnTest";
 
 export default class MidataService {
   /*
@@ -10,7 +12,7 @@ export default class MidataService {
     author      hessg1
     version     2019-03-13
 */
-  constructor(serviceUri, client){
+  constructor(){
     if(localStorage.getItem("oauth-client") == client){ // load midata information from storage
       this.uri = JSON.parse(localStorage.getItem("oauth-uri"));
       this.resources = JSON.parse(localStorage.getItem("oauth-resources"));

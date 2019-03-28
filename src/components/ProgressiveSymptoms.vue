@@ -584,7 +584,7 @@ export default {
     for(i in this.hsiteoption){
       this.hsiteoption[i].flag = false;
     }
-    this.midata = new MidataService("https://test.midata.coop/fhir", "migrEnTest");
+    this.midata = new MidataService();
   }
 
 }

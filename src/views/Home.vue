@@ -40,7 +40,7 @@
 
       if(this.midata == "") {
         console.log("no midata, create midata");
-        this.midata = new MidataService("https://test.midata.coop/fhir/", "migrEnTest");
+        this.midata = new MidataService();
       }
 
       // check if we got any parameters from MIDATA

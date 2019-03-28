@@ -483,7 +483,7 @@ export default {
   },
   // mounted is executed when component is mounted
   mounted(){
-    this.midata = new MidataService("https://test.midata.coop/fhir", "migrEnTest");
+    this.midata = new MidataService();
   }
 }
 </script>
