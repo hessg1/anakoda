@@ -22,9 +22,15 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/Impressum.vue')
     },
     {
-      path: '/yourdata',
-      name: 'yourdata',
-      component: () => import(/* webpackChunkName: "yourdata" */'./views/YourData.vue')
+      path: '/yourday',
+      name: 'yourday',
+      component: () => import(/* webpackChunkName: "yourdata" */'./views/YourDay.vue')
+    },
+
+    {
+      path: '/yoursymptoms',
+      name: 'yoursymptoms',
+      component: () => import(/* webpackChunkName: "yourdata" */'./views/YourSymptoms.vue')
     },
 
     {
