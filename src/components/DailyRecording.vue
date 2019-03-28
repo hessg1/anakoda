@@ -351,6 +351,9 @@ export default {
         var date2 = new Date().toISOString().substr(0, 10);
         this.date = this.generateDate(date2, -2);
       }
+      else if(this.entry === 'heute'){
+        this.date = new Date().toISOString().substr(0, 10);
+      }
     },
     timestart() {
       if(this.timestart >= "17:00" && this.timestart <= "23:59"){

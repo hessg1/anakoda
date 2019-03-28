@@ -331,6 +331,9 @@ export default {
         var date2 = new Date().toISOString().substr(0, 10);
         this.date = this.generateDate(date2, -2);
       }
+      else if(this.entry === 'heute'){
+        this.date = new Date().toISOString().substr(0, 10);
+      }
     },
     symptoms(){
       this.controll=true;
@@ -526,36 +529,48 @@ export default {
     parameters: none
     returns:    none, displays the result to the user in a Snackbox
     author:     hessg1
-    version:    2019-03-20
+    version:    2019-03-28
     */
     save(){
-      var observations = [];
-      for(var i = 0; i < this.symptoms.length; i++){
-        if(this.symptoms[i].category === "VariousComplaint"){
-          observations[i] = new Complaint(this.symptoms[i].startFormatted, this.symptoms[i].endFormatted, this.symptoms[i].quality, this.symptoms[i].code);
+      try{
+        var observations = [];
+        for(var i = 0; i < this.symptoms.length; i++){
+          if(this.symptoms[i].category === "VariousComplaint"){
+            observations[i] = new Complaint(this.symptoms[i].startFormatted, this.symptoms[i].endFormatted, this.symptoms[i].quality, this.symptoms[i].code);
+          }
+          else if(this.symptoms[i].category === "Condition"){
+            observations[i] = new Condition(this.symptoms[i].startFormatted, this.symptoms[i].endFormatted, this.symptoms[i].code);
+          }
+          else if(this.symptoms[i].category === "Headache"){
+            observations[i] = new Headache(this.symptoms[i].startFormatted, this.symptoms[i].endFormatted, this.symptoms[i].quality, this.symptoms[i].code, this.symptoms[i].bodysite.code);
+          }
         }
-        else if(this.symptoms[i].category === "Condition"){
-          observations[i] = new Condition(this.symptoms[i].startFormatted, this.symptoms[i].endFormatted, this.symptoms[i].code);
-        }
-        else if(this.symptoms[i].category === "Headache"){
-          observations[i] = new Headache(this.symptoms[i].startFormatted, this.symptoms[i].endFormatted, this.symptoms[i].quality, this.symptoms[i].code, this.symptoms[i].bodysite.code);
-        }
+        let bundle = this.midata.bundle(observations);
+        this.midata.saveData(bundle)
+        .then(res => {
+          this.feedback("Speichern erfolgreich\n " + res, false);
+        })
       }
-      let bundle = this.midata.bundle(observations);
-      this.midata.saveData(bundle)
-      .then(res => {
-        console.log("Speichern erfolgreich\n" + res);
-        this.snackbartext = "Erfolgreich gespeichert.";
-        this.snackbarcolor = "#0a967a";
-        this.snackbar = true;
-      })
-      .catch(err => {
-        this.snackbartext = "Da ist etwas schiefgegangen:\n" + err;
-        this.snackbarcolor = "red";
-        this.snackbar = true;
+      catch(err){
+        this.feedback("Da ist etwas schiefgegangen: " + err, true);
         console.log(err);
-      });
-    }
+      }
+    },
+
+    /*
+    Displays a SnackBar to the user. If the error parameter is set to true, the
+    message is displayed in red.
+    parameters: - text: the text displayed to the user
+                - error: boolean, if it is an error message (message in red)
+    returns:    nothing
+    author:     hessg1
+    version:    2019-03-27
+    */
+    feedback(text, error){
+      this.snackbarcolor = error ? "red" : "#0a967a";
+      this.snackbartext = text;
+      this.snackbar = true;
+    },
   },
 
   // mounted is executed when component is mounted
