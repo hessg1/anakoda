@@ -45,6 +45,7 @@
                   persistent-hint
                   prepend-icon="event"
                   v-on="on"
+                  @focus="hideKeyboard()"
                   @blur="date = parseDate(dateFormatted)"
                   color="#0a967a"
                   />
@@ -164,6 +165,7 @@
                     prepend-icon="event"
                     v-on="on"
                     @blur="datestart = parseDate(datestartFormatted)"
+                    @focus="hideKeyboard()"
                     color="#0a967a"
                     />
                   </template>
@@ -199,6 +201,7 @@
                 v-model="timeend"
                 label="Aufwach-Zeit"
                 prepend-icon="access_time"
+                @focus="hideKeyboard()"
                 readonly
                 v-on="on"
                 color="#0a967a"
@@ -235,6 +238,7 @@
                     persistent-hint
                     prepend-icon="event"
                     v-on="on"
+                    @focus="hideKeyboard()"
                     @blur="dateend = parseDate(dateendFormatted)"
                     color="#0a967a"
                     />
@@ -476,10 +480,22 @@ export default {
     qualityMinus () {
       this.quality = (this.quality - 1) || 0
     },
+
     //Increase the quality of sleep when pressing the icon
     qualityPlus () {
       this.quality = (this.quality + 1) || 10
-    }
+    },
+
+    /*
+    Helper method for not showing software keyboard on smartphones, when a input-
+    field is clicked (e.g. with date picker)
+    usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
+    author:     hessg1
+    version:    2019-03-29
+    */
+    hideKeyboard(){
+      document.activeElement.blur();
+    },
   },
   // mounted is executed when component is mounted
   mounted(){

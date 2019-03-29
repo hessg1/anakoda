@@ -45,6 +45,7 @@
               prepend-icon="event"
               v-on="on"
               @blur="date = parseDate(dateFormatted)"
+              @focus="hideKeyboard()"
               color="#0a967a"
               ></v-text-field>
             </template>
@@ -146,6 +147,7 @@
             prepend-icon="access_time"
             readonly
             v-on="on"
+            @focus="hideKeyboard()"
             color="#0a967a"
             />
           </template>
@@ -181,6 +183,7 @@
           label="Endzeit"
           prepend-icon="access_time"
           readonly
+          @focus="hideKeyboard()"
           v-on="on"
           color="#0a967a"
           />
@@ -570,6 +573,17 @@ export default {
       this.snackbarcolor = error ? "red" : "#0a967a";
       this.snackbartext = text;
       this.snackbar = true;
+    },
+
+    /*
+    Helper method for not showing software keyboard on smartphones, when a input-
+    field is clicked (e.g. with date picker)
+    usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
+    author:     hessg1
+    version:    2019-03-29
+    */
+    hideKeyboard(){
+      document.activeElement.blur();
     },
   },
 
