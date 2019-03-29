@@ -196,8 +196,8 @@ export class Complaint extends FhirResource {
         "code": {
           "coding": [{
               "system": "http://snomed.info/sct",
-              "code": "425401001", // "code": "425401001",
-              "display": "Pain intensity rating scale" // "display": "Pain intensity"
+              "code": "406127006",
+              "display": "Pain intensity"
             }]
         },
         "valueQuantity": {
