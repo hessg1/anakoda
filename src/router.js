@@ -41,10 +41,10 @@ export default new Router({
 
     // important: the following entry has to be commented for productive build
 
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import(/* webpackChunkName: "test" */'./views/Test.vue')
-    }
+    // {
+    //   path: '/test',
+    //   name: 'test',
+    //   component: () => import(/* webpackChunkName: "test" */'./views/Test.vue')
+    // }
   ]
 })
