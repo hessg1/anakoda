@@ -81,6 +81,7 @@
 <v-stepper-content step="2">
   <v-card>
     <v-card-text>
+      <v-layout wrap>
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on }">
           <v-combobox
@@ -235,6 +236,7 @@
 </v-card-actions>
 </v-card>
 </v-dialog>
+</v-layout>
 </v-card-text>
 <v-subheader v-if="controll==false">
   <v-icon color="red">warning</v-icon>&nbsp;

@@ -108,8 +108,8 @@
         <v-stepper-content step="3">
           <v-card>
             <v-card-text>
-              <v-layout row>
-                <v-flex xs11 sm5>
+              <v-layout row wrap>
+                <v-flex xs12 md6>
                 <v-menu
                 ref="menutimestart"
                 v-model="menutimestart"
@@ -144,7 +144,7 @@
                 </v-menu>
               </v-flex>
               <v-spacer />
-              <v-flex xs12 sm6 md5>
+              <v-flex xs12 md6>
                 <v-menu
                 ref="menudatestart"
                 v-model="menudatestart"
@@ -181,8 +181,8 @@
                 </v-menu>
               </v-flex>
             </v-layout>
-            <v-layout row>
-              <v-flex xs11 sm5>
+            <v-layout row wrap>
+              <v-flex xs12 md6>
               <v-menu
               ref="menutimeend"
               v-model="menutimeend"
@@ -218,7 +218,7 @@
             </v-menu>
           </v-flex>
               <v-spacer></v-spacer>
-              <v-flex xs12 sm6 md5>
+              <v-flex xs12 md6>
                 <v-menu
                 ref="menudateend"
                 v-model="menudateend"
