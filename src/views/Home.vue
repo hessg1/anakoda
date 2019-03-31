@@ -68,10 +68,12 @@
       <v-card class="primary--text">
         <v-card-title primary-title>
           <div>
-            <span>Bitte melde dich ab, sobald du fertig bist.<br></span>
-            <v-btn class="primary--text" @click="midata.logout()">MIDATA logout</v-btn>
+            <span>Bitte logge dich aus sobald du fertig bist.<br></span>
           </div>
         </v-card-title>
+        <v-card-actions>
+          <v-btn class="primary--text" @click="midata.logout()">MIDATA logout</v-btn>
+        </v-card-actions>
       </v-card>
     </v-flex>
   </v-layout>
