@@ -1,52 +1,114 @@
 <template>
-  <v-container>
-    <v-img
-      :src="require('../assets/logo.png')"
-      class="my-3"
-      contain
-      height="250"
-    ></v-img>
-    <p class="subheading font-weight-regular">
-      Willkommen zu anakoda - Analyse von Kopfschmerz-Daten
-    </p>
-    <p>
-    <v-btn v-if="midata == '' || !midata.isReady()" @click="auth()">MIDATA login</v-btn>
-    <v-btn flat v-else @click="midata.logout()">MIDATA logout</v-btn>
-    </p>
-  </v-container>
+  <v-container
+  fluid
+  grid-list-lg>
+
+  <v-layout row wrap>
+    <v-flex xs12 v-if="midata == '' || !midata.isReady()">
+      <v-card color="primary" class="white--text">
+        <v-card-title primary-title>
+          <div>
+            <div class="headline">Anmelden</div>
+            <span>Bitte melde dich bei MIDATA an, damit du neue Einträge erstellen kannst.</span>
+          </div>
+        </v-card-title>
+        <v-card-actions>
+          <v-btn flat dark @click="auth()">MIDATA login</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+    <v-flex xs12 v-if="midata.isReady()">
+      <v-card  class="primary--text">
+        <v-card-title primary-title>
+          <v-layout row wrap>
+          <v-flex xs12 md6>
+            <div class="headline">Hallo {{name}}</div>
+            <span>Momentan kannst du auf anakoda ledigich Daten erfassen und noch nicht einsehen. Wir arbeiten daran, dir so schnell wie möglich erste Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist es wichtig, dass du regelmässig Daten erfasst. Nur so können wir dir später eine möglichst detailierte Analyse bieten.</span>
+          </v-flex>
+          <v-flex xs12 md6>
+              <v-img
+              :src="require('../assets/logo.png')"
+              class="my-3"
+              contain
+              height="150"
+              ></v-img>
+          </v-flex>
+        </v-layout>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+    <v-flex xs12 v-if="midata.isReady()">
+      <v-card color="#e5f9e0" class="primary--text">
+        <v-card-title primary-title>
+          <div>
+            <div class="headline"><v-icon color="primary">today</v-icon> Alltägliche Einträge erfassen</div>
+            <span>Um herauszufinden ob dein alltägliches Verhalten einen Einfluss auf deine Kopfschmerz-Daten hat, kannst du dies hier mit nur wenigen klicks erfassen.</span>
+          </div>
+        </v-card-title>
+        <v-card-actions>
+          <v-btn class="primary--text" to="/yourday">Mein Tag</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+    <v-flex xs12 v-if="midata.isReady()">
+      <v-card color="#e5f9e0" class="primary--text">
+        <v-card-title primary-title>
+          <div>
+            <div class="headline"><v-icon color="primary">face</v-icon> Auffälligkeiten erfassen</div>
+            <span>Es ist wichtig, dass du neben deinen Kopfschmerzen alle weitere Auffälligkeiten angibst, die dir aufgefallen sind. So kannst du herausfinden, ob diese Auffälligkeiten einen Einfluss auf deine Kopfschmerzen haben.</span>
+            <span></span>
+          </div>
+        </v-card-title>
+        <v-card-actions>
+          <v-btn class="primary--text" to="/yoursymptoms">Meine Auffälligkeiten</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+    <v-flex xs12 v-if="midata.isReady()">
+      <v-card class="primary--text">
+        <v-card-title primary-title>
+          <div>
+            <span>Bitte melde dich ab, sobald du fertig bist.<br></span>
+            <v-btn class="primary--text" @click="midata.logout()">MIDATA logout</v-btn>
+          </div>
+        </v-card-title>
+      </v-card>
+    </v-flex>
+  </v-layout>
+</v-container>
 </template>
 
 <script>
-  import MidataService from '@/services/MidataService';
+import MidataService from '@/services/MidataService';
 
-  export default {
-    name: 'home',
-    components: {
-    },
+export default {
+  name: 'home',
+  components: {
+  },
 
-    data() {
-      return {
-        midata: "",
-        name: ""
-      }
-    },
-    methods: {
-      auth(){
-        this.midata.requestAuth(window.location.href);
-      }
-    },
-    // mounted() is executed when the component is mounted
-    mounted(){
+  data() {
+    return {
+      midata: "",
+      name: ""
+    }
+  },
+  methods: {
+    auth(){
+      this.midata.requestAuth(window.location.href);
+    }
+  },
+  // mounted() is executed when the component is mounted
+  mounted(){
 
-      if(this.midata == "") {
-        console.log("no midata, create midata");
-        this.midata = new MidataService();
-      }
+    if(this.midata == "") {
+      console.log("no midata, create midata");
+      this.midata = new MidataService();
+    }
 
-      // check if we got any parameters from MIDATA
-      if(window.location.search){
-        this.midata.fetchToken();
-      }
+    // check if we got any parameters from MIDATA
+    if(window.location.search){
+      this.midata.fetchToken();
     }
   }
+}
 </script>
