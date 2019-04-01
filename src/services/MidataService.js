@@ -21,8 +21,14 @@ export default class MidataService {
       this.token = localStorage.getItem("oauth-token") || "";
       this.refreshToken = localStorage.getItem("oauth-refreshtoken") || "";
       this.tokenEOL = Number(localStorage.getItem("oauth-tokeneol") || Date.now());
+      if(this.token == ""){
+        this.token = sessionStorage.getItem("oauth-token") || "";
+        this.refreshToken = sessionStorage.getItem("oauth-refreshtoken") || "";
+        this.tokenEOL = Number(sessionStorage.getItem("oauth-tokeneol") || Date.now());
+      }
       this.client = client;
       this.patient = localStorage.getItem("patientId") || "";
+      this.keepToken = localStorage.getItem("keepToken") || false;
 
     }
     else { // create completely new midata object
@@ -39,6 +45,7 @@ export default class MidataService {
       this.token = "";
       this.refreshToken = "";
       this.patient = "";
+      this.keepToken = false;
 
       // set up given pameters
       this.uri.service = (serviceUri.charAt(serviceUri.length - 1) == "/") ? serviceUri.substring(0, serviceUri.length - 1) : serviceUri;
@@ -70,6 +77,7 @@ export default class MidataService {
         // save URIS to localstorage
         localStorage.setItem("oauth-uri", JSON.stringify(that.uri));
       });
+      localStorage.setItem("keepToken", this.keepToken);
     }
   }
 
@@ -151,9 +159,16 @@ export default class MidataService {
       this.refreshToken = res.refresh_token;
       this.tokenEOL = Date.now() + (1000 * res.expires_in);
       this.patient = res.patient;
-      localStorage.setItem("oauth-token", res.access_token);
-      localStorage.setItem("oauth-refreshtoken", res.refresh_token);
-      localStorage.setItem("oauth-tokeneol", this.tokenEOL);
+      if(this.keepToken){
+        localStorage.setItem("oauth-token", res.access_token);
+        localStorage.setItem("oauth-refreshtoken", res.refresh_token);
+        localStorage.setItem("oauth-tokeneol", this.tokenEOL);
+      }
+      else{
+        sessionStorage.setItem("oauth-token", res.access_token);
+        sessionStorage.setItem("oauth-refreshtoken", res.refresh_token);
+        sessionStorage.setItem("oauth-tokeneol", this.tokenEOL);
+      }
       localStorage.setItem("patientId", res.patient);
 
     }).catch(err => {

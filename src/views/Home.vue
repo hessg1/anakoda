@@ -17,7 +17,7 @@
         </v-card-actions>
       </v-card>
     </v-flex>
-    <v-flex xs12 v-if="midata.isReady()">
+    <v-flex xs12 v-if="midata != '' && midata.isReady()">
       <v-card  class="primary--text">
         <v-card-title primary-title>
           <v-layout row wrap>
@@ -37,7 +37,7 @@
         </v-card-title>
       </v-card>
     </v-flex>
-    <v-flex xs12 v-if="midata.isReady()">
+    <v-flex xs12 v-if="midata != '' && midata.isReady()">
       <v-card color="#e5f9e0" class="primary--text">
         <v-card-title primary-title>
           <div>
@@ -50,7 +50,7 @@
         </v-card-actions>
       </v-card>
     </v-flex>
-    <v-flex xs12 v-if="midata.isReady()">
+    <v-flex xs12 v-if="midata != '' && midata.isReady()">
       <v-card color="#e5f9e0" class="primary--text">
         <v-card-title primary-title>
           <div>
@@ -64,7 +64,7 @@
         </v-card-actions>
       </v-card>
     </v-flex>
-    <v-flex xs12 v-if="midata.isReady()">
+    <v-flex xs12 v-if="midata != '' && midata.isReady()">
       <v-card class="primary--text">
         <v-card-title primary-title>
           <div>

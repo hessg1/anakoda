@@ -17,7 +17,7 @@
           <p>
           Ziel von anakoda 0.1 ist, so bald wie möglich
           Kopfschmerzdaten erfassen zu können.<br>Das Dashboard wird in einer ersten
-          Version mit anakoda 0.2 eingeführt, die Mitte April erscheint.
+          Version mit anakoda 0.2 eingeführt, die Ende April erscheint.
         </p>
         </v-card-text>
 
