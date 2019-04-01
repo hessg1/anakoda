@@ -22,8 +22,12 @@
         <v-card-title primary-title>
           <v-layout row wrap>
           <v-flex xs12 md6>
-            <div class="headline">Hallo {{name}}</div>
-            <span>Momentan kannst du auf anakoda ledigich Daten erfassen und noch nicht einsehen. Wir arbeiten daran, dir so schnell wie möglich erste Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist es wichtig, dass du regelmässig Daten erfasst. Nur so können wir dir später eine möglichst detailierte Analyse bieten.</span>
+            <div class="headline">Willkommmen {{name}}</div>
+            <span>Momentan kannst du auf anakoda ledigich Daten erfassen und noch
+              nicht einsehen. Wir arbeiten daran, dir so schnell wie möglich erste
+               Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist
+               es wichtig, dass du regelmässig Daten erfasst. Nur so können wir
+               dir später eine möglichst detaillierte Analyse bieten.</span>
           </v-flex>
           <v-flex xs12 md6>
               <v-img
@@ -41,8 +45,11 @@
       <v-card color="#e5f9e0" class="primary--text">
         <v-card-title primary-title>
           <div>
-            <div class="headline"><v-icon color="primary">today</v-icon> Alltägliche Einträge erfassen</div>
-            <span>Um herauszufinden ob dein alltägliches Verhalten einen Einfluss auf deine Kopfschmerz-Daten hat, kannst du dies hier mit nur wenigen klicks erfassen.</span>
+            <div class="headline"><v-icon color="primary">today</v-icon>
+              Alltägliche Einträge erfassen</div>
+            <span>Um herauszufinden ob dein alltägliches Verhalten einen Einfluss
+              auf deine Kopfschmerz-Daten hat, kannst du dies hier mit nur wenigen
+              Klicks erfassen.</span>
           </div>
         </v-card-title>
         <v-card-actions>

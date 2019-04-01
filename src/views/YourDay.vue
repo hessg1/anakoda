@@ -76,7 +76,7 @@
 
       <v-stepper-step :complete="pos > 2" step="2" editable color="#0a967a">
         Essgewohnheit
-        <small>Wie war dein Essverhalten?</small>
+        <small>Wie hast du gegessen?</small>
       </v-stepper-step>
 
       <v-stepper-content step="2">
