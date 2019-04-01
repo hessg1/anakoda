@@ -84,7 +84,7 @@
       <v-layout wrap>
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on }">
-          <v-combobox
+          <v-select
           v-model="symptoms"
           :items="symoption"
           item-text="de"
@@ -93,8 +93,9 @@
           clearable
           solo
           multiple
+          return-object
           >
-          <template v-slot:selection="data" @click = "hurlibrli()">
+          <template v-slot:selection="data">
             <v-badge color="red" overlap>
               <template v-slot:badge v-if="data.item.flag == false">
                 <v-icon
@@ -112,22 +113,23 @@
             v-on="on"
             outline
             color="#0a967a"
+            class="text-truncate"
             >
-            <strong>{{ data.item.de }}&nbsp;</strong>
-            <span v-if="data.item.flag == true && data.item.category != 'Condition'">{{data.item.quality}}&nbsp;</span>
-            <span v-if="data.item.flag == true">({{data.item.start}} - {{data.item.end}})</span>
+            <strong>{{ data.item.de }}</strong>
+            <span v-if="data.item.flag == true && data.item.category != 'Condition'" class="hidden-sm-and-down text-truncate">&nbsp;{{data.item.quality}}</span>
+            <span v-if="data.item.flag == true" class="hidden-sm-and-down text-truncate">&nbsp;({{data.item.start}} - {{data.item.end}})</span>
           </v-chip>
         </v-badge>
       </template>
-    </v-combobox>
+    </v-select>
   </template>
   <v-card>
     <v-card-title>
       <span class="headline">Weitere Angaben</span>
     </v-card-title>
     <v-card-text>
-      <v-layout row>
-        <v-flex xs11 sm5>
+      <v-layout row wrap  >
+        <v-flex xs12 md6>
           <v-menu
           ref="menutimestart"
           v-model="menutimestart"
@@ -164,7 +166,7 @@
         </v-menu>
       </v-flex>
       <v-spacer></v-spacer>
-      <v-flex xs11 sm5>
+      <v-flex xs12 md6>
         <v-menu
         ref="menutimeend"
         v-model="menutimeend"
@@ -231,15 +233,15 @@
 </v-card-text>
 <v-card-actions>
   <v-spacer></v-spacer>
-  <v-btn color="primary darken-1" flat @click="closeDialog()">Close</v-btn>
-  <v-btn color="primary darken-1" flat @click="saveCurrent()">Save</v-btn>
+  <v-btn color="primary darken-1" flat @click="closeDialog()">Abbrechen</v-btn>
+  <v-btn color="primary darken-1" flat @click="saveCurrent()">Fertig</v-btn>
 </v-card-actions>
 </v-card>
 </v-dialog>
 </v-layout>
 </v-card-text>
 <v-subheader v-if="controll==false">
-  <v-icon color="red">warning</v-icon>&nbsp;
+  <v-icon color="red">warning</v-icon>
   Klicke auf dein erfasstes Symptom um alle Angaben zu erfassen.
 </v-subheader>
 <v-card-actions>
