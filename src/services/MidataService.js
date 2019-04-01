@@ -1,6 +1,6 @@
 import $ from 'jquery';
 const serviceUri = "https://test.midata.coop/fhir/";
-const client = "migrEnTest";
+const client = "anakoda";
 
 export default class MidataService {
   /*
@@ -28,7 +28,7 @@ export default class MidataService {
       }
       this.client = client;
       this.patient = localStorage.getItem("patientId") || "";
-      this.keepToken = localStorage.getItem("keepToken") || false;
+      this.keepToken = localStorage.getItem("keepToken") == 'true';
 
     }
     else { // create completely new midata object
