@@ -10,7 +10,7 @@ export default class MidataService {
                 - client: the name of the App communicating with MIDATA
     returns     a MidataService
     author      hessg1
-    version     2019-03-13
+    version     2019-04-01
 */
   constructor(){
     if(localStorage.getItem("oauth-client") == client){ // load midata information from storage
@@ -111,7 +111,7 @@ export default class MidataService {
     parameters  - urlParams: the GET parameters from
     returns     nothing, but sets token and gets MIDATA client ready
     author      hessg1
-    version     2019-03-13
+    version     2019-04-01
   */
   fetchToken(){
     let state = "";
@@ -132,8 +132,6 @@ export default class MidataService {
         }
     }
 
-    // TODO: check if state is correct (once MIDATA object is persisted and not
-    // always created on mount)
     if(state == this.state){
       console.log("correct state: " + state);
     }
@@ -319,15 +317,18 @@ export default class MidataService {
     parameters  none
     returns     nothing, just clears the memory and does a reload
     author      hessg1
-    version     2019-03-19
+    version     2019-04-01
   */
   logout(){
     localStorage.removeItem("oauth-client");
     localStorage.removeItem("oauth-refreshtoken");
+    sessionStorage.removeItem("oauth-refreshtoken");
     localStorage.removeItem("oauth-resources");
     localStorage.removeItem("oauth-state");
     localStorage.removeItem("oauth-token");
+    sessionStorage.removeItem("oauth-token");
     localStorage.removeItem("oauth-tokeneol");
+    sessionStorage.removeItem("oauth-tokeneol");
     localStorage.removeItem("oauth-uri");
     localStorage.removeItem("patient");
     location.reload();
