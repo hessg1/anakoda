@@ -150,7 +150,7 @@ export default class SnomedService {
       {
         "code": 106126000,
         "en": "Emotional state finding",
-        "de": "???",
+        "de": "Emotionale Empfindlichkeit",
         "superCategory": 285854004,
         "category": "Condition"
       },
