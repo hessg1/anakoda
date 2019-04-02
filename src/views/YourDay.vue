@@ -506,8 +506,8 @@ export default {
   mounted(){
     this.midata = new MidataService();
 
+    // if current time is before 4 PM, we assume the user wants to protocol yesterday
     if(new Date().getHours() < 16){
-      console.log("es geht um gestern");
       this.entry = 'gestern';
     }
   }
