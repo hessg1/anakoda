@@ -359,6 +359,7 @@ export default {
         this.date = new Date().toISOString().substr(0, 10);
       }
     },
+
     timestart() {
       if(this.timestart >= "17:00" && this.timestart <= "23:59"){
         var date1 = this.date;
@@ -392,6 +393,10 @@ export default {
           .then(res => {
             console.log("Speichern erfolgreich\n" + res);
             this.feedback("Erfolgreich gespeichert.", false);
+            this.eating = 702970004;
+            this.quality = 5;
+            this.timestart = null;
+            this.timeend = null;
           })
           .catch(err => {
             this.feedback("Da ist etwas schiefgegangen: " + err, true);
@@ -500,6 +505,11 @@ export default {
   // mounted is executed when component is mounted
   mounted(){
     this.midata = new MidataService();
+
+    if(new Date().getHours() < 16){
+      console.log("es geht um gestern");
+      this.entry = 'gestern';
+    }
   }
 }
 </script>

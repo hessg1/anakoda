@@ -189,6 +189,9 @@ export default class MidataService {
     version     2019-03-13
   */
   getData(query){
+    if(!query || query == ''){
+      throw("Kann keine leere Anfrage machen.");
+    }
     const url = this.uri.service + "/" + query;
     const header =  "Bearer " + this.token;
 
@@ -227,6 +230,9 @@ export default class MidataService {
     version     2019-03-19
   */
   saveData(data){
+    if(!data){
+      throw("Kann nicht NULL speichern.");
+    }
 
     //TODO: validate data for FHIR specs?
     let that = this;

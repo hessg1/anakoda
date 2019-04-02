@@ -656,9 +656,14 @@ export default {
       this.headache.endFormatted = this.timeendFormatted;
       this.headache.quality = this.quality;
       this.headache.bodysite = this.hsite;
-      this.quality = 0;
-      this.hsite = null;
-      this.dialogHeadache = false;
+      if(this.quality > 0 && this.hsite != null && this.headache.start != null && this.headache.end != null){
+        this.controll = true;
+        this.pos = 3;
+        this.quality = 0;
+        this.hsite = null;
+        this.dialogHeadache = false;
+      }
+
     },
 
 
@@ -704,7 +709,9 @@ export default {
         let bundle = this.midata.bundle(observations);
         this.midata.saveData(bundle)
         .then(res => {
-          this.feedback("Speichern erfolgreich\n " + res, false);
+          this.feedback("Speichern erfolgreich.", false);
+          this.symptoms = [];
+          this.headache = {de: 'Keine Kopfschmerzen', flag:true};
         })
       }
       catch(err){
