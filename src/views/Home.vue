@@ -23,7 +23,7 @@
           <v-layout row wrap>
           <v-flex xs12 md6>
             <div class="headline">Willkommmen {{name}}</div>
-            <span>Momentan kannst du auf anakoda ledigich Daten erfassen und noch
+            <span>Momentan kannst du auf anakoda lediglich Daten erfassen und noch
               nicht einsehen. Wir arbeiten daran, dir so schnell wie möglich erste
                Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist
                es wichtig, dass du regelmässig Daten erfasst. Nur so können wir
@@ -75,7 +75,7 @@
       <v-card class="primary--text">
         <v-card-title primary-title>
           <div>
-            <span>Bitte logge dich aus sobald du fertig bist.<br></span>
+            <span>Benutzen andere Personen den selben Computer? Dann logge dich aus, wenn du fertig bist (automatisches Logout nach sechs Stunden).<br></span>
           </div>
         </v-card-title>
         <v-card-actions>

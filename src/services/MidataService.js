@@ -45,7 +45,7 @@ export default class MidataService {
       this.token = "";
       this.refreshToken = "";
       this.patient = "";
-      this.keepToken = false;
+      this.keepToken = true; // determines if token is kept in localStorage or in sessionStorage (and thus deleted when Browser Tab is closed)
 
       // set up given pameters
       this.uri.service = (serviceUri.charAt(serviceUri.length - 1) == "/") ? serviceUri.substring(0, serviceUri.length - 1) : serviceUri;
