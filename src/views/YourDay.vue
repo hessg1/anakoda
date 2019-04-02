@@ -384,8 +384,8 @@ export default {
       try{
         let eat = new EatingHabit(this.date, this.eating);
         let sleep = new SleepPattern(
-          this.datestart + "T" + this.timestart + ":00+01:00",
-          this.dateend + "T" + this.timeend + ":00+01:00",
+          this.datestart + "T" + this.timestart + ":00+00:00",
+          this.dateend + "T" + this.timeen + ":00+00:00",
           this.quality);
         let bundle = this.midata.bundle([eat,sleep]);
 

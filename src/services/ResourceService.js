@@ -65,7 +65,7 @@ export class EatingHabit extends FhirResource {
     }
 
     // check if date is in future
-    if(new Date(date).getTime() > Date.now()){
+    if(new Date(date).getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit zukünftigem Datum erstellen.");
     }
 
@@ -111,7 +111,7 @@ export class SleepPattern extends FhirResource {
     }
 
     // check if date is in future
-    if(new Date(startTime).getTime() > Date.now() || new Date(endTime).getTime() > Date.now()){
+    if(new Date(startTime).getTime() > Date.now() + 2*60*60*1000 || new Date(endTime).getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 
@@ -166,7 +166,7 @@ export class Complaint extends FhirResource {
       throw("Fehler: Nullwert eingegeben.");
     }
 
-    if(new Date(startTime).getTime() > Date.now() || new Date(endTime).getTime() > Date.now()){
+    if(new Date(startTime).getTime() > Date.now() + 2*60*60*1000 || new Date(endTime).getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 
@@ -243,7 +243,8 @@ export class Condition extends FhirResource {
       throw("Fehler: Nullwert eingegeben.");
     }
 
-    if(new Date(startTime).getTime() > Date.now() || new Date(endTime).getTime() > Date.now()){
+    if(new Date(startTime).getTime() > Date.now() + 2*60*60*1000 || new Date(endTime).getTime() > Date.now() + 2*60*60*1000){
+      console.log("enddatum: " + endTime + " / " + new Date(endTime).getTime())
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 

@@ -324,18 +324,6 @@
       </v-flex>
     </v-layout>
   </v-card-text>
-  <v-card-text v-if= "this.symcurrentid != null && this.symptoms[this.symcurrentid].category == 'Headache'">
-    <v-subheader>Kopfseite</v-subheader>
-    <v-select
-    v-model="hsite"
-    :items="hsiteoption"
-    item-text="de"
-    menu-props="auto"
-    single-line
-    color="#0a967a"
-    return-object>
-  </v-select>
-</v-card-text>
 <v-card-text v-if="this.symcurrentid != null && this.symptoms[this.symcurrentid].category != 'Condition'">
   <v-subheader>Intensität</v-subheader>
   <v-slider
@@ -541,7 +529,7 @@ export default {
     formateTime (time) {
       if (!time) return null
 
-      return this.date + "T" + time + ":00+01:00"
+      return this.date + "T" + time+ ":00+00:00";
     },
 
     /*
@@ -712,6 +700,8 @@ export default {
           this.feedback("Speichern erfolgreich.", false);
           this.symptoms = [];
           this.headache = {de: 'Keine Kopfschmerzen', flag:true};
+          this.controll = false;
+          this.symcurrentid = null;
         })
       }
       catch(err){
