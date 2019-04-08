@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Login />
     <h2>Mein Tag</h2>
     <p>
       Hier kannst du dein alltägliches Befinden erfassen.
@@ -306,6 +307,7 @@
 <script>
 import MidataService from '@/services/MidataService';
 import { EatingHabit, SleepPattern } from '@/services/ResourceService';
+import Login from '@/components/Login';
 
 export default {
   data: app => ({
@@ -333,6 +335,10 @@ export default {
     snackbar: false,
     snackbarcolor: ''
   }),
+  components: {
+    Login
+  },
+
 
   watch: {
     date () {

@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <Login />
     <h2>Meine Auffälligkeiten</h2>
     <p>Hier kannst du deine Symptome erfassen.</p>
 
@@ -387,6 +388,7 @@ MIDATA nicht bereit
 import SnomedService from '@/services/SnomedService';
 import MidataService from '@/services/MidataService';
 import { Complaint, Condition, Headache} from '@/services/ResourceService';
+import Login from '@/components/Login';
 
 export default {
   data: app => ({
@@ -427,6 +429,9 @@ export default {
     noheadache: {de: 'Keine Kopfschmerzen', flag:true},
     headoption: []
   }),
+  components: {
+    Login
+  },
 
   watch: {
     date () {
@@ -696,7 +701,7 @@ export default {
         }
         let bundle = this.midata.bundle(observations);
         this.midata.saveData(bundle)
-        .then(res => {
+        .then(() => {
           this.feedback("Speichern erfolgreich.", false);
           this.symptoms = [];
           this.headache = {de: 'Keine Kopfschmerzen', flag:true};
