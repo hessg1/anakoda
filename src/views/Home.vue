@@ -22,7 +22,7 @@
         <v-card-title primary-title>
           <v-layout row wrap>
           <v-flex xs12 md6>
-            <div class="headline">Willkommmen {{name}}</div>
+            <div class="headline">Willkommen {{name}}</div>
             <span>Momentan kannst du auf anakoda lediglich Daten erfassen und noch
               nicht einsehen. Wir arbeiten daran, dir so schnell wie möglich erste
                Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist
@@ -47,8 +47,8 @@
           <div>
             <div class="headline"><v-icon color="primary">today</v-icon>
               Alltägliche Einträge erfassen</div>
-            <span>Um herauszufinden ob dein alltägliches Verhalten einen Einfluss
-              auf deine Kopfschmerz-Daten hat, kannst du dies hier mit nur wenigen
+            <span>Um herauszufinden ob dein alltägliches Wohlbefinden einen Einfluss
+              auf deine Kopfschmerzen hat, kannst du dies hier mit nur wenigen
               Klicks erfassen.</span>
           </div>
         </v-card-title>
@@ -61,8 +61,10 @@
       <v-card color="#e5f9e0" class="primary--text">
         <v-card-title primary-title>
           <div>
-            <div class="headline"><v-icon color="primary">face</v-icon> Auffälligkeiten erfassen</div>
-            <span>Es ist wichtig, dass du neben deinen Kopfschmerzen alle weitere Auffälligkeiten angibst, die dir aufgefallen sind. So kannst du herausfinden, ob diese Auffälligkeiten einen Einfluss auf deine Kopfschmerzen haben.</span>
+            <div class="headline"><v-icon color="primary">face</v-icon> Symptome erfassen</div>
+            <span>Es ist wichtig, dass du neben deinen Kopfschmerzen alle weitere Auffälligkeiten angibst,
+              die dir aufgefallen sind. So kannst du herausfinden, ob diese einen Einfluss
+              auf deine Kopfschmerzen haben.</span>
             <span></span>
           </div>
         </v-card-title>

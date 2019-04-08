@@ -1,5 +1,5 @@
 <template>
-  <v-tabs color="#0a967a" slider-color="#a3f7b5">
+  <v-tabs color="#40c9a2" slider-color="#a3f7b5">
     <v-tab>
       Nutzungsbedingungen
     </v-tab>

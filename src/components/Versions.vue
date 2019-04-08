@@ -2,7 +2,7 @@
   <v-container>
     <h1>Versionsverlauf</h1>
     <h2>anakoda 0.1</h2>
-    <p>01.04.2019</p>
+    <p>09.04.2019</p>
     <p>
       <ul>
         <li>Erfassung des täglichen Wohlbefindens</li>
