@@ -254,7 +254,7 @@ export default class MidataService {
         },
         "data": JSON.stringify(data),
         "error": function(err){
-          //console.log(err);
+          console.log(err);
           reject("An error occured (" + err.status + "): " + err.statusText );
         },
         "success": function(response){

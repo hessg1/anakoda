@@ -110,9 +110,10 @@ export default {
   },
   // mounted() is executed when the component is mounted
   mounted(){
-
+    // link this.midata to app-wide midataService
+    this.midata = this.$midataService;
+    // fallback, if something went wrong
     if(this.midata == "") {
-      console.log("no midata, create midata");
       this.midata = new MidataService();
     }
 

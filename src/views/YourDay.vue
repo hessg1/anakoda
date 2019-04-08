@@ -385,7 +385,7 @@ export default {
         let eat = new EatingHabit(this.date, this.eating);
         let sleep = new SleepPattern(
           this.datestart + "T" + this.timestart + ":00+00:00",
-          this.dateend + "T" + this.timeen + ":00+00:00",
+          this.dateend + "T" + this.timeend + ":00+00:00",
           this.quality);
         let bundle = this.midata.bundle([eat,sleep]);
 
@@ -504,7 +504,12 @@ export default {
   },
   // mounted is executed when component is mounted
   mounted(){
-    this.midata = new MidataService();
+    // link this.midata to app-wide midataService
+    this.midata = this.$midataService;
+    // fallback, if something went wrong
+    if(this.midata == "") {
+      this.midata = new MidataService();
+    }
 
     // if current time is before 4 PM, we assume the user wants to protocol yesterday
     if(new Date().getHours() < 16){

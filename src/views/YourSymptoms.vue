@@ -742,6 +742,13 @@ export default {
 
   // mounted is executed when component is mounted
   mounted(){
+    // link this.midata to app-wide midataService
+    this.midata = this.$midataService;
+    // fallback, if something went wrong
+    if(this.midata == "") {
+      this.midata = new MidataService();
+    }
+
     this.snomedservice = new SnomedService();
     this.symoption = this.snomedservice.getFiltered(x => x.category == "VariousComplaint" || x.category == "Condition");
     this.headoption = this.snomedservice.getFiltered(y => y.category == "Headache");
@@ -755,7 +762,9 @@ export default {
     for(var y in this.hsiteoption){
       this.hsiteoption[y].flag = false;
     }
-    this.midata = new MidataService();
+
+
+
   }
 
 }
