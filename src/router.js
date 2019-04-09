@@ -5,7 +5,7 @@ import Home from './views/Home.vue'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history', // muss für deployment evtl. ausgeschaltet werden
+  //mode: 'history', // muss für deployment evtl. ausgeschaltet werden
   base: process.env.BASE_URL,
   routes: [
     {

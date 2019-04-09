@@ -1,8 +1,5 @@
 <template>
-  <v-dialog
-        v-model="dialog"
-        width="500"
-      >
+  <v-dialog v-model="dialog" width="500" persistent>
         <v-card>
           <v-card-title
             class="headline red lighten-2"

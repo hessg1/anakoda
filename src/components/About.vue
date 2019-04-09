@@ -11,7 +11,7 @@
     </p>
     <h2>Mail</h2>
     <p>
-      Bei Fragen oder Anregungen wenden Sie sich bitte per <a href="mailto:migren@bfh.ch">eMail</a> an uns.
+      Bei Fragen oder Anregungen wenden Sie sich bitte per <a href="mailto:info@anakoda.ch">eMail</a> an uns.
     </p>
     <h2>Adresse</h2>
     <p>
