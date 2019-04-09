@@ -105,7 +105,17 @@ export default {
   },
   methods: {
     auth(){
-      this.midata.requestAuth(window.location.href);
+      // create redirect uri and remove potential #:
+      let url = window.location.href;
+      if(url.includes('#')){
+  	    url = url.slice(0, url.indexOf('#'));
+      }
+      // url must end in an /
+      if(url.charAt(url.length-1) != '/'){
+  	    url = url + '/';
+      }
+      // if everything is ok, we can call midata
+      this.midata.requestAuth(url);
     }
   },
   // mounted() is executed when the component is mounted
