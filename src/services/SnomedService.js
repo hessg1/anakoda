@@ -11,7 +11,6 @@ export default class SnomedService {
     /*
     This large array of JS objects is the "library" of the function. When adding
     a new SCT code to the project, it should also be added here.
-    The value "flag" is used for the individual further processing of a code. (For example UI adaptations)
     */
     this.codes = [
       {
@@ -316,20 +315,47 @@ export default class SnomedService {
         "category": "Diagnosis"
       },
       {
-        "code": 56097005,
+        "code": "G43.0",
         "en": "Migraine without aura",
         "de": "Migräne ohne Aura",
         "superCategory": 128187005,
         "category": "Diagnosis"
       },
       {
-        "code": 4473006,
+        "code": "G43.1",
         "en": "Migraine with aura",
         "de": "Migräne mit Aura",
         "superCategory": 128187005,
         "category": "Diagnosis"
+      },
+      {
+        "code": "G43.10",
+        "en": "Typical aura with headache",
+        "de": "Typische Aura mit Kopfschmerzen",
+        "superCategory": 128187005,
+        "category": "Diagnosis"
+      },
+      {
+        "code": "G43.104",
+        "en": "Typical aura without headache",
+        "de": "Typische Aura ohne Kopfschmerzen",
+        "superCategory": 128187005,
+        "category": "Diagnosis"
+      },
+      {
+        "code": "G43.105",
+        "en": "Hemiplegic migraine",
+        "de": "Hemiplegische Migräne",
+        "superCategory": 128187005,
+        "category": "Diagnosis"
+      },
+      {
+        "code": 74964007,
+        "en": "Other diagnosis",
+        "de": "Andere Diagnose",
+        "superCategory": 128187005,
+        "category": "Diagnosis"
       }
-      // more diagnoses to come
     ];
   }
 
