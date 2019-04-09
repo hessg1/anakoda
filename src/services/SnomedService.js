@@ -81,7 +81,7 @@ export default class SnomedService {
         "en": "Attack",
         "de": "Anfall",
         "superCategory": 118222006,
-        "category": "VariousComplaint"
+        "category": "Condition"
       },
       {
         "code": 73595000,
