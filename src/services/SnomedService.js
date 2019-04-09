@@ -28,6 +28,20 @@ export default class SnomedService {
         "category": "VariousComplaint"
       },
       {
+        "code": 248254009,
+        "en": "Sleep pattern finding",
+        "de": "Schlafmuster",
+        "superCategory": "65554-8",
+        "category": "SleepPattern"
+      },
+      {
+        "code": "65554-8",
+        "en": "Sleep / wakeup duration",
+        "de": "Schlafdauer",
+        "superCategory": "",
+        "category": "SuperCategory"
+      },
+      {
         "code": 409668002,
         "en": "Photophobia",
         "de": "Lichtempfindlichkeit",
@@ -98,9 +112,16 @@ export default class SnomedService {
         "category": "VariousComplaint"
       },
       {
-        "code": 64531003,
+        "code": 267101005,
         "en": "Nasal discharge present",
         "de": "Nasenlaufen",
+        "superCategory": 373573001,
+        "category": "VariousComplaint"
+      },
+      {
+        "code": 267100006,
+        "en": "Nasal obstruction present",
+        "de": "Verstopfte Nase",
         "superCategory": 373573001,
         "category": "VariousComplaint"
       },
