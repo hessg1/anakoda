@@ -341,13 +341,19 @@ export default class SnomedService {
         "de": "Typische Aura ohne Kopfschmerzen",
         "superCategory": 128187005,
         "category": "Diagnosis"
+<<<<<<< HEAD
       },
+=======
+      }
+      ,
+>>>>>>> 74a5f8016e2bfb6fafa947819509ef59b35edbb7
       {
         "code": "G43.105",
         "en": "Hemiplegic migraine",
         "de": "Hemiplegische Migräne",
         "superCategory": 128187005,
         "category": "Diagnosis"
+<<<<<<< HEAD
       },
       {
         "code": 74964007,
@@ -355,6 +361,8 @@ export default class SnomedService {
         "de": "Andere Diagnose",
         "superCategory": 128187005,
         "category": "Diagnosis"
+=======
+>>>>>>> 74a5f8016e2bfb6fafa947819509ef59b35edbb7
       }
     ];
   }
