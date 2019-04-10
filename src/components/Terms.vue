@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout text-xs-justify wrap>
-    <h1>Nutzungsbedingungen <b>beta</b></h1>
+    <h1>Nutzungsbedingungen</h1>
     <p>
       Herzlich willkommen bei «anakoda», der Webapp zur Analyse von Kopfschmerzdaten. «anakoda» entsteht im Rahmen einer Bachelorarbeit am Institut für Medizininformatik der Berner Fachhochschule und ermöglicht Ihnen, in der MIDATA-Plattform gespeicherte Kopfschmerz- und Migränedaten darzustellen und zu visualisieren. Solche Kopfschmerz- und Migränedaten können mittels der «heMigrania»-App auf MIDATA gespeichert werden, einer Smartphone-App, die ebenfalls als Bachelor-Arbeit an der Berner Fachhochschule weiterentwickelt wird. Mit gewissen Einschränkungen ist die Speicherung von Kopfschmerz- und Migränedaten auf MIDATA auch mit «anakoda» möglich.
     </p>
