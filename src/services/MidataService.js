@@ -374,6 +374,12 @@ export default class MidataService {
           template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
         }
 
+        if(template.category == 'Headache'){
+          // headaches also have body sites
+          template.bodySiteSCT = res.entry[i].resource.bodySite.coding[0].code;
+          template.bodySiteDE = sct.getGerman(template.bodySiteSCT);
+        }
+
         // create metadata
         let meta = {};
         meta.id = res.entry[i].resource.id;
@@ -409,8 +415,8 @@ export default class MidataService {
       else{
         throw("Fehler: Kann momentan nur Bundles mit Observation- oder Patient-Ressourcen verarbeiten.");
       }
-      return data;
     }
+    return data;
   }
 
 
