@@ -153,13 +153,20 @@ export default {
       this.loading = true;
       this.midata.fetchToken().then(() =>{
         this.getPatient();
-        // remove the parameters from the url
+
         this.loading = false;
+
+        // remove the parameters from the url
          window.history.pushState('',document.title,window.location.toString().split("?")[0]);
       });
     }
     else{
-      this.getPatient();
+      if(this.$patient.firstName){
+        this.name = this.$patient.firstName;
+      }
+      else{
+        this.getPatient();
+      }
     }
 
 
