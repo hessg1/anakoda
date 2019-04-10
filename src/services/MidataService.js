@@ -112,9 +112,9 @@ export default class MidataService {
     Handles the URL parameters from a auth response (triggered by requestAuth
     and subsequently the user inputting correct credentials on midata)
     parameters  - urlParams: the GET parameters from
-    returns     nothing, but sets token and gets MIDATA client ready
+    returns     - a Promise with the response of the midata server
     author      hessg1
-    version     2019-04-01
+    version     2019-04-10
   */
   fetchToken(){
     let state = "";
@@ -141,44 +141,47 @@ export default class MidataService {
     else {
       console.log("warning: incorrect state!");
     }
+    var that = this; // so "this" is available inside
+    return new Promise(function(resolve, reject){
+      // ajaxing to MIDATA for getting the token
 
-    // ajaxing to MIDATA for getting the token
-    var that = this; // so "this" is available inside the
-    $.ajax({
-      url: this.uri.token,
-      type: 'POST',
-      data: {
-        code: code,
-        grant_type: 'authorization_code',
-        redirect_uri: that.uri.redirect,
-        client_id: that.client
-      }
-    }).done(res => {
-      console.log("success:");
-      console.log(res)
-      this.token = res.access_token;
-      this.refreshToken = res.refresh_token;
-      this.tokenEOL = Date.now() + (1000 * res.expires_in);
-      this.patient = res.patient;
-      if(this.keepToken){
-        localStorage.setItem("oauth-token", res.access_token);
-        localStorage.setItem("oauth-refreshtoken", res.refresh_token);
-        localStorage.setItem("oauth-tokeneol", this.tokenEOL);
-      }
-      else{
-        sessionStorage.setItem("oauth-token", res.access_token);
-        sessionStorage.setItem("oauth-refreshtoken", res.refresh_token);
-        sessionStorage.setItem("oauth-tokeneol", this.tokenEOL);
-      }
-      localStorage.setItem("patientId", res.patient);
+      $.ajax({
+        url: that.uri.token,
+        type: 'POST',
+        data: {
+          code: code,
+          grant_type: 'authorization_code',
+          redirect_uri: that.uri.redirect,
+          client_id: that.client
+        }
+      }).done(res => {
+        console.log("success:");
+        console.log(res)
+        that.token = res.access_token;
+        that.refreshToken = res.refresh_token;
+        that.tokenEOL = Date.now() + (1000 * res.expires_in);
+        that.patient = res.patient;
+        if(that.keepToken){
+          localStorage.setItem("oauth-token", res.access_token);
+          localStorage.setItem("oauth-refreshtoken", res.refresh_token);
+          localStorage.setItem("oauth-tokeneol", that.tokenEOL);
+        }
+        else{
+          sessionStorage.setItem("oauth-token", res.access_token);
+          sessionStorage.setItem("oauth-refreshtoken", res.refresh_token);
+          sessionStorage.setItem("oauth-tokeneol", that.tokenEOL);
+        }
+        localStorage.setItem("patientId", res.patient);
+        resolve(res);
 
-    }).catch(err => {
-      console.log("error retrieving token:");
-      console.log(err)
+      }).catch(err => {
+        console.log("error retrieving token:");
+        console.log(err);
+        reject(err);
+      });
     });
 
-    // remove the parameters from the url
-     window.history.pushState('',document.title,window.location.toString().split("?")[0]);
+
 
   }
 
