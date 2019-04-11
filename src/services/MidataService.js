@@ -50,7 +50,7 @@ export default class MidataService {
       this.patient = "";
       this.keepToken = false; // determines if token is kept in localStorage or in sessionStorage (and thus deleted when Browser Tab is closed)
 
-      // set up given pameters
+      // set up given parameters
       this.uri.service = (serviceUri.charAt(serviceUri.length - 1) == "/") ? serviceUri.substring(0, serviceUri.length - 1) : serviceUri;
       this.client = client;
       this.uri.conformance = serviceUri + "/metadata";
@@ -73,7 +73,7 @@ export default class MidataService {
             that.uri.token = element.valueUri;
           }
         });
-        // save available ressources:
+        // save available resources:
         that.resources = r.rest[0].resource;
         localStorage.setItem("oauth-resources", JSON.stringify(that.resources));
 
@@ -326,14 +326,14 @@ export default class MidataService {
   }
 
   /*
-  Processes a FHIR bundle into easier to process JSON objects with all relevant data
+  Processes a FHIR bundle into easier to handle JSON objects with all relevant data
   parameters  - res: a FHIR bundle as retrieved from MIDATA (and as returned
                      from getData()), containing Patient and / or Observation resources.
   returns     - an array of Objects, containing Observations and / or patient object
                 (depending on resources in bundle)
   throws      - an error if the bundly contains any non patient- or observation resource
   author      hessg1
-  version     2019-04-10
+  version     2019-04-11
   */
   prepareData(res){
     let data = [];
@@ -349,13 +349,17 @@ export default class MidataService {
         }
 
         // get the template for the sct code from snomed service
-        let template = sct.getFiltered(x => (x.code == code));
+        const templateArr = sct.getFiltered(x => (x.code == code));
 
         // if code was not found in SNOMED CT, we abort and throw an error:
-        if(template.length == 0){
+        if(templateArr.length == 0){
           throw("Fehlerhafte Daten: SNOMED-Code " + code + " ist nicht bekannt (Objekt " + i + ").");
         }
-        template = template[0]; // we only expect this array to have one entry anyway, since code is unique
+
+        // we only expect this array to have one entry anyway, since code is unique
+        // we have to do the json stringify dance, so the object is not passed by reference,
+        // which was causing strange errors
+        let template = JSON.parse(JSON.stringify(templateArr[0]));
 
         // fill template with actual values from resource
         if(template.category == 'EatingHabit'){ // EatingHabit has only one Time
