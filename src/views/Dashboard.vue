@@ -13,11 +13,11 @@
         </v-card-title>
 
         <v-card-text>
-          <p>Das Dashboard ist in anakoda 0.1 noch nicht verfügbar.</p>
+          <p>Das Dashboard ist in anakoda 0.2 noch nicht verfügbar.</p>
           <p>
-          Ziel von anakoda 0.1 ist, so bald wie möglich
-          Kopfschmerzdaten erfassen zu können.<br>Das Dashboard wird in einer ersten
-          Version mit anakoda 0.2 eingeführt, die Ende April erscheint.
+          Das Dashboard wird in einer ersten
+          Version mit anakoda 0.3 eingeführt, die im Mai erscheint. Bis dann kannst du
+          deine Daten unter <a href="#/dataview">Meine Daten</a> einsehen.
         </p>
         </v-card-text>
 

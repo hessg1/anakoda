@@ -357,7 +357,7 @@ export default class MidataService {
         }
 
         // we only expect this array to have one entry anyway, since code is unique
-        // we have to do the json stringify dance, so the object is not passed by reference,
+        // we have to do the json stringify dance, so the object is later not passed by reference,
         // which was causing strange errors
         let template = JSON.parse(JSON.stringify(templateArr[0]));
 
@@ -388,7 +388,7 @@ export default class MidataService {
         let meta = {};
         meta.id = res.entry[i].resource.id;
         meta.versionId = res.entry[i].resource.meta.versionId;
-        meta.timestamp = res.entry[i].resource.meta.lastUpdated;
+        meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
         meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display;
         template.meta = meta;
         data.push(template);
