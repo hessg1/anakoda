@@ -5,78 +5,76 @@
         <v-btn icon @click="drawer = !drawer"><v-icon>arrow_back</v-icon></v-btn>
       </v-toolbar>
       <v-list>
-        <v-list-tile
-        :to="'/'"
-        >
-        <v-list-tile-action>
-          <v-icon>home</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title>Home</v-list-tile-title>
-      </v-list-tile>
-      <v-list-tile
-      :to="'/dashboard'"
-      >
-      <v-list-tile-action>
-        <v-icon>dashboard</v-icon>
-      </v-list-tile-action>
-      <v-list-tile-title>Dashboard</v-list-tile-title>
-    </v-list-tile>
-    <v-list-group
-    prepend-icon="create"
-    value="true"
-    >
-    <template v-slot:activator>
-      <v-list-tile>
-        <v-list-tile-title>Neuer Eintrag</v-list-tile-title>
-      </v-list-tile>
-    </template>
-    <v-list-tile
-    :to="'/yourday'"
-    >
-    <v-list-tile-action>
-      <v-icon>today</v-icon>
-    </v-list-tile-action>
-    <v-list-tile-title>Mein Tag</v-list-tile-title>
-  </v-list-tile>
-  <v-list-tile
-  :to="'/yoursymptoms'"
-  >
-  <v-list-tile-action>
-    <v-icon>face</v-icon>
-  </v-list-tile-action>
-  <v-list-tile-title>Meine Auffälligkeiten</v-list-tile-title>
-</v-list-tile>
-</v-list-group>
-<v-list-tile
-:to="'/about'"
->
-<v-list-tile-action>
-  <v-icon>info</v-icon>
-</v-list-tile-action>
-<v-list-tile-title>Impressum</v-list-tile-title>
-</v-list-tile>
+
+        <v-list-tile :to="'/'">
+          <v-list-tile-action>
+            <v-icon>home</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Home</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile :to="'/dashboard'">
+          <v-list-tile-action>
+            <v-icon>dashboard</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Dashboard</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-tile :to="'/dataview'">
+          <v-list-tile-action>
+            <v-icon>description</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Meine Daten</v-list-tile-title>
+        </v-list-tile>
+
+        <v-list-group prepend-icon="create" value="true">
+          <template v-slot:activator>
+            <v-list-tile>
+              <v-list-tile-title>Eintrag erfassen</v-list-tile-title>
+            </v-list-tile>
+          </template>
+
+          <v-list-tile :to="'/yourday'">
+            <v-list-tile-action>
+              <v-icon>today</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title>Mein Tag</v-list-tile-title>
+          </v-list-tile>
+
+          <v-list-tile :to="'/yoursymptoms'">
+            <v-list-tile-action>
+              <v-icon>face</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title>Meine Auffälligkeiten</v-list-tile-title>
+          </v-list-tile>
+        </v-list-group>
+
+        <v-list-tile :to="'/about'">
+          <v-list-tile-action>
+            <v-icon>info</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Impressum</v-list-tile-title>
+        </v-list-tile>
+
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-toolbar app clipped-left color="primary">
+      <v-btn icon @click="drawer = !drawer"><v-icon>menu</v-icon></v-btn>
+      <v-toolbar-title class="headline">
+        <span class="font-weight-light">anakoda <i>preview&nbsp;</i></span>
+      </v-toolbar-title>
+    </v-toolbar>
 
 
-
-</v-list>
-</v-navigation-drawer>
-
-<v-toolbar app clipped-left color="primary">
-  <v-btn icon @click="drawer = !drawer"><v-icon>menu</v-icon></v-btn>
-  <v-toolbar-title class="headline">
-    <span class="font-weight-light">anakoda <i>preview&nbsp;</i></span>
-  </v-toolbar-title>
-</v-toolbar>
-
-
-<v-content>
-  <router-view/>
-</v-content>
-<v-footer class="pa-3">
-  <v-spacer></v-spacer>
-  <div>&copy; anakoda {{ new Date().getFullYear() }}</div>
-</v-footer>
-</v-app>
+    <v-content>
+      <router-view/>
+    </v-content>
+    <v-footer class="pa-3">
+      <v-spacer></v-spacer>
+      <div>&copy; anakoda {{ new Date().getFullYear() }}</div>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
