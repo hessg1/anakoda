@@ -3,6 +3,7 @@
 <v-dialog
       v-model="dialog"
       width="500"
+      persistent
     >
       <v-card>
         <v-card-title
@@ -18,6 +19,7 @@
           Das Dashboard wird in einer ersten
           Version mit anakoda 0.3 eingeführt, die im Mai erscheint. Bis dann kannst du
           deine Daten unter <a href="#/dataview">Meine Daten</a> einsehen.
+
         </p>
         </v-card-text>
 
