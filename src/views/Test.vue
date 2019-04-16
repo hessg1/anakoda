@@ -16,6 +16,8 @@
         1.12 - 1.17 <v-btn small @click="testBundle(input)">test bundle()</v-btn> (input in method)<br />
         <br />
         1.18 <v-btn small @click="midata.logout()">logout()</v-btn><br />
+        <br />
+        1.19 <v-btn small @click="testPrepare()">prepareData()</v-btn><br />
       </v-tab-item>
       <v-tab>
         ResourceService
@@ -183,6 +185,23 @@ export default {
           console.log(err);
         });
 
+    },
+
+    // utility method for testing midata service
+    testPrepare(){
+      let that = this;
+      this.midata.getData("Patient")
+      .then(res =>{
+        that.tester("Try Patient, expect OK", function(){
+          return that.midata.prepareData(res);
+        });
+      });
+
+      this.midata.getData("Observation").then(res =>{
+        that.tester("Try Observation, expect OK", function(){
+          return that.midata.prepareData(res);
+        });
+      });
     },
 
     // utility method for testing ResourceService
@@ -441,7 +460,13 @@ export default {
   },
   // mounted() is executed when the component is mounted
   mounted(){
-    this.midata = new MidataService();
+    // link this.midata to app-wide midataService
+    this.midata = this.$midataService;
+    // fallback, if something went wrong
+    if(this.midata == "" || this.midata == null) {
+      this.midata = new MidataService();
+    }
+
   }
 }
 </script>

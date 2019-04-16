@@ -7,6 +7,7 @@ import MidataService from '@/services/MidataService';
 Vue.config.productionTip = false
 
 const midataService = new MidataService();
+var patient = "";
 
 Object.defineProperties(Vue.prototype, {
   $midataService: {
@@ -14,7 +15,19 @@ Object.defineProperties(Vue.prototype, {
       return midataService;
     }
   }
-})
+});
+
+Object.defineProperties(Vue.prototype, {
+  $patient: {
+    get: function() {
+      return patient;
+    },
+    set: function(pat){
+      patient = pat;
+    }
+  }
+});
+
 
 
 new Vue({

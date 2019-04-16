@@ -4,7 +4,17 @@
   grid-list-lg>
 
   <v-layout row wrap>
-    <v-flex xs12 v-if="midata == '' || !midata.isReady()">
+    <v-flex xs12 v-if="loading">
+      <v-card color="primary" class="white--text">
+        <v-card-title primary-title>
+          <div>
+            <div class="headline">Verbindung mit MIDATA...</div>
+          </div>
+        </v-card-title>
+      </v-card>
+      <v-progress-linear :indeterminate="true"></v-progress-linear>
+    </v-flex>
+    <v-flex xs12 v-if="(midata == '' || !midata.isReady()) && !loading">
       <v-card color="primary" class="white--text">
         <v-card-title primary-title>
           <div>
@@ -22,7 +32,7 @@
         <v-card-title primary-title>
           <v-layout row wrap>
           <v-flex xs12 md6>
-            <div class="headline">Willkommen {{name}}</div>
+            <div class="headline">Willkommen<span v-if="name!=''">, {{name}}!</span></div>
             <span>Momentan kannst du auf anakoda lediglich Daten erfassen und noch
               nicht einsehen. Wir arbeiten daran, dir so schnell wie möglich erste
                Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist
@@ -100,7 +110,8 @@ export default {
   data() {
     return {
       midata: "",
-      name: ""
+      name: "",
+      loading: false
     }
   },
   methods: {
@@ -108,14 +119,25 @@ export default {
       // create redirect uri and remove potential #:
       let url = window.location.href;
       if(url.includes('#')){
-  	    url = url.slice(0, url.indexOf('#'));
+        url = url.slice(0, url.indexOf('#'));
       }
       // url must end in an /
       if(url.charAt(url.length-1) != '/'){
-  	    url = url + '/';
+        url = url + '/';
       }
       // if everything is ok, we can call midata
       this.midata.requestAuth(url);
+    },
+
+    // loads patient info from midata
+    getPatient(){
+      if(this.midata.isReady()){
+        // get patient resource and set user name
+        this.midata.getData("Patient").then(res => {
+          this.$patient = this.midata.prepareData(res)[0];
+          this.name = this.$patient.firstName;
+        });
+      }
     }
   },
   // mounted() is executed when the component is mounted
@@ -126,11 +148,29 @@ export default {
     if(this.midata == "") {
       this.midata = new MidataService();
     }
-
     // check if we got any parameters from MIDATA
     if(window.location.search){
-      this.midata.fetchToken();
+      this.loading = true;
+      this.midata.fetchToken().then(() =>{
+        this.getPatient();
+
+        this.loading = false;
+
+        // remove the parameters from the url
+         window.history.pushState('',document.title,window.location.toString().split("?")[0]);
+      });
     }
+    else{
+      if(this.$patient.firstName){
+        this.name = this.$patient.firstName;
+      }
+      else{
+        this.getPatient();
+      }
+    }
+
+
+
   }
 }
 </script>
