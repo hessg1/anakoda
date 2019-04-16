@@ -1,5 +1,5 @@
 import $ from 'jquery';
-const serviceUri = "https://test.midata.coop/fhir/";
+const serviceUri = "https://ch.midata.coop/fhir/";
 const client = "anakoda";
 
 export default class MidataService {
