@@ -1,4 +1,4 @@
-const serviceUri = "https://test.midata.coop/fhir/";
+const serviceUri = "https://ch.midata.coop/fhir/";
 const client = "anakoda";
 
 import $ from 'jquery';
@@ -216,6 +216,8 @@ export default class MidataService {
               "Authorization": header
           },
         }).done(res => {
+          console.log("Query erfolgreich:")
+          console.log(res)
           resolve(res);
         })
         .catch(err => {
@@ -338,7 +340,10 @@ export default class MidataService {
   prepareData(res){
     let data = [];
     for(var i in res.entry){
+      console.log("verarbeite resource:");
+      console.log(res.entry[i].resource);
       if(res.entry[i].resource.resourceType == 'Observation'){
+
         // create template object from SnomedService
         let code = "";
         if(res.entry[i].resource.valueCodeableConcept != undefined){
@@ -346,6 +351,15 @@ export default class MidataService {
         }
         else {
           code = res.entry[i].resource.component[0].code.coding[0].code;
+        }
+
+        // we have to catch possible "other diagnosis" and "other headache",
+        // which are persisted with a wrong and colliding SNOMED code in heMigrania
+        if(code == "74964007" && res.entry[i].resource.code.coding[0].code == "418138009"){ // diagnosis
+          code = "74964007d"
+        }
+        if(code == "74964007" && res.entry[i].resource.code.coding[0].code == "162306000"){ // headache
+          code = "74964007h"
         }
 
         // get the template for the sct code from snomed service
@@ -361,12 +375,10 @@ export default class MidataService {
         // which was causing strange errors
         let template = JSON.parse(JSON.stringify(templateArr[0]));
 
+
         // fill template with actual values from resource
-        if(template.category == 'EatingHabit'){ // EatingHabit has only one Time
+        if(template.category == 'EatingHabit' || template.category == 'Diagnosis'){ // EatingHabit and diagnosis has only one Time
           template.date = new Date(res.entry[i].resource.effectiveDateTime);
-        }
-        else if(template.category == 'Diagnosis'){ // so does Diagnosis, but encoded differently
-          template.date = new Date(res.entry[i].resource.component.valueDateTime);
         }
         else { // all other have start and end times
           template.startTime = new Date(res.entry[i].resource.effectivePeriod.start);

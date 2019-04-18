@@ -21,6 +21,13 @@ export default class SnomedService {
         "category": "VariousComplaint"
       },
       {
+        "code": 74964007,
+        "en": "Other symptom",
+        "de": "Andere Symptome",
+        "superCategory": "",
+        "category": "Condition"
+      },
+      {
         "code": 162057007,
         "en": "Nausea present",
         "de": "Übelkeit",
@@ -370,13 +377,23 @@ export default class SnomedService {
         "superCategory": 128187005,
         "category": "Diagnosis"
       },
+      // we have to deal with fake snomed codes for "other diagnosis" and "other
+      // headache", because they are all encoded in heMigrania with 74964007 and
+      // thus conflicting with "other complaint"
       {
-        "code": 74964007,
+        "code": "74964007d",
         "en": "Other diagnosis",
         "de": "Andere Diagnose",
         "superCategory": 128187005,
         "category": "Diagnosis"
-      }
+      },
+      {
+        "code": "74964007h",
+        "en": "Other Headache",
+        "de": "Sonstige Kopfschmerzen",
+        "superCategory": "",
+        "category": "Headache"
+      },
     ];
   }
 
