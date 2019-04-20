@@ -1,36 +1,52 @@
 <template>
   <v-container>
     <Login />
-    <v-dialog v-model="dialog">
+    <v-dialog v-model="dialog" scrollable>
       <v-card  v-if="activeItem != null">
         <v-card-title>
           <span class="headline">{{ activeItem.de }} am {{ activeItem.startTime.toLocaleDateString() }}</span>
         </v-card-title>
 
         <v-card-text>
-          <table width="90%">
+          <table class="detail">
             <tr v-if="activeItem.category == 'Headache'">
-              <td>Seite:</td><td> {{ activeItem.bodySiteDE}}</td>
+              <td>Seite:</td>
+              <td>{{ activeItem.bodySiteDE }}</td>
             </tr>
             <tr v-if="activeItem.category == 'VariousComplaint' || activeItem.category == 'Headache'">
-              <td>Intensität:</td><td> {{ activeItem.quantity }}</td>
+              <td>Intensität:</td>
+              <td>{{ activeItem.quantity}}/10</td>
             </tr>
-            <tr v-if="activeItem.category == 'SleepPattern' ">
-              <td>Qualität:</td><td> {{ activeItem.quantity }}</td>
+            <tr v-if="activeItem.category == 'SleepPattern'">
+              <td>Schlafqualität:</td>
+              <td>{{ activeItem.quantity}}/10</td>
             </tr>
-            <tr v-if="activeItem.category == 'SleepPattern' ">
-              <td>Schlafdauer: </td><td> {{ calcDuration(activeItem.startTime, activeItem.endTime) }}</td>
+            <tr v-if="activeItem.category == 'SleepPattern'">
+              <td>Schlafdauer:</td>
+              <td>{{ calcDuration(activeItem.startTime, activeItem.endTime) }}</td>
             </tr>
-            <tr v-if="activeItem.category == 'Headache' || activeItem.category == 'VariousComplaint' ">
-              <td>Dauer: </td><td> {{ formatDuration(activeItem) }}</td>
+            <tr v-if="activeItem.category == 'Headache' || activeItem.category == 'VariousComplaint'">
+              <td>Dauer:</td>
+              <td>{{ formatDuration(activeItem) }}</td>
+            </tr>
+            <tr v-if="relatedItems.length > 0 && activeItem.category == 'Headache'" class="detailRelated">
+              <td>Gleichzeitige Auffälligkeiten:</td>
+              <td>
+                <ul>
+                  <li v-for="item in relatedItems" v-bind:key="item.index">
+                    {{item.de}} <span v-if="item.category == 'VariousComplaint'">({{item.quantity}}/10)</span>
+                  </li>
+                </ul>
+              </td>
             </tr>
           </table>
-
-          <br /><span>Erfasst am {{ activeItem.meta.timestamp.toLocaleDateString() }} mit {{ activeItem.meta.source}}.</span>
+          <p class="sourceInfo">
+            Erfasst am {{ activeItem.meta.timestamp.toLocaleDateString() }} mit {{ activeItem.meta.source}}.
+          </p>
         </v-card-text>
 
-        <v-divider></v-divider>
 
+        <v-divider />
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" flat
@@ -67,6 +83,7 @@
 import Login from '@/components/Login';
 import SnomedService from '@/services/SnomedService';
 const sct = new SnomedService();
+let observations = [];
 
 export default {
   data() {
@@ -80,6 +97,7 @@ export default {
       search: '',
       isMobile: false,
       activeItem: null,
+      relatedItems: null,
       dialog: false,
       headers: [
         {
@@ -88,10 +106,10 @@ export default {
           sortable: false,
           value: 'de'
         },
-        { text: 'am:', value: 'startTime'},
-        { text: 'Intensität', value: 'quantity' },
-        { text: 'Seite', sortable: false},
-        { text: 'Dauer (h)', sortable: false}
+        { text: 'am:', value: 'startTime', align: 'center'},
+        { text: 'Intensität', value: 'quantity', align: 'center'},
+        { text: 'Seite', sortable: false, align: 'center'},
+        { text: 'Dauer (h)', sortable: false, align: 'center'}
       ],
     }
   },
@@ -118,16 +136,21 @@ export default {
       this.dialog = true;
     },
 
+    /*
+    Convenience method for building a "duration" string
+    hessg1 / 2019-04-17
+    */
     formatDuration(item){
-      //if(item.startTime.getDate() != item.endTime.getDate() && item.startTime.getMonth() != item.endTime.getMonth()){
+      let start = item.startTime.toLocaleTimeString().slice(0,5);
+      let end = item.endTime.toLocaleTimeString().slice(0,5);
       if(item.startTime.toLocaleDateString() != item.endTime.toLocaleDateString()){
-        return "vom " + item.startTime.toLocaleDateString() + " um " + item.startTime.toLocaleTimeString()
-        + " bis am " + item.endTime.toLocaleDateString() + " um " + item.endTime.toLocaleTimeString()
+        return "vom " + item.startTime.toLocaleDateString() + " um " + start
+        + " bis am " + item.endTime.toLocaleDateString() + " um " + end
         + " (" + this.calcDuration(item.startTime, item.endTime) + ")";
       }
       else{
-        return "von " + item.startTime.toLocaleTimeString() + " bis "
-        + item.endTime.toLocaleTimeString() + " (" + this.calcDuration(item.startTime, item.endTime) + ")";
+        return "von " + start + " bis "
+        + end + " (" + this.calcDuration(item.startTime, item.endTime) + ")";
       }
     },
 
@@ -155,6 +178,26 @@ export default {
       return duration;
 
     },
+
+    /*
+      Gets complaints and conditions that were happening during the occurence of a headache
+      (started or ended between start and end of headache)
+      hessg1 / 2019-04-15
+    */
+    getRelatedObs(headache){
+       return this.filterArray(function(obs){
+        if((obs.category == 'VariousComplaint' || obs.category == 'Condition') && obs.code != 216299002){
+          return((obs.startTime >= headache.startTime && obs.startTime < headache.endTime) ||
+                 (obs.endTime > headache.startTime && obs.endTime <= headache.endTime));
+        }
+        return false;
+
+      }, observations);
+    },
+
+    /*
+      Checks on resizing the datatable / screen if we are on a smartphone
+    */
     onResize(){
       this.isMobile = window.innerWidth < 600;
     }
@@ -162,8 +205,8 @@ export default {
   },
   mounted(){
     if(this.$midataService.isReady()){
-      this.$midataService.getData('Observation?code=162306000').then(res => {
-        const observations = this.$midataService.prepareData(res);
+      this.$midataService.getData('Observation').then(res => {
+        observations = this.$midataService.prepareData(res);
         // get the SCT codes for headaches from SnomedService
         let headacheCodes = sct.getFilteredProp(x => (x.category == 'Headache'), 'code');
         // and filter all the headache objects in observations
@@ -200,6 +243,14 @@ export default {
           { text: 'Dauer (h)', sortable: false}
         ]
       }
+    },
+    activeItem(){
+      if(this.activeItem){
+        this.relatedItems = (this.getRelatedObs(this.activeItem));
+      }
+      else{
+        this.relatedItems = null;
+      }
     }
 
   }
@@ -207,5 +258,30 @@ export default {
 </script>
 
 <style scoped>
-
+/* styling of the detail view table */
+table.detail {
+  width: 100%;
+}
+.detail tr:hover{
+}
+.detail td:first-child{
+  width: 30%;
+  font-weight: bold;
+  vertical-align: top;
+}
+.detail ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+.detail tr.detailRelated td {
+  border-top: 1px solid #F0F0F0;
+  padding-top: 5px;
+}
+p.sourceInfo{
+  margin-top: 15px;
+  margin-bottom: 0px;
+  text-align: left;
+  color: grey;
+  width: 100%;
+}
 </style>
