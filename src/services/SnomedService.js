@@ -86,7 +86,7 @@ export default class SnomedService {
       {
         "code": 216299002,
         "en": "Attack",
-        "de": "Anfall",
+        "de": "Migräneanfall",
         "superCategory": 118222006,
         "category": "Condition"
       },
@@ -163,7 +163,7 @@ export default class SnomedService {
       {
         "code": 248626009,
         "en": "Yawning",
-        "de": "Gähnen",
+        "de": "Vermehrtes Gähnen",
         "superCategory": 37993006,
         "category": "VariousComplaint"
       },

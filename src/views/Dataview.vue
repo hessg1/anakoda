@@ -1,14 +1,43 @@
 <template>
-  <v-container>
+  <div>
     <Login />
+
+    <!-- DETAIL VIEW -->
     <v-dialog v-model="dialog" scrollable>
       <v-card  v-if="activeItem != null">
         <v-card-title>
-          <span class="headline">{{ activeItem.de }} am {{ activeItem.startTime.toLocaleDateString() }}</span>
+          <span class="headline" v-if="activeItem.category == 'dayEntry'">Tageseintrag vom {{ activeItem.date }}</span>
+          <span class="headline" v-else>{{ activeItem.de }} am {{ activeItem.startTime.toLocaleDateString() }}</span>
+          <v-tooltip bottom v-if="activeItem.category == 'Headache'">
+            <template v-slot:activator="{ on }">
+              <v-icon v-if="isPerceivedAttack(activeItem)" color="primary" v-on="on">flash_on</v-icon>
+              <v-icon v-else color="primary" v-on="on">flash_off</v-icon>
+            </template>
+            <span v-if="isPerceivedAttack(activeItem)">Dieser Blitz zeigt an, dass du die Kopfschmerzen im Rahmen einer Migräne-Attacke eingeschätzt hast.</span>
+            <span v-else>Du hast die Kopfschmerzen NICHT im Rahmen einer Migräne-Attacke eingeschätzt.</span>
+          </v-tooltip>
         </v-card-title>
 
         <v-card-text>
-          <table class="detail">
+          <table v-if="activeItem.category == 'dayEntry'" class="detail">
+            <tr v-for="sleep in activeItem.sleep" :key="sleep.index">
+              <td>
+                geschlafen (von - bis):<br />
+                Schlafqualität:
+              </td>
+              <td>
+                {{ sleep.startTime.toLocaleTimeString() }} - {{ sleep.endTime.toLocaleTimeString() }} ({{calcDuration(sleep.endTime, sleep.startTime)}})<br/>
+                {{ sleep.quantity}}/10
+              </td>
+            </tr>
+            <tr>
+              <td>Essverhalten:</td>
+              <td v-if="activeItem.eat != ''">{{activeItem.eat.de}}</td>
+              <td v-else>Noch unbekannteres Essverhalten</td>
+            </tr>
+
+          </table>
+          <table class="detail" v-else>
             <tr v-if="activeItem.category == 'Headache'">
               <td>Seite:</td>
               <td>{{ activeItem.bodySiteDE }}</td>
@@ -16,14 +45,6 @@
             <tr v-if="activeItem.category == 'VariousComplaint' || activeItem.category == 'Headache'">
               <td>Intensität:</td>
               <td>{{ activeItem.quantity}}/10</td>
-            </tr>
-            <tr v-if="activeItem.category == 'SleepPattern'">
-              <td>Schlafqualität:</td>
-              <td>{{ activeItem.quantity}}/10</td>
-            </tr>
-            <tr v-if="activeItem.category == 'SleepPattern'">
-              <td>Schlafdauer:</td>
-              <td>{{ calcDuration(activeItem.startTime, activeItem.endTime) }}</td>
             </tr>
             <tr v-if="activeItem.category == 'Headache' || activeItem.category == 'VariousComplaint'">
               <td>Dauer:</td>
@@ -44,8 +65,6 @@
             Erfasst am {{ activeItem.meta.timestamp.toLocaleDateString() }} mit {{ activeItem.meta.source}}.
           </p>
         </v-card-text>
-
-
         <v-divider />
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -54,29 +73,87 @@
             OK
           </v-btn>
         </v-card-actions>
-
       </v-card>
     </v-dialog>
-    <v-data-table
-    :headers="headers"
-    :items="headaches"
-    class="elevation-1"
-    v-resize="onResize"
-    >
-    <template v-slot:items="props">
-      <tr @click="clicked(props.item)">
-        <td>{{ props.item.de }}</td>
-        <td class="text-xs-center">{{ props.item.startTime.toLocaleDateString() }}</td>
-        <td v-if="!isMobile" class="text-xs-center">{{ props.item.quantity }}</td>
-        <td v-if="!isMobile" class="text-xs-center">{{ props.item.bodySiteDE }}</td>
-        <td v-if="!isMobile" class="text-xs-center">{{ calcDuration(props.item.endTime, props.item.startTime) }}</td>
-      </tr>
-    </template>
-    <template v-slot:no-data>
-      Es gibt noch keine Daten zum Anzeigen.
-    </template>
-  </v-data-table>
-  </v-container>
+
+    <v-tabs color="#40c9a2" slider-color="#a3f7b5">
+    <v-tab>Kopfschmerzen</v-tab>
+
+    <!-- HEADACHE TABLE -->
+    <v-tab-item>
+        <v-container>
+      <v-data-table
+      :headers="headacheHeaders"
+      :items="headaches"
+      class="elevation-1"
+      v-resize="onResize"
+      >
+        <template v-slot:items="props">
+          <tr @click="clicked(props.item)">
+            <td>{{ props.item.de }}</td>
+            <td class="text-xs-center">{{ props.item.startTime.toLocaleDateString() }}</td>
+            <td v-if="!isMobile" class="text-xs-center">{{ props.item.quantity }}</td>
+            <td v-if="!isMobile" class="text-xs-center">{{ props.item.bodySiteDE }}</td>
+            <td v-if="!isMobile" class="text-xs-center">{{ calcDuration(props.item.endTime, props.item.startTime) }}</td>
+          </tr>
+        </template>
+        <template v-slot:no-data>
+          Es gibt noch keine Daten zum Anzeigen.
+        </template>
+      </v-data-table>
+    </v-container>
+    </v-tab-item>
+
+  <!-- SYMPTOM TABLE -->
+    <v-tab>{{symptomTab}}</v-tab>
+    <v-tab-item>
+      <v-container>
+        <v-data-table
+        :headers="symptomHeaders"
+        :items="symptoms"
+        class="elevation-1"
+        v-resize="onResize"
+        >
+          <template v-slot:items="props">
+            <tr @click="clicked(props.item)">
+              <td>{{ props.item.de }}</td>
+              <td class="text-xs-center">{{ props.item.startTime.toLocaleDateString() }}</td>
+              <td v-if="!isMobile" class="text-xs-center">{{ calcDuration(props.item.endTime, props.item.startTime) }}</td>
+            </tr>
+          </template>
+          <template v-slot:no-data>
+            Es gibt noch keine Daten zum Anzeigen.
+          </template>
+        </v-data-table>
+      </v-container>
+    </v-tab-item>
+
+  <!-- DAY TABLE-->
+  <v-tab>{{dayTab}}</v-tab>
+  <v-tab-item>
+    <v-container>
+      <v-data-table
+      :headers="dayHeaders"
+      :items="days"
+      class="elevation-1"
+      v-resize="onResize"
+      >
+        <template v-slot:items="props">
+          <tr @click="clicked(props.item)">
+            <td>{{ props.item.date }}</td>
+            <td>{{ calcDuration(props.item.sleep[0].startTime, props.item.sleep[0].endTime)}}</td>
+            <td>{{ props.item.eat.de }}</td>
+        </tr>
+        </template>
+        <template v-slot:no-data>
+          Es gibt noch keine Daten zum Anzeigen.
+        </template>
+      </v-data-table>
+    </v-container>
+  </v-tab-item>
+  </v-tabs>
+</div>
+
 </template>
 
 <script>
@@ -90,16 +167,20 @@ export default {
     return {
       observations: [],
       headaches: [],
+      symptoms: [],
+      days: [],
       pagination: {
           sortBy: 'name'
       },
-      selected: [],
+    //  selected: [],
       search: '',
       isMobile: false,
       activeItem: null,
       relatedItems: null,
       dialog: false,
-      headers: [
+      symptomTab: 'Symptome & Auffälligkeiten',
+      dayTab: 'Tageseinträge',
+      headacheHeaders: [
         {
           text: 'Kopfschmerzen',
           align: 'left',
@@ -110,6 +191,26 @@ export default {
         { text: 'Intensität', value: 'quantity', align: 'center'},
         { text: 'Seite', sortable: false, align: 'center'},
         { text: 'Dauer (h)', sortable: false, align: 'center'}
+      ],
+      symptomHeaders: [
+        {
+          text: 'Symptome und Auffälligkeiten',
+          align: 'left',
+          sortable: false,
+          value: 'de'
+        },
+        { text: 'am:', value: 'startTime', align: 'center'},
+        { text: 'Dauer (h)', sortable: false, align: 'center'}
+      ],
+      dayHeaders: [
+        {
+          text: 'Eintrag vom',
+          align: 'left',
+          sortable: true,
+          value: 'date'
+        },
+        { text: 'Schlaf', sortable: false, align: 'center'},
+        { text: 'Essgewohnheit', sortable: false, align: 'center'}
       ],
     }
   },
@@ -191,8 +292,23 @@ export default {
                  (obs.endTime > headache.startTime && obs.endTime <= headache.endTime));
         }
         return false;
-
       }, observations);
+    },
+
+    /*
+      Checks if a given headache was perceived by the user as a migraine attack
+      (by searching all observations for an "attack" entry with the same start- and endtime)
+      hessg1 / 2019-04-23
+    */
+    isPerceivedAttack(headache){
+      let attacks = this.filterArray(x => (x.code == 216299002), observations);
+      for(var i in attacks){
+        if(attacks[i].startTime.getTime() == headache.startTime.getTime()
+          && attacks[i].endTime.getTime() == headache.endTime.getTime()){
+          return true;
+        }
+      }
+      return false;
     },
 
     /*
@@ -210,8 +326,59 @@ export default {
         // get the SCT codes for headaches from SnomedService
         let headacheCodes = sct.getFilteredProp(x => (x.category == 'Headache'), 'code');
         // and filter all the headache objects in observations
-        //this.headaches = this.filterArray(function(obs){return headacheCodes.includes(obs.code)}, observations);
         this.headaches = this.filterArray(x => (headacheCodes.includes(x.code)), observations);
+
+        this.symptoms = this.filterArray(x => ((x.category == 'VariousComplaint' || x.category == 'Condition') && x.code != 216299002), observations);
+
+        // get all sleep patterns and write them to the days array
+        let sleep = this.filterArray(x => (x.category == 'SleepPattern'), observations);
+        for(let i in sleep){
+          let dayEntry = null;
+          // check if there is already an array entry for this day
+          for(var j in this.days) {
+            if(sleep[i].endTime.toLocaleDateString() == this.days[j].date){
+              dayEntry = j;
+            }
+          }
+          if(dayEntry == null){
+            this.days.push({
+              date: sleep[i].endTime.toLocaleDateString(),
+              category: "dayEntry",
+              sleep: [sleep[i]],
+              eat: {de: "Unbekanntes Essverhalten"},
+              meta: sleep[i].meta
+            })
+          }
+          else{
+            this.days[j].sleep.push(sleep[i]);
+          }
+        }
+
+        // get all eating habits and write them to the days array
+        let eat = this.filterArray(x => (x.category == 'EatingHabit'), observations);
+        for(let i in eat){
+          let dayEntry = null;
+          // check if there is already an array entry for this day
+          for(j in this.days) {
+            if(eat[i].date.toLocaleDateString() == this.days[j].date){
+              dayEntry = j;
+            }
+          }
+          if(dayEntry == null){
+            this.days.push({
+              date: eat[i].date.toLocaleDateString(),
+              category: "dayEntry",
+              eat: [eat[i]],
+              sleep: [],
+              meta: eat[i].meta
+            })
+          }
+          else{
+            this.days[j].eat = eat[i];
+          }
+        }
+        console.log("days:");
+        console.log(this.days)
       });
     }
 
@@ -219,7 +386,7 @@ export default {
   watch: {
     isMobile(){
       if(this.isMobile){
-        this.headers = [
+        this.headacheHeaders = [
           {
             text: 'Kopfschmerzen',
             align: 'left',
@@ -227,10 +394,21 @@ export default {
             value: 'de'
           },
           { text: 'am:', value: 'startTime'}
-        ]
+        ];
+        this.symptomHeaders = [
+          {
+            text: 'Symptome und Auffälligkeiten',
+            align: 'left',
+            sortable: false,
+            value: 'de'
+          },
+          { text: 'am:', value: 'startTime', align: 'center'}
+        ];
+        this.symptomTab = 'Auffälligkeiten';
+        this.dayTab = 'Tage';
       }
       else{
-        this.headers = [
+        this.headacheHeaders = [
           {
             text: 'Kopfschmerzen',
             align: 'left',
@@ -241,7 +419,19 @@ export default {
           { text: 'Intensität', value: 'quantity' },
           { text: 'Seite', sortable: false},
           { text: 'Dauer (h)', sortable: false}
-        ]
+        ];
+        this.symptomHeaders = [
+          {
+            text: 'Symptome und Auffälligkeiten',
+            align: 'left',
+            sortable: false,
+            value: 'de'
+          },
+          { text: 'am:', value: 'startTime', align: 'center'},
+          { text: 'Dauer (h)', sortable: false, align: 'center'}
+        ];
+        this.symptomTab = 'Symptome & Auffälligkeiten';
+        this.dayTab = 'Tageseinträge';
       }
     },
     activeItem(){
