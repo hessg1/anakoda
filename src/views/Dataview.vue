@@ -86,7 +86,8 @@
 
     <!-- HEADACHE TABLE -->
     <v-tab-item>
-        <v-container>
+      <v-container>
+          <p>Hier siehst du deine Kopfschmerz-Attacken. Klicke einen Eintrag an, um mehr Infos dazu anzuzeigen.</p>
       <v-data-table
       :headers="headacheHeaders"
       :items="headaches"
@@ -120,9 +121,11 @@
   </v-tab-item>
 
   <!-- SYMPTOM TABLE -->
+
     <v-tab>{{symptomTab}}</v-tab>
     <v-tab-item>
       <v-container>
+        <p>Hier siehst du deine Symptome und Auffälligkeiten. Klicke einen Eintrag an, um mehr Infos dazu anzuzeigen.</p>
         <v-data-table
         :headers="symptomHeaders"
         :items="symptoms"
@@ -147,6 +150,7 @@
   <v-tab>{{dayTab}}</v-tab>
   <v-tab-item>
     <v-container>
+      <p>Hier siehst du deine Tages-Einträge. Klicke einen Eintrag an, um mehr Infos dazu anzuzeigen.</p>
       <v-data-table
       :headers="dayHeaders"
       :items="days"
@@ -188,7 +192,6 @@ export default {
       pagination: {
           sortBy: 'name'
       },
-    //  selected: [],
       search: '',
       isMobile: false,
       activeItem: null,
@@ -203,10 +206,10 @@ export default {
           sortable: false,
           value: 'de'
         },
-        { text: 'am:', value: 'startTime', align: 'center'},
-        { text: 'Intensität', value: 'quantity', align: 'center'},
-        { text: 'Seite', sortable: false, align: 'center'},
-        { text: 'Dauer (h)', sortable: false, align: 'center'}
+        { text: 'am:', value: 'startTime', align: 'left'},
+        { text: 'Intensität', value: 'quantity', align: 'left'},
+        { text: 'Seite', sortable: false, align: 'left'},
+        { text: 'Dauer (h)', sortable: false, align: 'left'}
       ],
       symptomHeaders: [
         {
@@ -215,18 +218,18 @@ export default {
           sortable: false,
           value: 'de'
         },
-        { text: 'am:', value: 'startTime', align: 'center'},
-        { text: 'Dauer (h)', sortable: false, align: 'center'}
+        { text: 'am:', value: 'startTime', align: 'left'},
+        { text: 'Dauer (h)', sortable: false, align: 'left'}
       ],
       dayHeaders: [
         {
           text: 'Eintrag vom',
           align: 'left',
           sortable: true,
-          value: 'date'
+          value: 'sleep[0].endTime'
         },
-        { text: 'Schlaf', sortable: false, align: 'center'},
-        { text: 'Essgewohnheit', sortable: false, align: 'center'}
+        { text: 'Schlaf', sortable: false, align: 'left'},
+        { text: 'Essgewohnheit', sortable: false, align: 'left'}
       ],
       feedback: false,
       questions: [
@@ -431,7 +434,7 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime'}
+          { text: 'am:', value: 'startTime', align: 'left',}
         ];
         this.symptomHeaders = [
           {
@@ -440,7 +443,7 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime', align: 'center'}
+          { text: 'am:', value: 'startTime', align: 'left'}
         ];
         this.symptomTab = 'Auffälligkeiten';
         this.dayTab = 'Tage';
@@ -453,10 +456,10 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime'},
-          { text: 'Intensität', value: 'quantity' },
-          { text: 'Seite', sortable: false},
-          { text: 'Dauer (h)', sortable: false}
+          { text: 'am:', value: 'startTime', align: 'left',},
+          { text: 'Intensität', value: 'quantity', align: 'left',},
+          { text: 'Seite', sortable: false, align: 'left',},
+          { text: 'Dauer (h)', sortable: false, align: 'left',}
         ];
         this.symptomHeaders = [
           {
@@ -465,8 +468,8 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime', align: 'center'},
-          { text: 'Dauer (h)', sortable: false, align: 'center'}
+          { text: 'am:', value: 'startTime', align: 'left'},
+          { text: 'Dauer (h)', sortable: false, align: 'left'}
         ];
         this.symptomTab = 'Symptome & Auffälligkeiten';
         this.dayTab = 'Tageseinträge';
@@ -489,6 +492,10 @@ export default {
 /* styling of the detail view table */
 table.detail {
   width: 100%;
+}
+.detail td {
+  justify-content: left;
+  text-align: left;
 }
 .detail tr:hover{
 }
