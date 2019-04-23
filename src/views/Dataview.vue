@@ -22,11 +22,11 @@
           <table v-if="activeItem.category == 'dayEntry'" class="detail">
             <tr v-for="sleep in activeItem.sleep" :key="sleep.index">
               <td>
-                geschlafen (von - bis):<br />
+                geschlafen:<br />
                 Schlafqualität:
               </td>
               <td>
-                {{ sleep.startTime.toLocaleTimeString() }} - {{ sleep.endTime.toLocaleTimeString() }} ({{calcDuration(sleep.endTime, sleep.startTime)}})<br/>
+                {{ sleep.startTime.toLocaleTimeString().slice(0,5) }} - {{ sleep.endTime.toLocaleTimeString().slice(0,5) }} ({{calcDuration(sleep.endTime, sleep.startTime)}})<br/>
                 {{ sleep.quantity}}/10
               </td>
             </tr>
@@ -323,6 +323,12 @@ export default {
     if(this.$midataService.isReady()){
       this.$midataService.getData('Observation').then(res => {
         observations = this.$midataService.prepareData(res);
+        // only display valid entries
+        if(!JSON.parse(localStorage.getItem("showInvalid"))){
+          console.log("filter out invalid items")
+          observations = this.filterArray(x => (!x.invalid), observations);
+        }
+
         // get the SCT codes for headaches from SnomedService
         let headacheCodes = sct.getFilteredProp(x => (x.category == 'Headache'), 'code');
         // and filter all the headache objects in observations
@@ -377,8 +383,6 @@ export default {
             this.days[j].eat = eat[i];
           }
         }
-        console.log("days:");
-        console.log(this.days)
       });
     }
 

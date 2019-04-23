@@ -1,4 +1,4 @@
-const serviceUri = "https://ch.midata.coop/fhir/";
+const serviceUri = "https://test.midata.coop/fhir/";
 const client = "anakoda";
 
 import $ from 'jquery';
@@ -340,8 +340,6 @@ export default class MidataService {
   prepareData(res){
     let data = [];
     for(var i in res.entry){
-      console.log("verarbeite resource:");
-      console.log(res.entry[i].resource);
       if(res.entry[i].resource.resourceType == 'Observation'){
 
         // create template object from SnomedService
@@ -374,15 +372,21 @@ export default class MidataService {
         // we have to do the json stringify dance, so the object is later not passed by reference,
         // which was causing strange errors
         let template = JSON.parse(JSON.stringify(templateArr[0]));
-
+        template.invalid = false;
 
         // fill template with actual values from resource
         if(template.category == 'EatingHabit' || template.category == 'Diagnosis'){ // EatingHabit and diagnosis has only one Time
           template.date = new Date(res.entry[i].resource.effectiveDateTime);
+
+          // mark entries with invalid time values
+          template.invalid = template.startTime > new Date();
         }
         else { // all other have start and end times
           template.startTime = new Date(res.entry[i].resource.effectivePeriod.start);
           template.endTime = new Date(res.entry[i].resource.effectivePeriod.end);
+
+          // mark entries with invalid time values
+          template.invalid = (template.startTime > template.endTime) || (template.startTime > new Date());
         }
 
         if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
