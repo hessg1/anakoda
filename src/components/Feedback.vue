@@ -12,35 +12,39 @@
 
 <v-divider></v-divider>
 
-<v-form id="feedback" action="https://getsimpleform.com/messages?form_api_token=71e9e52b035d63023a80fac07ebe2d0b" method="post">
+<v-form ref="form" id="feedback" action="https://getsimpleform.com/messages?form_api_token=71e9e52b035d63023a80fac07ebe2d0b" method="post">
 
-  <v-card-text v-if="agegroup == ''">
+<input type="hidden" name='page' :value="page">
+  <v-card-text>
     In welcher Altersgruppe befindest du dich?
     <v-select
     :items="ageoption"
+    :rules="[v => !!v || 'Bitte wähle etwas aus.']"
     v-model="agegroup"
     label="">
   </v-select>
   <input type="hidden" name='agegroup' :value="agegroup">
 </v-card-text>
 
-<v-card-text v-if="skill == ''">
+<v-card-text>
   Wie häufig nutzt du Webanwendungen, wie Onlinebanking, ÖV-Fahrplan usw.?
   <v-select
   :items="skilloption"
   v-model="skill"
+  :rules="[v => !!v || 'Bitte wähle etwas aus.']"
   label="">
 </v-select>
 <input type="hidden" name='skill' :value="skill">
 </v-card-text>
 
-<v-divider v-if="this.skill == '' && this.agegroup == ''"></v-divider>
+<v-divider></v-divider>
 
 <v-card-text v-for="question in questions" :key="question.index">
   {{question.question}}
   <v-select
   :items="question.answers"
   v-model="question.model"
+  :rules="[v => !!v || 'Bitte wähle etwas aus.']"
   label="">
 </v-select>
 <input type="hidden" :name='question.modelname' :value="question.model">
@@ -99,17 +103,29 @@ export default {
 
   props: {
     questions: Array,
+    page: String
   },
 
   methods:{
+    /*
+    Controls whether all fields are filled,
+    stores the profile data in the local memory
+    and submits the form.
+    parameters: none
+    returns:    none
+    author:     schwf3
+    version:    2019-04-23
+    */
     send(){
-      if(this.agegroup){
-        localStorage.setItem("agegroup", this.agegroup);
+      if (this.$refs.form.validate()) {
+        if(this.agegroup){
+          localStorage.setItem("agegroup", this.agegroup);
+        }
+        if(this.skill){
+          localStorage.setItem("skill", this.skill);
+        }
+        document.getElementById("feedback").submit();
       }
-      if(this.skill){
-        localStorage.setItem("skill", this.skill);
-      }
-      document.getElementById("feedback").submit();
     }
 
   },
