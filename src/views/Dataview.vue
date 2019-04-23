@@ -78,7 +78,7 @@
 
     <!-- FEEDBACK DIALOG -->
     <v-dialog v-model="feedback">
-      <Feedback :questions="questions" :dialog="feedback"></Feedback>
+      <Feedback :questions="questions" page="DataView"></Feedback>
     </v-dialog>
 
     <v-tabs color="#40c9a2" slider-color="#a3f7b5">
@@ -107,17 +107,23 @@
           Es gibt noch keine Daten zum Anzeigen.
         </template>
       </v-data-table>
-      <v-btn
-      absolute
-      dark
-      fab
-      bottom
-      right
-      color="pink"
-      @click="feedback = !feedback">
-        <v-icon>feedback</v-icon>
-      </v-btn>
     </v-container>
+    <v-tooltip left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+        absolute
+        dark
+        fab
+        bottom
+        right
+        color="pink"
+        v-on="on"
+        @click="feedback = !feedback">
+          <v-icon>feedback</v-icon>
+        </v-btn>
+      </template>
+      <span>Gib uns dein Feedback</span>
+  </v-tooltip>
   </v-tab-item>
 
   <!-- SYMPTOM TABLE -->
@@ -144,6 +150,22 @@
           </template>
         </v-data-table>
       </v-container>
+      <v-tooltip left>
+        <template v-slot:activator="{ on }">
+          <v-btn
+          absolute
+          dark
+          fab
+          bottom
+          right
+          color="pink"
+          v-on="on"
+          @click="feedback = !feedback">
+            <v-icon>feedback</v-icon>
+          </v-btn>
+        </template>
+        <span>Gib uns dein Feedback</span>
+    </v-tooltip>
     </v-tab-item>
 
   <!-- DAY TABLE-->
@@ -169,6 +191,22 @@
         </template>
       </v-data-table>
     </v-container>
+    <v-tooltip left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+        absolute
+        dark
+        fab
+        bottom
+        right
+        color="pink"
+        v-on="on"
+        @click="feedback = !feedback">
+          <v-icon>feedback</v-icon>
+        </v-btn>
+      </template>
+      <span>Gib uns dein Feedback</span>
+  </v-tooltip>
   </v-tab-item>
   </v-tabs>
 </div>
@@ -233,19 +271,26 @@ export default {
       ],
       feedback: false,
       questions: [
-        { question: "Wünschst du dir weitere Funktionen?",
+        { question: "Findest du die Auflistung deiner Daten übersichtlich?",
           answers: ["Ja", "Nein"],
-          modelname: "functions",
+          modelname: "clear arrangement",
+          model: "",
+          questiontext: "Was stört dich?",
+          questiontextrule: "Nein"
+        },
+        { question: "Würdest du gerne weitere Informationen einsehen?",
+          answers: ["Ja", "Nein"],
+          modelname: "otherdata",
           model: "",
           questiontext: "Welche?",
           questiontextrule: "Ja"
         },
-        { question: "Ist der Himmel blau?",
+        { question: "Helfen dir die Auflistungen deiner Daten dabei deine Krankheit besser zu verstehen?",
           answers: ["Ja", "Nein"],
-          modelname: "skycolor",
+          modelname: "otherdata",
           model: "",
-          questiontext: "Welche Farbe hat er?",
-          questiontextrule: "Nein"
+          questiontext: false,
+          questiontextrule: ""
         }
       ]
     }
