@@ -76,6 +76,11 @@
       </v-card>
     </v-dialog>
 
+    <!-- FEEDBACK DIALOG -->
+    <v-dialog v-model="feedback">
+      <Feedback :questions="questions" :dialog="feedback"></Feedback>
+    </v-dialog>
+
     <v-tabs color="#40c9a2" slider-color="#a3f7b5">
     <v-tab>Kopfschmerzen</v-tab>
 
@@ -101,8 +106,18 @@
           Es gibt noch keine Daten zum Anzeigen.
         </template>
       </v-data-table>
+      <v-btn
+      absolute
+      dark
+      fab
+      bottom
+      right
+      color="pink"
+      @click="feedback = !feedback">
+        <v-icon>feedback</v-icon>
+      </v-btn>
     </v-container>
-    </v-tab-item>
+  </v-tab-item>
 
   <!-- SYMPTOM TABLE -->
     <v-tab>{{symptomTab}}</v-tab>
@@ -159,6 +174,7 @@
 <script>
 import Login from '@/components/Login';
 import SnomedService from '@/services/SnomedService';
+import Feedback from '../components/Feedback';
 const sct = new SnomedService();
 let observations = [];
 
@@ -212,10 +228,28 @@ export default {
         { text: 'Schlaf', sortable: false, align: 'center'},
         { text: 'Essgewohnheit', sortable: false, align: 'center'}
       ],
+      feedback: false,
+      questions: [
+        { question: "Wünschst du dir weitere Funktionen?",
+          answers: ["Ja", "Nein"],
+          modelname: "functions",
+          model: "",
+          questiontext: "Welche?",
+          questiontextrule: "Ja"
+        },
+        { question: "Ist der Himmel blau?",
+          answers: ["Ja", "Nein"],
+          modelname: "skycolor",
+          model: "",
+          questiontext: "Welche Farbe hat er?",
+          questiontextrule: "Nein"
+        }
+      ]
     }
   },
   components: {
     Login,
+    Feedback
   },
   methods: {
     /*
