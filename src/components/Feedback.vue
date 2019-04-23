@@ -1,12 +1,9 @@
 <template>
-  <v-card
-  class="elevation-16 mx-auto"
-  max-width="600px">
-
+  <v-card>
   <v-card-title
   class="headline"
   primary-title>
-  Deine Meinung ist uns Wichtig!
+  Deine Meinung ist uns wichtig!
 </v-card-title>
 <v-card-text>
   Damit wir unsere Webanwendung stetig verbessern können, ist uns deine Meinung sehr wichtig!
@@ -69,7 +66,9 @@
 <v-divider></v-divider>
 
 <v-card-actions class="justify-space-between">
-  <v-btn flat>Nein Danke</v-btn>
+  <v-btn flat>
+    Nein Danke
+  </v-btn>
   <v-btn
   color="primary"
   flat
@@ -93,11 +92,14 @@ export default {
       agegroup: "",
       skilloption: ["nie", "wenige Male im Jahr", "einmal im Monat", "einmal am Tag", "mehrmals am Tag"],
       skill: "",
-      raiting: 0
+      raiting: 0,
+      localdialog: null,
     }
   },
 
-  props: {questions: Array},
+  props: {
+    questions: Array,
+  },
 
   methods:{
     send(){

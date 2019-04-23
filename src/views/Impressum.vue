@@ -44,19 +44,19 @@ export default {
   data() {
     return {
       questions: [
-        { question: "Willst du weitere Funktionen?",
+        { question: "Wünschst du dir weitere Funktionen?",
           answers: ["Ja", "Nein"],
           modelname: "functions",
           model: "",
           questiontext: "Welche?",
           questiontextrule: "Ja"
         },
-        { question: "Essen?",
+        { question: "Ist der Himmel blau?",
           answers: ["Ja", "Nein"],
-          modelname: "eat",
+          modelname: "skycolor",
           model: "",
-          questiontext: "Was?",
-          questiontextrule: "Ja"
+          questiontext: "Welche Farbe hat er?",
+          questiontextrule: "Nein"
         }
       ]
     }
