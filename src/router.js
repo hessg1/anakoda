@@ -44,13 +44,18 @@ export default new Router({
       name: 'dataview',
       component: () => import(/* webpackChunkName: "dataview" */'./views/Dataview.vue')
     },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import(/* webpackChunkName: "settings" */'./views/Settings.vue')
+    },
+
 
     // important: the following entry has to be commented for productive build
-
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import(/* webpackChunkName: "test" */'./views/Test.vue')
-    }
+    // {
+    //   path: '/test',
+    //   name: 'test',
+    //   component: () => import(/* webpackChunkName: "test" */'./views/Test.vue')
+    // }
   ]
 })

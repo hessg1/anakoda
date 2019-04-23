@@ -49,6 +49,12 @@
           </v-list-tile>
         </v-list-group>
 
+        <v-list-tile :to="'/settings'">
+          <v-list-tile-action>
+            <v-icon>settings</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-title>Einstellungen</v-list-tile-title>
+        </v-list-tile>
         <v-list-tile :to="'/about'">
           <v-list-tile-action>
             <v-icon>info</v-icon>
