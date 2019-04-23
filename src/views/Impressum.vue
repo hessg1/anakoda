@@ -22,7 +22,7 @@
       Feedback
     </v-tab>
     <v-tab-item>
-      <Feedback />
+      <Feedback :questions="questions"></Feedback>
     </v-tab-item>
   </v-tabs>
 </template>
@@ -39,6 +39,27 @@ export default {
     Versions,
     About,
     Feedback
+  },
+
+  data() {
+    return {
+      questions: [
+        { question: "Willst du weitere Funktionen?",
+          answers: ["Ja", "Nein"],
+          modelname: "functions",
+          model: "",
+          questiontext: "Welche?",
+          questiontextrule: "Ja"
+        },
+        { question: "Essen?",
+          answers: ["Ja", "Nein"],
+          modelname: "eat",
+          model: "",
+          questiontext: "Was?",
+          questiontextrule: "Ja"
+        }
+      ]
+    }
   }
 }
 </script>
