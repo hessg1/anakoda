@@ -1,7 +1,13 @@
 <template>
   <v-container>
     <h1>Versionsverlauf</h1>
-    <h2>anakoda 0.1</h2>
+    <h2>anakoda 0.1.1</h2>
+    <p>24.04.2019</p>
+    <p>
+      <ul>
+        <li>Ein kleiner Fehler im Datumsformat gespeicherter Einträge wurde behoben</li>
+      </ul>
+    </p><h2>anakoda 0.1</h2>
     <p>09.04.2019</p>
     <p>
       <ul>

@@ -528,13 +528,13 @@ export default {
     Format a Time to string to ISO8601 (YYYY-MM-DDThh:mm:ss+hh:mm)
     parameters: - time: a time string in the format hh:mm
     returns:    - a date with time as ISO-string (YYYY-MM-DDThh:mm:ss+hh:mm)
-    author:     schwf3
-    version:    2019-03-27
+    author:     schwf3, updated hessg1
+    version:    2019-03-27, updated 2019-04-24
     */
     formateTime (time) {
       if (!time) return null
 
-      return this.date + "T" + time+ ":00+00:00";
+      return new Date(this.date + "T" + time).toISOString();
     },
 
     /*

@@ -65,7 +65,7 @@ export class EatingHabit extends FhirResource {
     }
 
     // check if date is in future
-    if(new Date(date).getTime() > Date.now() + 2*60*60*1000){
+    if(new Date(date).getTime() > Date.now() + 10000){
       throw("Fehler: Kann keine Observation mit zukünftigem Datum erstellen.");
     }
 
@@ -82,7 +82,7 @@ export class EatingHabit extends FhirResource {
         "code": "364645004",
         "display": "Eating feeding / drinking observable"
       }]};
-    this.effectiveDateTime = date;
+    this.effectiveDateTime = new Date(date).toISOString();
     this.valueCodeableConcept = {
       "coding": [{
           "system": "http://snomed.info/sct",
@@ -105,23 +105,26 @@ version     2019-03-19
 export class SleepPattern extends FhirResource {
   constructor(startTime, endTime, quality){
     super();
-    // check if quality is valid
-    if(quality < sleepQualityRange[0] || quality > sleepQualityRange[1]){
-      throw("Fehler: Qualität muss zwischen " + sleepQualityRange[0] + " und " + sleepQualityRange[1] + " liegen.");
-    }
-
-    // check if date is in future
-    if(new Date(startTime).getTime() > Date.now() + 2*60*60*1000 || new Date(endTime).getTime() > Date.now() + 2*60*60*1000){
-      throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
-    }
 
     // check for undefined values
     if(!startTime || !endTime || !quality){
       throw("Fehler: Nullwert eingegeben.");
     }
 
+    // check if quality is valid
+    if(quality < sleepQualityRange[0] || quality > sleepQualityRange[1]){
+      throw("Fehler: Qualität muss zwischen " + sleepQualityRange[0] + " und " + sleepQualityRange[1] + " liegen.");
+    }
+
+    startTime = new Date(startTime);
+    endTime = new Date(endTime);
+    // check if date is in future
+    if(startTime.getTime() > Date.now() || endTime.getTime() > Date.now() + 2*60*60*1000){
+      throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
+    }
+
     // throw an error if endTime is before startTime
-    if(new Date(endTime) < new Date(startTime)){
+    if(endTime < startTime){
       throw("Fehler: endTime liegt vor startTime.");
     }
 
@@ -131,7 +134,7 @@ export class SleepPattern extends FhirResource {
         "code": "65554-8",
         "display": "How many hours and minutes does it take for you to become fully awake from regular sleep, after first opening your eyes in the morning."
       }]};
-    this.effectivePeriod = {"start": startTime, "end": endTime},
+    this.effectivePeriod = {"start": startTime.toISOString(), "end": endTime.toISOString()},
     this.component = [{
         "code": {
           "coding": [{
@@ -166,12 +169,15 @@ export class Complaint extends FhirResource {
       throw("Fehler: Nullwert eingegeben.");
     }
 
-    if(new Date(startTime).getTime() > Date.now() + 2*60*60*1000 || new Date(endTime).getTime() > Date.now() + 2*60*60*1000){
+    startTime = new Date(startTime);
+    endTime = new Date(endTime);
+
+    if(startTime.getTime() > Date.now() || endTime.getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 
     // throw an error if endTime is before startTime
-    if(new Date(endTime) < new Date(startTime)){
+    if(endTime < startTime){
       throw("Fehler: endTime liegt vor startTime.");
     }
 
@@ -182,7 +188,7 @@ export class Complaint extends FhirResource {
       throw("Fehler: Intensität muss zwischen " + intensityRange[0] + " und " + intensityRange[1] + " liegen.");
     }
 
-    this.effectivePeriod = {"start": startTime, "end": endTime};
+    this.effectivePeriod = {"start": startTime.toISOString(), "end": endTime.toISOString()};
     this.valueCodeableConcept = {
       "coding": [
         {
@@ -243,13 +249,14 @@ export class Condition extends FhirResource {
       throw("Fehler: Nullwert eingegeben.");
     }
 
-    if(new Date(startTime).getTime() > Date.now() + 2*60*60*1000 || new Date(endTime).getTime() > Date.now() + 2*60*60*1000){
-      console.log("enddatum: " + endTime + " / " + new Date(endTime).getTime())
+    startTime = new Date(startTime);
+    endTime = new Date(endTime);
+    if(startTime.getTime() > Date.now() || endTime.getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
 
     // throw an error if endTime is before startTime
-    if(new Date(endTime) < new Date(startTime)){
+    if(endTime < startTime){
       throw("Fehler: endTime liegt vor startTime.");
     }
 
@@ -259,7 +266,7 @@ export class Condition extends FhirResource {
       throw("Fehler: Ungültiger SCT Code für Condition.");
     }
     super();
-    this.effectivePeriod = {"start": startTime, "end": endTime};
+    this.effectivePeriod = {"start": startTime.toISOString(), "end": endTime.toISOString()};
     this.valueCodeableConcept = {
       "coding": [
         {
@@ -353,7 +360,7 @@ export class Diagnosis extends FhirResource {
       throw("Fehler: Ungültiger SCT Code für Diagnosis");
     }
     super();
-    this.effectiveDateTime = date;
+    this.effectiveDateTime = new Date(date).toISOString();
 
     let superCode = sct.getFilteredProp(x=>x.code == code, "superCategory")[0];
     this.code = {

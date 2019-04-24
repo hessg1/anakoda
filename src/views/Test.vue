@@ -17,7 +17,7 @@
         <br />
         1.18 <v-btn small @click="midata.logout()">logout()</v-btn><br />
         <br />
-        1.19 <v-btn small @click="testPrepare()">prepareData()</v-btn><br />
+        1.19 - 1.25<v-btn small @click="testPrepare()">prepareData()</v-btn><br />
       </v-tab-item>
       <v-tab>
         ResourceService
@@ -192,17 +192,45 @@ export default {
       let that = this;
       this.midata.getData("Patient")
       .then(res =>{
-        that.tester("Try Patient, expect OK", function(){
+        that.tester("1.19: Aufruf mit Patient-Bundle, erwarte OK", function(){
           return that.midata.prepareData(res);
         });
       });
 
       this.midata.getData("Observation").then(res =>{
-        that.tester("Try Observation, expect OK", function(){
+        that.tester("1.20: Aufruf mit Observation-Bundle, erwarte OK", function(){
           return that.midata.prepareData(res);
         });
       });
+
+      this.midata.getData("Patient")
+      .then(res =>{
+        that.tester("1.21: Aufruf mit einzelner Patient-Ressource, erwarte OK", function(){
+          return that.midata.prepareData(res.entry[0]);
+        });
+      });
+
+      this.midata.getData("Observation")
+      .then(res =>{
+        that.tester("1.22: Aufruf mit einzelner Observation-Ressource, erwarte OK", function(){
+          return that.midata.prepareData(res.entry[0]);
+        });
+      });
+
+      this.tester("1.23: Aufruf mit null, erwarte Fehler", function(){
+        return that.midata.prepareData(null);
+      });
+
+      this.tester("1.24: Aufruf mit String, erwarte Fehler", function(){
+        return that.midata.prepareData("Patient");
+      });
+
+      this.tester("1.25: Aufruf mit undefined, erwarte Fehler", function(){
+        return that.midata.prepareData(undefined);
+      });
     },
+
+
 
     // utility method for testing ResourceService
     testEatingHabit(){

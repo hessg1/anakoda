@@ -24,7 +24,7 @@ export default class SnomedService {
         "code": 74964007,
         "en": "Other symptom",
         "de": "Andere Symptome",
-        "superCategory": "",
+        "superCategory": 118222006,
         "category": "Condition"
       },
       {

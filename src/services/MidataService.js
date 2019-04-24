@@ -338,7 +338,14 @@ export default class MidataService {
   version     2019-04-11
   */
   prepareData(res){
+    if(typeof res != 'object' ){
+      throw("Fehler: Ungültige Eingabe (res ist kein Objekt)");
+    }
     let data = [];
+    if(res.resource){ // catch if only one resource instead of a bundle was passed as argument
+      res.entry = [];
+      res.entry.push(res);
+    }
     for(var i in res.entry){
       if(res.entry[i].resource.resourceType == 'Observation'){
 
