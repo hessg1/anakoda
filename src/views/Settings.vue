@@ -28,7 +28,7 @@ export default {
   },
   mounted(){
     this.loggedin = this.$midataService.keepToken;
-    this.showInvalid = localStorage.getItem("showInvalid");
+    this.showInvalid = localStorage.getItem("showInvalid") == 'true';
   },
   watch: {
     loggedIn(){

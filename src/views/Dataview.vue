@@ -7,7 +7,7 @@
       <v-card  v-if="activeItem != null">
         <v-card-title>
           <span class="headline" v-if="activeItem.category == 'dayEntry'">Tageseintrag vom {{ activeItem.date }}</span>
-          <span class="headline" v-else>{{ activeItem.de }} am {{ activeItem.startTime.toLocaleDateString() }}</span>
+          <span class="headline" v-else>{{ activeItem.de }} <br v-if="isMobile"/>am {{ activeItem.startTime.toLocaleDateString() }}</span>
           <v-tooltip bottom v-if="activeItem.category == 'Headache'">
             <template v-slot:activator="{ on }">
               <v-icon v-if="isPerceivedAttack(activeItem)" color="primary" v-on="on">flash_on</v-icon>
@@ -91,6 +91,7 @@
       <v-data-table
       :headers="headacheHeaders"
       :items="headaches"
+      :pagination.sync="pagination"
       class="elevation-1"
       v-resize="onResize"
       >
@@ -135,6 +136,7 @@
         <v-data-table
         :headers="symptomHeaders"
         :items="symptoms"
+        :pagination.sync="pagination"
         class="elevation-1"
         v-resize="onResize"
         >
@@ -176,6 +178,7 @@
       <v-data-table
       :headers="dayHeaders"
       :items="days"
+      :pagination.sync="dayPagination"
       class="elevation-1"
       v-resize="onResize"
       >
@@ -228,7 +231,14 @@ export default {
       symptoms: [],
       days: [],
       pagination: {
-          sortBy: 'name'
+          descending: true,
+          rowsPerPage: 6,
+          sortBy: "startTime"
+      },
+      dayPagination: {
+          descending: true,
+          rowsPerPage: 6,
+          sortBy: "sleep[0].endTime"
       },
       search: '',
       isMobile: false,
@@ -407,8 +417,7 @@ export default {
         observations = this.$midataService.prepareData(res);
         // only display valid entries
         if(!JSON.parse(localStorage.getItem("showInvalid"))){
-          console.log("filter out invalid items")
-          observations = this.filterArray(x => (!x.invalid), observations);
+          observations = this.filterArray(x => (!x.meta.invalid), observations);
         }
 
         // get the SCT codes for headaches from SnomedService

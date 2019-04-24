@@ -372,26 +372,32 @@ export default class MidataService {
         // we have to do the json stringify dance, so the object is later not passed by reference,
         // which was causing strange errors
         let template = JSON.parse(JSON.stringify(templateArr[0]));
-        template.invalid = false;
+        let invalid = false;
 
         // fill template with actual values from resource
         if(template.category == 'EatingHabit' || template.category == 'Diagnosis'){ // EatingHabit and diagnosis has only one Time
           template.date = new Date(res.entry[i].resource.effectiveDateTime);
 
           // mark entries with invalid time values
-          template.invalid = template.startTime > new Date();
+          invalid = template.startTime > new Date();
         }
         else { // all other have start and end times
           template.startTime = new Date(res.entry[i].resource.effectivePeriod.start);
           template.endTime = new Date(res.entry[i].resource.effectivePeriod.end);
 
           // mark entries with invalid time values
-          template.invalid = (template.startTime > template.endTime) || (template.startTime > new Date());
+          invalid = (template.startTime > template.endTime) || (template.startTime > new Date());
         }
 
         if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
           // these Categories have intensities
-          template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
+          if(res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
+            template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
+          }
+          else{
+            invalid = true;
+          }
+
         }
 
         if(template.category == 'Headache'){
@@ -406,6 +412,13 @@ export default class MidataService {
         meta.versionId = res.entry[i].resource.meta.versionId;
         meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
         meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display;
+        // entries created before 2019-03-01 are possibly invalid
+        if(meta.timestamp < new Date("2019-01-31")){
+          meta.invalid = true;
+        }
+        else{
+          meta.invalid = invalid;
+        }
         template.meta = meta;
         data.push(template);
       }
