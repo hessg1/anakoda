@@ -349,6 +349,7 @@ export default class MidataService {
       res.entry.push(res);
     }
     for(var i in res.entry){
+      console.log(res.entry[i].resource)
       if(res.entry[i].resource.resourceType == 'Observation'){
 
         // create template object from SnomedService
@@ -391,11 +392,21 @@ export default class MidataService {
           invalid = template.startTime > new Date();
         }
         else { // all other have start and end times
-          template.startTime = new Date(res.entry[i].resource.effectivePeriod.start);
-          template.endTime = new Date(res.entry[i].resource.effectivePeriod.end);
+          if(res.entry[i].resource.effectivePeriod){
+            template.startTime = new Date(res.entry[i].resource.effectivePeriod.start);
+            template.endTime = new Date(res.entry[i].resource.effectivePeriod.end);
 
-          // mark entries with invalid time values
-          invalid = (template.startTime > template.endTime) || (template.startTime > new Date());
+            // mark entries with invalid time values
+            invalid = (template.startTime > template.endTime) || (template.startTime > new Date());
+          }
+          else{ // some older entries don't even have time entries, and are thus invalid
+            template.startTime = new Date(0);
+            template.endTime = new Date(1);
+            invalid = true;
+          }
+
+
+
         }
 
         if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
