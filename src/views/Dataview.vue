@@ -2,7 +2,10 @@
   <div>
     <Login />
 
-    <!-- DETAIL VIEW -->
+    <!-- FEEDBACK DIALOG -->
+    <Feedback :visible="openFeedback" :questions="questions" page="DataView" @close="openFeedback = false" />
+
+    <!-- DETAIL VIEW DIALOG-->
     <v-dialog v-model="dialog" scrollable>
       <v-card  v-if="activeItem != null">
         <v-card-title>
@@ -76,11 +79,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- FEEDBACK DIALOG -->
-    <v-dialog v-model="feedback">
-      <Feedback :questions="questions" page="DataView"></Feedback>
-    </v-dialog>
-
     <v-tabs color="#40c9a2" slider-color="#a3f7b5">
     <v-tab>Kopfschmerzen</v-tab>
 
@@ -119,7 +117,7 @@
         right
         color="pink"
         v-on="on"
-        @click="feedback = !feedback">
+        @click="openFeedback = !openFeedback">
           <v-icon>feedback</v-icon>
         </v-btn>
       </template>
@@ -162,7 +160,7 @@
           right
           color="pink"
           v-on="on"
-          @click="feedback = !feedback">
+          @click="openFeedback = openFeedback">
             <v-icon>feedback</v-icon>
           </v-btn>
         </template>
@@ -204,7 +202,7 @@
         right
         color="pink"
         v-on="on"
-        @click="feedback = !feedback">
+        @click="openFeedback = !openFeedback">
           <v-icon>feedback</v-icon>
         </v-btn>
       </template>
@@ -279,7 +277,7 @@ export default {
         { text: 'Schlaf', sortable: false, align: 'left'},
         { text: 'Essgewohnheit', sortable: false, align: 'left'}
       ],
-      feedback: false,
+      openFeedback: false,
       questions: [
         { question: "Findest du die Auflistung deiner Daten übersichtlich?",
           answers: ["Ja", "Nein"],
