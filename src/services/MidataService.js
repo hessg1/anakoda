@@ -343,7 +343,7 @@ export default class MidataService {
     }
     let data = [];
     if(res.resource){ // catch if only one resource instead of a bundle was passed as argument
-      res.entry = [];
+      res.entry = [];
       res.entry.push(res);
     }
     for(var i in res.entry){

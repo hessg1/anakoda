@@ -57,14 +57,14 @@
 </v-card-text>
 
 <v-card-text>
-      Wie viele Sterne gibst du unserer Webanwendung?
+      Wie viele Sterne gibst du anakoda?
       <v-rating
-      v-model="raiting"
+      v-model="rating"
       hover
       background-color="primary">
       </v-rating>
-      <input type="hidden" name='raiting' :value="raiting">
-
+      <input type="hidden" name='rating' :value="rating">
+      <input type="hidden" name='userID' :value="userID">
 </v-card-text>
 
 <v-divider></v-divider>
@@ -88,15 +88,17 @@
 </template>
 
 <script>
+const crypto = require('crypto');
 
 export default {
   data() {
     return {
       ageoption: ["unter 25", "unter 40", "unter 65", "über 65"],
       agegroup: "",
-      skilloption: ["nie", "wenige Male im Jahr", "einmal im Monat", "einmal am Tag", "mehrmals am Tag"],
+      skilloption: ["nie", "wenige Male im Jahr", "monatlich", "wöchentlich", "einmal am Tag", "mehrmals am Tag"],
       skill: "",
-      raiting: 0,
+      userID: "",
+      rating: 0,
       localdialog: null,
     }
   },
@@ -137,6 +139,10 @@ export default {
     if(localStorage.getItem("skill")){
       this.skill = localStorage.getItem("skill");
     }
+    //create an anonymous, but distinct user id
+    let user = this.$midataService.patient;
+    this.userID = crypto.createHash('md5').update(user).digest('hex');
+    console.log(this.$midataService.patient)
   }
 }
 
