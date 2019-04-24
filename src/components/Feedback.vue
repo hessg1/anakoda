@@ -7,8 +7,8 @@
       Deine Meinung ist uns wichtig!
     </v-card-title>
     <v-card-text>
-      Damit wir unsere Webanwendung stetig verbessern können, ist uns deine Meinung sehr wichtig!
-      Bitte fülle dafür die folgenden Felder aus. Das Feedback wird selbstverständlich anonym behandelt.
+      Damit wir anakoda stetig verbessern können, ist uns deine Meinung sehr wichtig!<br />
+      Bitte fülle dafür die folgenden Felder aus. Deine Antworten werden anonym übermittelt.
     </v-card-text>
 
     <v-divider></v-divider>
@@ -58,7 +58,7 @@
     </v-card-text>
 
     <v-card-text>
-          Wie viele Sterne gibst du anakoda?
+          Alles in allem: Wie viele Sterne gibst du anakoda?
           <v-rating
           v-model="rating"
           hover
@@ -72,7 +72,7 @@
 
     <v-card-actions class="justify-space-between">
       <v-btn flat @click.stop="show=false">
-        Nein Danke
+        Abbrechen
       </v-btn>
       <v-btn
       color="primary"
@@ -101,7 +101,6 @@ export default {
       skill: "",
       userID: "",
       rating: 0,
-      localdialog: null, 
       show: false,
     }
   },
@@ -137,8 +136,6 @@ export default {
   },
 
   mounted(){
-    this.dialog = this.open;
-
     if(localStorage.getItem("agegroup")){
       this.agegroup = localStorage.getItem("agegroup");
     }
@@ -149,6 +146,7 @@ export default {
     let user = this.$midataService.patient;
     this.userID = crypto.createHash('md5').update(user).digest('hex');
   },
+
   watch: {
     visible(){
       this.show = this.visible;
