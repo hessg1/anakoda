@@ -46,7 +46,7 @@
               <td>Intensität:</td>
               <td>{{ activeItem.quantity}}/10</td>
             </tr>
-            <tr v-if="activeItem.category == 'Headache' || activeItem.category == 'VariousComplaint'">
+            <tr v-if="activeItem.category == 'Headache' || activeItem.category == 'VariousComplaint' || activeItem.category == 'Condition'">
               <td>Dauer:</td>
               <td>{{ formatDuration(activeItem) }}</td>
             </tr>
