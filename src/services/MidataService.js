@@ -338,6 +338,8 @@ export default class MidataService {
   version     2019-04-11
   */
   prepareData(res){
+    const cutOffDate = new Date("2019-01-31") // older entries are marked invalid
+
     if(typeof res != 'object' ){
       throw("Fehler: Ungültige Eingabe (res ist kein Objekt)");
     }
@@ -398,7 +400,8 @@ export default class MidataService {
 
         if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
           // these Categories have intensities
-          if(res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
+
+          if(new Date(res.entry[i].resource.meta.lastUpdated) > cutOffDate && res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
             template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
           }
           else{
@@ -420,7 +423,7 @@ export default class MidataService {
         meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
         meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display;
         // entries created before 2019-03-01 are possibly invalid
-        if(meta.timestamp < new Date("2019-01-31")){
+        if(meta.timestamp < cutOffDate){
           meta.invalid = true;
         }
         else{
