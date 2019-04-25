@@ -96,10 +96,10 @@
         <template v-slot:items="props">
           <tr @click="clicked(props.item)">
             <td>{{ props.item.de }}</td>
-            <td class="text-xs-center">{{ props.item.startTime.toLocaleDateString() }}</td>
-            <td v-if="!isMobile" class="text-xs-center">{{ props.item.quantity }}</td>
-            <td v-if="!isMobile" class="text-xs-center">{{ props.item.bodySiteDE }}</td>
-            <td v-if="!isMobile" class="text-xs-center">{{ calcDuration(props.item.endTime, props.item.startTime) }}</td>
+            <td class="text-xs">{{ props.item.startTime.toLocaleDateString() }}</td>
+            <td v-if="!isMobile" class="text-xs">{{ props.item.quantity }}</td>
+            <td v-if="!isMobile" class="text-xs">{{ props.item.bodySiteDE }}</td>
+            <td v-if="!isMobile" class="text-xs">{{ calcDuration(props.item.endTime, props.item.startTime) }}</td>
           </tr>
         </template>
         <template v-slot:no-data>
@@ -141,8 +141,8 @@
           <template v-slot:items="props">
             <tr @click="clicked(props.item)">
               <td>{{ props.item.de }}</td>
-              <td class="text-xs-center">{{ props.item.startTime.toLocaleDateString() }}</td>
-              <td v-if="!isMobile" class="text-xs-center">{{ calcDuration(props.item.endTime, props.item.startTime) }}</td>
+              <td class="text-xs">{{ props.item.startTime.toLocaleDateString() }}</td>
+              <td v-if="!isMobile" class="text-xs">{{ calcDuration(props.item.endTime, props.item.startTime) }}</td>
             </tr>
           </template>
           <template v-slot:no-data>
@@ -252,7 +252,7 @@ export default {
           sortable: false,
           value: 'de'
         },
-        { text: 'am:', value: 'startTime', align: 'left'},
+        { text: 'Datum:', value: 'startTime', align: 'left'},
         { text: 'Intensität', value: 'quantity', align: 'left'},
         { text: 'Seite', sortable: false, align: 'left'},
         { text: 'Dauer (h)', sortable: false, align: 'left'}
@@ -264,7 +264,7 @@ export default {
           sortable: false,
           value: 'de'
         },
-        { text: 'am:', value: 'startTime', align: 'left'},
+        { text: 'Datum:', value: 'startTime', align: 'left'},
         { text: 'Dauer (h)', sortable: false, align: 'left'}
       ],
       dayHeaders: [
@@ -445,6 +445,13 @@ export default {
             })
           }
           else{
+            if(this.days[j].meta.invalid && this.days[j].sleep.length == 1){
+              // check if it's invalid because only eating habit was created yet
+              if(this.days[j].sleep[0].quantity == -1 ){
+                this.days[j].meta.invalid = sleep[i].meta.invalid;
+                this.days[j].sleep[0] = sleep[i];
+              }
+            }
             this.days[j].sleep.push(sleep[i]);
           }
         }
@@ -460,11 +467,16 @@ export default {
             }
           }
           if(dayEntry == null){
+            eat[i].meta.invalid = true; // if we don't have a sleep pattern, it's not valid
             this.days.push({
               date: eat[i].date.toLocaleDateString(),
               category: "dayEntry",
               eat: [eat[i]],
-              sleep: [],
+              sleep: [{
+                startTime: new Date(0),
+                endTime: new Date(1),
+                quantity: -1
+              }],
               meta: eat[i].meta
             })
           }
@@ -486,7 +498,7 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime', align: 'left',}
+          { text: 'Datum:', value: 'startTime', align: 'left',}
         ];
         this.symptomHeaders = [
           {
@@ -495,7 +507,7 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime', align: 'left'}
+          { text: 'Datum:', value: 'startTime', align: 'left'}
         ];
         this.symptomTab = 'Auffälligkeiten';
         this.dayTab = 'Tage';
@@ -508,7 +520,7 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime', align: 'left',},
+          { text: 'Datum:', value: 'startTime', align: 'left',},
           { text: 'Intensität', value: 'quantity', align: 'left',},
           { text: 'Seite', sortable: false, align: 'left',},
           { text: 'Dauer (h)', sortable: false, align: 'left',}
@@ -520,7 +532,7 @@ export default {
             sortable: false,
             value: 'de'
           },
-          { text: 'am:', value: 'startTime', align: 'left'},
+          { text: 'Datum:', value: 'startTime', align: 'left'},
           { text: 'Dauer (h)', sortable: false, align: 'left'}
         ];
         this.symptomTab = 'Symptome & Auffälligkeiten';
@@ -541,6 +553,10 @@ export default {
 </script>
 
 <style scoped>
+.v-table td {
+  cursor: pointer;
+}
+
 /* styling of the detail view table */
 table.detail {
   width: 100%;
@@ -548,8 +564,6 @@ table.detail {
 .detail td {
   justify-content: left;
   text-align: left;
-}
-.detail tr:hover{
 }
 .detail td:first-child{
   width: 30%;
