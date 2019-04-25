@@ -113,12 +113,12 @@
         absolute
         dark
         fab
-        bottom
+        top
         right
-        color="pink"
+        color="#664147"
         v-on="on"
         @click="openFeedback = !openFeedback">
-          <v-icon>feedback</v-icon>
+          <v-icon>comment</v-icon>
         </v-btn>
       </template>
       <span>Gib uns dein Feedback</span>
@@ -156,12 +156,12 @@
           absolute
           dark
           fab
-          bottom
+          top
           right
-          color="pink"
+          color="#664147"
           v-on="on"
           @click="openFeedback = openFeedback">
-            <v-icon>feedback</v-icon>
+            <v-icon>comment</v-icon>
           </v-btn>
         </template>
         <span>Gib uns dein Feedback</span>
@@ -198,12 +198,12 @@
         absolute
         dark
         fab
-        bottom
+        top
         right
-        color="pink"
+        color="#664147"
         v-on="on"
         @click="openFeedback = !openFeedback">
-          <v-icon>feedback</v-icon>
+          <v-icon>comment</v-icon>
         </v-btn>
       </template>
       <span>Gib uns dein Feedback</span>
@@ -474,8 +474,8 @@ export default {
         }
       });
     }
-
   },
+  
   watch: {
     isMobile(){
       if(this.isMobile){
