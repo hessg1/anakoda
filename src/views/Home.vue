@@ -32,9 +32,9 @@
         <v-card-title primary-title>
           <v-layout row wrap>
           <v-flex xs12 md6>
-            <div class="headline">Willkommen<span v-if="name!=''">, {{name}}!</span></div>
-            <span>Momentan kannst du auf anakoda lediglich Daten erfassen und noch
-              nicht einsehen. Wir arbeiten daran, dir so schnell wie möglich erste
+            <div class="headline">Hallo<span v-if="name!=''">, {{name}}!</span></div>
+            <span>Herzlich Willkommen bei anakoda. Aktuell kannst du mit dem Onlinetool Daten erfassen und einsehen.
+              Wir arbeiten daran, dir so schnell wie möglich erste
                Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist
                es wichtig, dass du regelmässig Daten erfasst. Nur so können wir
                dir später eine möglichst detaillierte Analyse bieten.</span>
@@ -49,6 +49,20 @@
           </v-flex>
         </v-layout>
         </v-card-title>
+      </v-card>
+    </v-flex>
+    <v-flex xs12 v-if="midata != '' && midata.isReady()">
+      <v-card color="#e5f9e0" class="primary--text">
+        <v-card-title primary-title>
+          <div>
+            <div class="headline"><v-icon color="primary">description</v-icon>
+              Daten einsehen</div>
+            <span>Lass dir all deine Daten anzeigen, unabhängig von welcher Applikation sie abgespeichert wurden. Vielleicht erkennst du schon erste Muster.</span>
+          </div>
+        </v-card-title>
+        <v-card-actions>
+          <v-btn class="primary--text" to="/dataview">Meine Daten</v-btn>
+        </v-card-actions>
       </v-card>
     </v-flex>
     <v-flex xs12 v-if="midata != '' && midata.isReady()">
