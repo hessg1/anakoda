@@ -79,6 +79,26 @@
       </v-card>
     </v-dialog>
 
+    <v-tooltip left>
+      <template v-slot:activator="{ on }">
+        <v-btn v-if="flashyFeedback" absolute dark fab top right color="#664147" z-index="1000" v-on="on" @click="openFeedback = !openFeedback">
+          <v-icon>comment</v-icon>
+        </v-btn>
+        <v-btn
+        v-else
+        absolute
+        small dark fab
+        top right
+        z-index="1000"
+        color="grey"
+        v-on="on"
+        @click="openFeedback = !openFeedback">
+          <v-icon>comment</v-icon>
+        </v-btn>
+      </template>
+      <span>Gib uns dein Feedback</span>
+  </v-tooltip>
+
     <v-tabs color="#40c9a2" slider-color="#a3f7b5">
     <v-tab>Kopfschmerzen</v-tab>
 
@@ -107,22 +127,7 @@
         </template>
       </v-data-table>
     </v-container>
-    <v-tooltip left>
-      <template v-slot:activator="{ on }">
-        <v-btn
-        absolute
-        dark
-        fab
-        top
-        right
-        color="#664147"
-        v-on="on"
-        @click="openFeedback = !openFeedback">
-          <v-icon>comment</v-icon>
-        </v-btn>
-      </template>
-      <span>Gib uns dein Feedback</span>
-  </v-tooltip>
+
   </v-tab-item>
 
   <!-- SYMPTOM TABLE -->
@@ -150,22 +155,7 @@
           </template>
         </v-data-table>
       </v-container>
-      <v-tooltip left>
-        <template v-slot:activator="{ on }">
-          <v-btn
-          absolute
-          dark
-          fab
-          top
-          right
-          color="#664147"
-          v-on="on"
-          @click="openFeedback = openFeedback">
-            <v-icon>comment</v-icon>
-          </v-btn>
-        </template>
-        <span>Gib uns dein Feedback</span>
-    </v-tooltip>
+
     </v-tab-item>
 
   <!-- DAY TABLE-->
@@ -192,22 +182,6 @@
         </template>
       </v-data-table>
     </v-container>
-    <v-tooltip left>
-      <template v-slot:activator="{ on }">
-        <v-btn
-        absolute
-        dark
-        fab
-        top
-        right
-        color="#664147"
-        v-on="on"
-        @click="openFeedback = !openFeedback">
-          <v-icon>comment</v-icon>
-        </v-btn>
-      </template>
-      <span>Gib uns dein Feedback</span>
-  </v-tooltip>
   </v-tab-item>
   </v-tabs>
 </div>
@@ -487,7 +461,7 @@ export default {
       });
     }
   },
-  
+
   watch: {
     isMobile(){
       if(this.isMobile){
@@ -548,6 +522,16 @@ export default {
       }
     }
 
+  },
+  computed: {
+    flashyFeedback(){
+      // the feedback fab don't have to be flashy if feedback was filled out or page is loaded the first time
+      let feedback = false;
+      if(localStorage.getItem('feedback')){
+        feedback = JSON.parse(localStorage.getItem('feedback'))['DataView'];
+      }
+      return feedback != 'filled' && feedback > 1;
+    }
   }
 }
 </script>
