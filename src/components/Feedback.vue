@@ -105,6 +105,7 @@ export default {
       rating: 0,
       show: false,
       feedbacks: {},
+      filled: false,
     }
   },
 
@@ -132,6 +133,10 @@ export default {
         if(this.skill){
           localStorage.setItem("skill", this.skill);
         }
+
+        this.feedbacks[this.page] = "filled";
+        localStorage.setItem("feedback",  JSON.stringify(this.feedbacks))
+
         document.getElementById("feedback").submit();
       }
     }
@@ -150,22 +155,21 @@ export default {
     let user = this.$midataService.patient;
     this.userID = crypto.createHash('md5').update(user).digest('hex');
 
+    // show feedback automaticly every fifth time if not filled in
     if(localStorage.getItem("feedback")){
       this.feedbacks = JSON.parse(localStorage.getItem("feedback"));
     }
-
     if(this.feedbacks[this.page]){
-      if(this.feedbacks[this.page] <= 5){
-        this.feedbacks[this.page] = this.feedbacks[this.page] + 1;
-      }
-      if(this.feedbacks[this.page] == 5){
-        this.show = true;
+      if(this.feedbacks[this.page] != "filled"){
+        this.feedbacks[this.page] += 1;
+        if(this.feedbacks[this.page] % 5 == 0){
+          this.show = true;
+        }
       }
     }
     else{
       this.feedbacks[this.page] = 1;
     }
-
     localStorage.setItem("feedback",  JSON.stringify(this.feedbacks))
 
   },
