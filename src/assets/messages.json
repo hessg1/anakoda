@@ -1,0 +1,12 @@
+[
+  {
+    "patient": "P-MLHK-K1L5",
+    "message": "In Ihrem Datenset wurden Auffälligkeiten gefunden, die auf ein medizinisches Problem hinweisen.",
+    "contact": "study@anadoka.ch"
+  },
+  {
+    "patient": "x-xxxx-xxxx",
+    "message": "Ciao bella!",
+    "contact": "casa@nova.it"
+  }
+]

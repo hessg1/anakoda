@@ -101,6 +101,7 @@
 
 <script>
 import MidataService from '@/services/MidataService';
+import warnings from '@/assets/messages.json'
 
 export default {
   name: 'home',
@@ -168,6 +169,19 @@ export default {
         this.getPatient();
       }
     }
+
+    if(this.patient){
+      // check if we have any warnings from study researchers
+      let id = this.$patient.meta.participantId
+      warnings.forEach(warning => {
+        if(warning.patient == id){
+          console.log("WARNUNG");
+          console.log(warning.message);
+          console.log("Bitte kontaktieren Sie " + warning.contact);
+        }
+      })
+    }
+
 
 
 
