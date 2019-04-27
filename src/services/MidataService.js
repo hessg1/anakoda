@@ -338,8 +338,6 @@ export default class MidataService {
   version     2019-04-11
   */
   prepareData(res){
-    const cutOffDate = new Date("2019-01-31") // older entries are marked invalid
-
     if(typeof res != 'object' ){
       throw("Fehler: Ungültige Eingabe (res ist kein Objekt)");
     }
@@ -353,11 +351,14 @@ export default class MidataService {
 
         // create template object from SnomedService
         let code = "";
+        let invalid = true;
         if(res.entry[i].resource.valueCodeableConcept != undefined){
           code = res.entry[i].resource.valueCodeableConcept.coding[0].code;
+          invalid = false;
         }
-        else {
+        else if(res.entry[i].resource.component[0].code != undefined) {
           code = res.entry[i].resource.component[0].code.coding[0].code;
+          invalid = false;
         }
 
         // we have to catch possible "other diagnosis" and "other headache",
@@ -381,14 +382,19 @@ export default class MidataService {
         // we have to do the json stringify dance, so the object is later not passed by reference,
         // which was causing strange errors
         let template = JSON.parse(JSON.stringify(templateArr[0]));
-        let invalid = false;
 
         // fill template with actual values from resource
         if(template.category == 'EatingHabit' || template.category == 'Diagnosis'){ // EatingHabit and diagnosis has only one Time
-          template.date = new Date(res.entry[i].resource.effectiveDateTime);
+          if(res.entry[i].resource.effectiveDateTime){
+            template.date = new Date(res.entry[i].resource.effectiveDateTime);
 
-          // mark entries with invalid time values
-          invalid = template.startTime > new Date();
+            // mark entries with invalid time values
+            invalid = template.startTime > new Date();
+          }
+          else {
+            template.date = new Date(1);
+            invalid = true;
+          }
         }
         else { // all other have start and end times
           if(res.entry[i].resource.effectivePeriod){
@@ -403,15 +409,12 @@ export default class MidataService {
             template.endTime = new Date(1);
             invalid = true;
           }
-
-
-
         }
 
         if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
           // these Categories have intensities
 
-          if(new Date(res.entry[i].resource.meta.lastUpdated) > cutOffDate && res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
+          if(res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
             template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
           }
           else{
@@ -422,26 +425,32 @@ export default class MidataService {
 
         if(template.category == 'Headache'){
           // headaches also have body sites
-          template.bodySiteSCT = res.entry[i].resource.bodySite.coding[0].code;
-          template.bodySiteDE = sct.getGerman(template.bodySiteSCT);
+          if(res.entry[i].resource.bodySite.coding[0]){
+            template.bodySiteSCT = res.entry[i].resource.bodySite.coding[0].code;
+            template.bodySiteDE = sct.getGerman(template.bodySiteSCT);
+          }
+          else{
+            invalid = true;
+          }
+
         }
 
         // create metadata
         let meta = {};
         meta.id = res.entry[i].resource.id;
-        meta.versionId = res.entry[i].resource.meta.versionId;
-        meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
-        meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display;
-        // entries created before 2019-03-01 are possibly invalid
-        if(meta.timestamp < cutOffDate){
-          meta.invalid = true;
+        if(res.entry[i].resource.meta){
+          meta.versionId = res.entry[i].resource.meta.versionId;
+          meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
+          meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display;
         }
-        else{
-          meta.invalid = invalid;
+        else {
+          invalid = true;
         }
+        meta.invalid = invalid;
         template.meta = meta;
         data.push(template);
       }
+
       else if(res.entry[i].resource.resourceType == 'Patient'){
         let pat = {};
         pat.id = res.entry[i].resource.id;
