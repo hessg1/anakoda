@@ -527,7 +527,7 @@ export default {
     flashyFeedback(){
       // the feedback fab don't have to be flashy if feedback was filled out or page is loaded the first time
       let feedback = false;
-      if(localStorage.getItem('feedback')){
+      if(localStorage.getItem('feedback') && localStorage.getItem('feedback') != 'undefined'){
         feedback = JSON.parse(localStorage.getItem('feedback'))['DataView'];
       }
       return feedback != 'filled' && feedback > 1;

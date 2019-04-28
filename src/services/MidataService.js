@@ -161,6 +161,16 @@ export default class MidataService {
         that.refreshToken = res.refresh_token;
         that.tokenEOL = Date.now() + (1000 * res.expires_in);
         that.patient = res.patient;
+        // check if logged in patient is the same as last logged in
+        if(localStorage.getItem("patientId") != res.patient){
+          // if we have another patient, we need to clear the localStorage
+          localStorage.clear();
+          localStorage.setItem("patientId", res.patient);
+          localStorage.setItem("oauth-client", that.client);
+          localStorage.setItem("oauth-state", that.state);
+          localStorage.setItem("oauth-uri", JSON.stringify(that.uri));
+          localStorage.setItem("keepToken", that.keepToken);
+        }
         if(that.keepToken){
           localStorage.setItem("oauth-token", res.access_token);
           localStorage.setItem("oauth-refreshtoken", res.refresh_token);
@@ -171,7 +181,7 @@ export default class MidataService {
           sessionStorage.setItem("oauth-refreshtoken", res.refresh_token);
           sessionStorage.setItem("oauth-tokeneol", that.tokenEOL);
         }
-        localStorage.setItem("patientId", res.patient);
+
         resolve(res);
 
       }).catch(err => {
