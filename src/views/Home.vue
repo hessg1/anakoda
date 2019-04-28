@@ -19,7 +19,7 @@
         <v-card-title primary-title>
           <div>
             <div class="headline">Anmelden</div>
-            <span>Bitte melde dich bei MIDATA an, damit du neue Einträge erstellen kannst.</span>
+            <span>Bitte melde dich bei MIDATA an, damit du anakoda verwenden kannst.</span>
           </div>
         </v-card-title>
         <v-card-actions>
@@ -33,7 +33,7 @@
           <v-layout row wrap>
           <v-flex xs12 md6>
             <div class="headline">Hallo<span v-if="name!=''">, {{name}}!</span></div>
-            <span>Herzlich Willkommen bei anakoda. Aktuell kannst du mit dem Onlinetool Daten erfassen und einsehen.
+            <span>Herzlich Willkommen bei anakoda. Aktuell kannst du Daten erfassen und einsehen.
               Wir arbeiten daran, dir so schnell wie möglich erste
                Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist
                es wichtig, dass du regelmässig Daten erfasst. Nur so können wir
@@ -57,7 +57,7 @@
           <div>
             <div class="headline"><v-icon color="primary">description</v-icon>
               Daten einsehen</div>
-            <span>Lass dir all deine Daten anzeigen, unabhängig von welcher Applikation sie abgespeichert wurden. Vielleicht erkennst du schon erste Muster.</span>
+            <span>Lasse dir all deine Daten anzeigen, unabhängig mit welcher Applikation du sie abgespeichert hast.</span>
           </div>
         </v-card-title>
         <v-card-actions>
@@ -72,7 +72,7 @@
             <div class="headline"><v-icon color="primary">today</v-icon>
               Alltägliche Einträge erfassen</div>
             <span>Um herauszufinden ob dein alltägliches Wohlbefinden einen Einfluss
-              auf deine Kopfschmerzen hat, kannst du dies hier mit nur wenigen
+              auf deine Kopfschmerzen hat, kannst du es hier mit nur wenigen
               Klicks erfassen.</span>
           </div>
         </v-card-title>
@@ -101,7 +101,7 @@
       <v-card class="primary--text">
         <v-card-title primary-title>
           <div>
-            <span>Benutzen andere Personen den selben Computer? Dann logge dich aus, wenn du fertig bist (automatisches Logout nach sechs Stunden).<br></span>
+            <span>Dann logge dich aus, wenn du fertig bist.<br></span>
           </div>
         </v-card-title>
         <v-card-actions>

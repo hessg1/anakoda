@@ -38,14 +38,14 @@
             <v-list-tile-action>
               <v-icon>today</v-icon>
             </v-list-tile-action>
-            <v-list-tile-title>Mein Tag</v-list-tile-title>
+            <v-list-tile-title>Tag erfassen</v-list-tile-title>
           </v-list-tile>
 
           <v-list-tile :to="'/yoursymptoms'">
             <v-list-tile-action>
               <v-icon>face</v-icon>
             </v-list-tile-action>
-            <v-list-tile-title>Meine Auffälligkeiten</v-list-tile-title>
+            <v-list-tile-title>Auffälligkeiten erfassen</v-list-tile-title>
           </v-list-tile>
         </v-list-group>
 
@@ -68,7 +68,7 @@
     <v-toolbar app clipped-left color="primary">
       <v-btn icon @click="drawer = !drawer"><v-icon>menu</v-icon></v-btn>
       <v-toolbar-title class="headline">
-        <span class="font-weight-light">anakoda <i>preview V0.2&nbsp;</i></span>
+        <span class="font-weight-light">anakoda <i>preview RC0.2&nbsp;</i></span>
       </v-toolbar-title>
     </v-toolbar>
 

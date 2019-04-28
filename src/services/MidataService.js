@@ -1,4 +1,4 @@
-const serviceUri = "https://test.midata.coop/fhir/";
+const serviceUri = "https://ch.midata.coop/fhir/";
 const client = "anakoda";
 
 import $ from 'jquery';
