@@ -13,7 +13,7 @@
 
     <v-divider></v-divider>
 
-    <v-form ref="form" id="feedback" action="https://getsimpleform.com/messages?form_api_token=71e9e52b035d63023a80fac07ebe2d0b" method="post">
+    <v-form ref="form" id="feedback" action="http://anakoda.ch/preview/backend/feedbackMailer.php" method="post">
 
       <input type="hidden" name='page' :value="page">
 
@@ -93,6 +93,7 @@
 
 <script>
 const crypto = require('crypto');
+import $ from 'jquery';
 
 export default {
   data() {
@@ -122,11 +123,13 @@ export default {
     and submits the form.
     parameters: none
     returns:    none
-    author:     schwf3
-    version:    2019-04-23
+    author:     schwf3 / hessg1
+    version:    2019-04-28
     */
     send(){
       if (this.$refs.form.validate()) {
+
+        // persist demographic values locally
         if(this.agegroup){
           localStorage.setItem("agegroup", this.agegroup);
         }
@@ -134,10 +137,40 @@ export default {
           localStorage.setItem("skill", this.skill);
         }
 
-        this.feedbacks[this.page] = "filled";
-        localStorage.setItem("feedback",  JSON.stringify(this.feedbacks))
+        // actually send form
+        let that = this;
+        $.ajax({
+          type: 'POST',
+          url: "https://anakoda.ch/preview/backend/feedbackMailer.php",
+          data: $("form").serialize(),
+          dataType: "json"
+        }).done(function(res, text, header){
+            console.log("feedback verschickt, status: " + header.status)
+            that.show = false;
+            that.feedbacks[that.page] = "filled";
+            localStorage.setItem("feedback",  JSON.stringify(this.feedbacks));
 
-        document.getElementById("feedback").submit();
+            // reset form:
+            that.$refs.form.reset();
+
+        }).catch(function(err, text, header) {
+            if(err.status == 0){
+              console.log("Feedbackformular: Fehler \n(beim Testen von localhost vermutlich Cross-Origin blockiert)");
+
+              // for testing locally, we assume everything was alright
+              that.show = false;
+              that.feedbacks[that.page] = "filled";
+              localStorage.setItem("feedback",  JSON.stringify(this.feedbacks));
+
+              // reset form:
+              that.$refs.form.reset();
+            }
+            else{
+              console.log("Feedbackformular: Fehler (Status: " + header.status + ")");
+              console.log(err);
+              alert("Ups, da ist etwas schiefgegangen.");
+            }
+          });
       }
     }
 
@@ -156,7 +189,7 @@ export default {
     this.userID = crypto.createHash('md5').update(user).digest('hex');
 
     // show feedback automaticly every fifth time if not filled in
-    if(localStorage.getItem("feedback")){
+    if(localStorage.getItem("feedback") && localStorage.getItem("feedback") != 'undefined'){
       this.feedbacks = JSON.parse(localStorage.getItem("feedback"));
     }
     if(this.feedbacks[this.page]){
