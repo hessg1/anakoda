@@ -131,15 +131,24 @@ export default {
   },
   methods: {
     auth(){
-      // create redirect uri and remove potential #:
+      // create redirect uri fitting for productive or preview platform
       let url = window.location.href;
-      if(url.includes('#')){
-        url = url.slice(0, url.indexOf('#'));
+      if(!url.includes('localhost') && url.includes('/app/')){
+        url = 'https://anakoda.ch/app/';
       }
-      // url must end in an /
-      if(url.charAt(url.length-1) != '/'){
-        url = url + '/';
+      else if(!url.includes('localhost') && url.includes('/preview/')){
+        url = 'https://anakoda.ch/preview/';
       }
+      else{
+        if(url.includes('#')){
+         url = url.slice(0, url.indexOf('#'));
+       }
+        // url must end in an /
+        if(url.charAt(url.length-1) != '/'){
+          url = url + '/';
+        }
+      }
+
       // if everything is ok, we can call midata
       this.midata.requestAuth(url);
     },

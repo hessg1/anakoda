@@ -1,4 +1,4 @@
-const serviceUri = "https://ch.midata.coop/fhir/";
+const serviceUri = "https://test.midata.coop/fhir/";
 const client = "anakoda";
 
 import $ from 'jquery';
@@ -424,7 +424,7 @@ export default class MidataService {
         if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
           // these Categories have intensities
 
-          if(res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
+          if(res.entry[i].resource.component){ // catch old faulty entries
             template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
           }
           else{
