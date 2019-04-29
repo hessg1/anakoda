@@ -101,7 +101,7 @@
       <v-card class="primary--text">
         <v-card-title primary-title>
           <div>
-            <span>Dann logge dich aus, wenn du fertig bist.<br></span>
+            <span>Logge dich aus, wenn du fertig bist.<br></span>
           </div>
         </v-card-title>
         <v-card-actions>

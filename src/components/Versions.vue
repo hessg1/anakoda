@@ -2,14 +2,16 @@
   <v-container>
     <h1>Versionsverlauf</h1>
     <h2>anakoda 0.2</h2>
-    <p>28.04.2019</p>
+    <p>29.04.2019</p>
     <p>
       <ul>
         <li>Anzeigen von erfassten Einträgen in Tabellenform</li>
         <li>Feedback-Funktion</li>
         <li>Feedback auf "Daten anzeigen"-Seite</li>
         <li>Erweiterungen MidataService</li>
+        <li>Einstellungen: du kannst unlogische Einträge ein- oder ausblenden</li>
         <li>diverse kleinere Anpassungen</li>
+        <li>Ein Bug, der das Verbinden mit MIDATA verhinderte, wurde behoben</li>
       </ul>
 
     <h2>anakoda 0.1.1</h2>
