@@ -55,6 +55,7 @@
           </v-list-tile-action>
           <v-list-tile-title>Einstellungen</v-list-tile-title>
         </v-list-tile>
+
         <v-list-tile :to="'/about'">
           <v-list-tile-action>
             <v-icon>info</v-icon>
@@ -68,7 +69,7 @@
     <v-toolbar app clipped-left color="primary">
       <v-btn icon @click="drawer = !drawer"><v-icon>menu</v-icon></v-btn>
       <v-toolbar-title class="headline">
-        <span class="font-weight-light">anakoda <i>preview RC0.2&nbsp;</i></span>
+        <span class="font-weight-light">anakoda</span>
       </v-toolbar-title>
     </v-toolbar>
 

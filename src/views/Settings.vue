@@ -2,10 +2,10 @@
 <v-container>
   <h2>Einstellungen</h2>
   <p>Hier kannst du einige Einstellungen tätigen.</p>
-  <v-switch v-model="loggedIn" label="Eingeloggt bleiben"></v-switch>
+  <!--v-switch v-model="loggedIn" label="Eingeloggt bleiben"></v-switch>
   <p>Wähle "Eingeloggt bleiben", um die Verbindung mit MIDATA zu behalten, auch wenn du das Browser-Fenster schliesst.<br />
     Beachte aber, dass in diesem Fall andere Menschen, die den selben Computer benutzen, Zugriff auf deine Daten haben.<br />
-    Ausserdem kann es dennoch vorkommen, dass die Verbindung nach einiger Zeit von MIDATA getrennt wird.</p>
+    Ausserdem kann es dennoch vorkommen, dass die Verbindung nach einiger Zeit von MIDATA getrennt wird.</p-->
   <v-switch v-model="showInvalid" label="Unlogische Einträge auch anzeigen"></v-switch>
   <p>Wähle diese Option, um auch unlogische Einträge von MIDATA anzuzeigen. Unlogische Einträge sind zum Beispiel solche, bei denen die Start-
     nach der End-Zeit liegt.<br />

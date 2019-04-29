@@ -100,7 +100,7 @@ export default {
     return {
       ageoption: ["unter 25", "unter 40", "unter 65", "über 65"],
       agegroup: "",
-      skilloption: ["nie", "wenige Male im Jahr", "monatlich", "wöchentlich", "einmal am Tag", "mehrmals am Tag"],
+      skilloption: ["mehrmals am Tag", "einmal am Tag", "wöchentlich", "monatlich", "wenige Male im Jahr", "nie"],
       skill: "",
       userID: "",
       rating: 0,
@@ -147,8 +147,9 @@ export default {
         }).done(function(res, text, header){
             console.log("feedback verschickt, status: " + header.status)
             that.show = false;
+
             that.feedbacks[that.page] = "filled";
-            localStorage.setItem("feedback",  JSON.stringify(this.feedbacks));
+            localStorage.setItem("feedback",  JSON.stringify(that.feedbacks));
 
             // reset form:
             that.$refs.form.reset();
@@ -158,9 +159,10 @@ export default {
               console.log("Feedbackformular: Fehler \n(beim Testen von localhost vermutlich Cross-Origin blockiert)");
 
               // for testing locally, we assume everything was alright
+
               that.show = false;
               that.feedbacks[that.page] = "filled";
-              localStorage.setItem("feedback",  JSON.stringify(this.feedbacks));
+              localStorage.setItem("feedback",  JSON.stringify(that.feedbacks));
 
               // reset form:
               that.$refs.form.reset();

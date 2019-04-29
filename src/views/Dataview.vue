@@ -273,7 +273,15 @@ export default {
           model: "",
           questiontext: false,
           questiontextrule: ""
-        }
+        },
+        { question: "Hattest du bei anakoda mit technischen Problemen zu kämpfen?",
+          answers: ["Ja", "Nein"],
+          modelname: "problems",
+          model: "",
+          questiontext: "Bitte beschreibe dein Problem und wo es aufgetreten ist.",
+          questiontextrule: "Ja"
+        },
+
       ]
     }
   },

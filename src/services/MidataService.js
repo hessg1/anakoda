@@ -357,7 +357,6 @@ export default class MidataService {
       res.entry.push(res);
     }
     for(var i in res.entry){
-      console.log(res.entry[i])
       if(res.entry[i].resource.resourceType == 'Observation'){
 
         // create template object from SnomedService
