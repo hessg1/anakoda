@@ -6,7 +6,7 @@
     <Feedback :visible="openFeedback" :questions="questions" page="DataView" @close="openFeedback = false" />
 
     <!-- DETAIL VIEW DIALOG-->
-    <v-dialog v-model="dialog" scrollable>
+    <v-dialog v-model="dialog" scrollable lazy>
       <v-card  v-if="activeItem != null">
         <v-card-title>
           <span class="headline" v-if="activeItem.category == 'dayEntry'">Tageseintrag vom {{ activeItem.date }}</span>
@@ -103,7 +103,7 @@
     <v-tab>Kopfschmerzen</v-tab>
 
     <!-- HEADACHE TABLE -->
-    <v-tab-item>
+    <v-tab-item lazy>
       <v-container>
           <p>Hier siehst du deine Kopfschmerz-Attacken. Klicke einen Eintrag an, um mehr Infos dazu anzuzeigen.</p>
       <v-data-table
@@ -133,7 +133,7 @@
   <!-- SYMPTOM TABLE -->
 
     <v-tab>{{symptomTab}}</v-tab>
-    <v-tab-item>
+    <v-tab-item lazy>
       <v-container>
         <p>Hier siehst du deine Symptome und Auffälligkeiten. Klicke einen Eintrag an, um mehr Infos dazu anzuzeigen.</p>
         <v-data-table
@@ -160,7 +160,7 @@
 
   <!-- DAY TABLE-->
   <v-tab>{{dayTab}}</v-tab>
-  <v-tab-item>
+  <v-tab-item lazy>
     <v-container>
       <p>Hier siehst du deine Tages-Einträge. Klicke einen Eintrag an, um mehr Infos dazu anzuzeigen.</p>
       <v-data-table
@@ -393,7 +393,7 @@ export default {
   },
   mounted(){
     if(this.$midataService.isReady()){
-      this.$midataService.getData('Observation').then(res => {
+      this.$midataService.getData('Observation').then(res => { //'Observation?date=ge2019-03-01&date=le2019-04-30'
         observations = this.$midataService.prepareData(res);
         // only display valid entries
         if(!JSON.parse(localStorage.getItem("showInvalid"))){
