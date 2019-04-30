@@ -1,5 +1,6 @@
 <template>
-  <v-container>
+  <v-container fluid grid-list-lg>
+    <v-layout column wrap>
     <Login />
     <h2>Meine Auffälligkeiten</h2>
     <p>Hier kannst du deine Symptome erfassen.</p>
@@ -380,7 +381,7 @@ MIDATA nicht bereit
   <v-btn v-if="snackbarcolor=='red'" dark flat @click="snackbar = false">schliessen</v-btn>
   <v-btn v-else dark flat to="/">home</v-btn>
 </v-snackbar>
-
+</v-layout>
 </v-container>
 </template>
 

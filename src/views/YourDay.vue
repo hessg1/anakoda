@@ -1,11 +1,9 @@
 <template>
-  <v-container>
+  <v-container fluid grid-list-lg>
+    <v-layout column wrap>
     <Login />
     <h2>Mein Tag</h2>
-    <p>
-      Hier kannst du dein alltägliches Befinden erfassen.
-    </p>
-
+    <p>Hier kannst du dein alltägliches Befinden erfassen.</p>
     <v-stepper v-model="pos" vertical>
       <v-stepper-step :complete="pos > 1" step="1" editable color="#0a967a">
         Datum
@@ -301,6 +299,7 @@
       <v-btn v-if="snackbarcolor=='red'" dark flat @click="snackbar = false">schliessen</v-btn>
       <v-btn v-else dark flat to="/">home</v-btn>
     </v-snackbar>
+  </v-layout>
   </v-container>
 </template>
 
