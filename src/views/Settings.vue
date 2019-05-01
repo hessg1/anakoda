@@ -18,9 +18,11 @@
     <v-flex>
       <v-card>
         <v-card-text>
-          Wähle diese Option, um auch unlogische Einträge von MIDATA anzuzeigen. Unlogische Einträge sind zum Beispiel solche, bei denen die Start-
-          nach der End-Zeit liegt.<br />
-          Unlogische Einträge können durch Software-Fehler oder durch das Verwenden schlecht geprüfter Apps entstehen.
+          Wähle diese Option, um auch unlogische Einträge von MIDATA anzuzeigen. Dies wirkt sich nicht auf die
+            Übersichts-Grafik im Dashboard aus, hier werden unlogische Einträge nie angezeigt.<br />
+            Unlogische Einträge sind zum Beispiel solche, bei denen die Start-
+            nach der End-Zeit liegt. Sie können durch Software-Fehler oder durch das
+            Verwenden schlecht geprüfter Apps entstehen.
         </v-card-text>
         <v-card-actions>
           <v-switch v-model="showInvalid" label="Unlogische Einträge auch anzeigen"></v-switch>

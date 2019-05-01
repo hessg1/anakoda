@@ -235,7 +235,7 @@ export default class SnomedService {
         "de": "Unbekanntes Essverhalten",
         "superCategory": "",
         "category": "EatingHabit",
-        "colour": "##928F1B"
+        "colour": "#928F1B"
       },
       {
         "code": 289141003,
@@ -243,7 +243,7 @@ export default class SnomedService {
         "de": "Regelmässig gegessen",
         "superCategory": "",
         "category": "EatingHabit",
-        "colour": "##928F1B"
+        "colour": "#928F1B"
       },
       {
         "code": 225526009,
@@ -251,7 +251,7 @@ export default class SnomedService {
         "de": "Unregelmässig gegessen",
         "superCategory": "",
         "category": "EatingHabit",
-        "colour": "##928F1B"
+        "colour": "#928F1B"
       },
       {
         "code": 29624005,

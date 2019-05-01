@@ -69,7 +69,7 @@
     <v-toolbar app clipped-left color="primary">
       <v-btn icon @click="drawer = !drawer"><v-icon>menu</v-icon></v-btn>
       <v-toolbar-title class="headline">
-        <span class="font-weight-light">anakoda</span>
+        <span class="font-weight-light">anakoda <i>previev V0.3&nbsp;</i></span>
       </v-toolbar-title>
     </v-toolbar>
 
