@@ -187,7 +187,7 @@ export default {
       this.skill = localStorage.getItem("skill");
     }
     //create an anonymous, but distinct user id
-    let user = this.$midataService.patient;
+    let user = this.$midataService.patient + this.$patient.firstName;
     this.userID = crypto.createHash('md5').update(user).digest('hex');
 
     // show feedback automaticly every fifth time if not filled in
