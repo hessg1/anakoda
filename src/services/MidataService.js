@@ -16,6 +16,7 @@ export default class MidataService {
     version     2019-04-01
 */
   constructor(){
+    this.queryCache = [];
     if(localStorage.getItem("oauth-client") == client){ // load midata information from storage
       this.uri = JSON.parse(localStorage.getItem("oauth-uri"));
       this.resources = JSON.parse(localStorage.getItem("oauth-resources"));
@@ -32,6 +33,7 @@ export default class MidataService {
       this.client = client;
       this.patient = localStorage.getItem("patientId") || "";
       this.keepToken = localStorage.getItem("keepToken") == 'true';
+      this.cacheQueries = localStorage.getItem("cacheQueries") == 'true'
 
     }
     else { // create completely new midata object
@@ -49,6 +51,7 @@ export default class MidataService {
       this.refreshToken = "";
       this.patient = "";
       this.keepToken = false; // determines if token is kept in localStorage or in sessionStorage (and thus deleted when Browser Tab is closed)
+      this.cacheQueries = true; // determines if queries are cached
 
       // set up given parameters
       this.uri.service = (serviceUri.charAt(serviceUri.length - 1) == "/") ? serviceUri.substring(0, serviceUri.length - 1) : serviceUri;
@@ -81,6 +84,7 @@ export default class MidataService {
         localStorage.setItem("oauth-uri", JSON.stringify(that.uri));
       });
       localStorage.setItem("keepToken", this.keepToken);
+      localStorage.setItem("cacheQueries", this.cacheQueries);
     }
   }
 
@@ -199,6 +203,24 @@ export default class MidataService {
     Retrieves Data from MIDATA.
     Requires a completely set up MIDATA environment, with Token etc.
     parameters  - query: a string with the wanted midata-query
+    returns     - a cached FHIR bundle from MIDATA, if it was cached
+                  null if the query was not cached
+    author      hessg1
+    version     2019-05-01
+  */
+  getCachedData(query){
+    for(let i in this.queryCache){
+      if(this.queryCache[i][0] == query){
+        return this.queryCache[i][1];
+      }
+    }
+    return null;
+  }
+
+  /*
+    Retrieves Data from MIDATA.
+    Requires a completely set up MIDATA environment, with Token etc.
+    parameters  - query: a string with the wanted midata-query
     returns     - a promise with either the FHIR bundle as returned from
                   MIDATA (resolve) or an error (reject)
     author      hessg1
@@ -212,11 +234,21 @@ export default class MidataService {
       throw("please... get a token.");
       // TODO: handle missing token (e.g. get authorization)
     }
+
     else {
       const url = this.uri.service + "/" + query;
       const header =  "Bearer " + this.token;
-
+      let that = this;
       return new Promise(function(resolve, reject){
+        // check in cache
+        if(that.cacheQueries){
+          let result = that.getCachedData(query)
+          if(result){
+            resolve(result);
+          }
+        }
+
+
         // ajax-request to midata
         $.ajax({
           url: url,
@@ -227,7 +259,9 @@ export default class MidataService {
           },
         }).done(res => {
           console.log("Query erfolgreich:")
-          console.log(res)
+          console.log(res);
+          //write query to cache
+          that.queryCache.push([query, res]);
           resolve(res);
         })
         .catch(err => {
