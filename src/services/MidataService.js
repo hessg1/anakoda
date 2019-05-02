@@ -17,7 +17,11 @@ export default class MidataService {
 */
   constructor(){
     this.queryCache = [];
-    if(localStorage.getItem("oauth-client") == client){ // load midata information from storage
+    let cachedUri = "";
+    if(localStorage.getItem('oauth-uri')){
+      cachedUri = JSON.parse(localStorage.getItem('oauth-uri')).service;
+    }
+    if(cachedUri == serviceUri || cachedUri + '/' == serviceUri){ // load midata information from storage
       this.uri = JSON.parse(localStorage.getItem("oauth-uri"));
       this.resources = JSON.parse(localStorage.getItem("oauth-resources"));
       this.state = Number(localStorage.getItem("oauth-state"));
@@ -209,6 +213,16 @@ export default class MidataService {
     version     2019-05-01
   */
   getCachedData(query){
+    // limit query to actual patient
+    if(!query.includes('Patient')){
+      if(query.includes('?')){
+        query += '&patient=' + this.patient;
+      }
+      else{
+        query += '?patient=' + this.patient;
+      }
+    }
+
     for(let i in this.queryCache){
       if(this.queryCache[i][0] == query){
         return this.queryCache[i][1];
@@ -234,8 +248,17 @@ export default class MidataService {
       throw("please... get a token.");
       // TODO: handle missing token (e.g. get authorization)
     }
-
     else {
+      // limit query to actual patient
+      if(!query.includes('Patient')){
+        if(query.includes('?')){
+          query += '&patient=' + this.patient;
+        }
+        else{
+          query += '?patient=' + this.patient;
+        }
+      }
+
       const url = this.uri.service + "/" + query;
       const header =  "Bearer " + this.token;
       let that = this;
