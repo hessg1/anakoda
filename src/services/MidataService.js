@@ -16,6 +16,8 @@ export default class MidataService {
     version     2019-04-01
 */
   constructor(){
+    localStorage.setItem('cacheQueries', true);
+
     this.queryCache = [];
     let cachedUri = "";
     if(localStorage.getItem('oauth-uri')){
@@ -37,8 +39,7 @@ export default class MidataService {
       this.client = client;
       this.patient = localStorage.getItem("patientId") || "";
       this.keepToken = localStorage.getItem("keepToken") == 'true';
-      this.cacheQueries = localStorage.getItem("cacheQueries") == 'true'
-
+      this.cacheQueries = localStorage.getItem("cacheQueries") == 'true';
     }
     else { // create completely new midata object
       this.uri = {
@@ -163,8 +164,7 @@ export default class MidataService {
           client_id: that.client
         }
       }).done(res => {
-        console.log("success:");
-        console.log(res)
+        console.log("token successful");
         that.token = res.access_token;
         that.refreshToken = res.refresh_token;
         that.tokenEOL = Date.now() + (1000 * res.expires_in);
@@ -213,8 +213,8 @@ export default class MidataService {
     version     2019-05-01
   */
   getCachedData(query){
-    // limit query to actual patient
-    if(!query.includes('Patient')){
+      // limit query to actual patient
+    if(!query.includes('atient')){ // so we cover 'Patient' and 'patient'
       if(query.includes('?')){
         query += '&patient=' + this.patient;
       }
@@ -250,7 +250,7 @@ export default class MidataService {
     }
     else {
       // limit query to actual patient
-      if(!query.includes('Patient')){
+      if(!query.includes('atient')){
         if(query.includes('?')){
           query += '&patient=' + this.patient;
         }
@@ -264,33 +264,36 @@ export default class MidataService {
       let that = this;
       return new Promise(function(resolve, reject){
         // check in cache
+        let result = null;
         if(that.cacheQueries){
-          let result = that.getCachedData(query)
-          if(result){
-            resolve(result);
-          }
+          result = that.getCachedData(query)
+        }
+        console.log(result)
+        if(result){
+          resolve(result);
+        }
+        else{
+          // ajax-request to midata
+          $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            headers: {
+                "Authorization": header
+            },
+          }).done(res => {
+            //write query to cache
+            that.queryCache.push([query, res]);
+            resolve(res);
+          })
+          .catch(err => {
+            console.log("Error: " + err.responseText);
+            reject(err);
+          });
         }
 
 
-        // ajax-request to midata
-        $.ajax({
-          url: url,
-          type: "GET",
-          dataType: "json",
-          headers: {
-              "Authorization": header
-          },
-        }).done(res => {
-          console.log("Query erfolgreich:")
-          console.log(res);
-          //write query to cache
-          that.queryCache.push([query, res]);
-          resolve(res);
-        })
-        .catch(err => {
-          console.log("Error: " + err.responseText);
-          reject(err);
-        });
+
       });
 
     }
@@ -428,6 +431,7 @@ export default class MidataService {
           invalid = false;
         }
 
+
         // we have to catch possible "other diagnosis" and "other headache",
         // which are persisted with a wrong and colliding SNOMED code in heMigrania
         if(code == "74964007" && res.entry[i].resource.code.coding[0].code == "418138009"){ // diagnosis
@@ -444,6 +448,7 @@ export default class MidataService {
         if(templateArr.length == 0){
           throw("Fehlerhafte Daten: SNOMED-Code " + code + " ist nicht bekannt (Objekt " + i + ").");
         }
+
 
         // we only expect this array to have one entry anyway, since code is unique
         // we have to do the json stringify dance, so the object is later not passed by reference,
@@ -481,7 +486,7 @@ export default class MidataService {
         if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
           // these Categories have intensities
 
-          if(res.entry[i].resource.component){ // catch old faulty entries
+          if(res.entry[i].resource.component && res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
             template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
           }
           else{
@@ -489,6 +494,7 @@ export default class MidataService {
           }
 
         }
+
 
         if(template.category == 'Headache'){
           // headaches also have body sites
@@ -499,7 +505,6 @@ export default class MidataService {
           else{
             invalid = true;
           }
-
         }
 
         // create metadata
@@ -541,10 +546,64 @@ export default class MidataService {
         pat.meta = meta;
         data.push(pat);
       }
+      else if(res.entry[i].resource.resourceType == 'MedicationStatement'){
+        let med = {
+          code: 'medication',
+          category: 'Medication',
+          superCategory: '',
+          colour: '#FD8DD7'
+        };
+        let invalid = true;
+
+        if(res.entry[i].resource.medicationCodeableConcept.coding){
+          med.en = res.entry[i].resource.medicationCodeableConcept.coding[0].display;
+          med.de = med.en;
+          invalid = false;
+        }
+
+        if(res.entry[i].resource.dosage){
+          med.dosage = res.entry[i].resource.dosage[0].doseQuantity.value;
+        }
+        else{
+          med.dosage = 0;
+          invalid = true;
+        }
+
+        med.taken = res.entry[i].taken == 'y';
+
+
+        if(res.entry[i].resource.effectiveDateTime){
+          med.date = new Date(res.entry[i].resource.effectiveDateTime);
+
+          // mark entries with invalid time values
+          invalid = med.startTime > new Date();
+        }
+        else {
+          med.date = new Date(1);
+          invalid = true;
+        }
+
+        // create metadata
+        let meta = {};
+        meta.id = res.entry[i].resource.id;
+        if(res.entry[i].resource.meta){
+          meta.versionId = res.entry[i].resource.meta.versionId;
+          meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
+          meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display; // this is a bit shaky and should be done more flexible for generalisation
+        }
+        else {
+          invalid = true;
+        }
+        meta.invalid = invalid;
+        med.meta = meta;
+
+        data.push(med);
+      }
       else{
-        throw("Fehler: Kann momentan nur Bundles mit Observation- oder Patient-Ressourcen verarbeiten.");
+        throw("Fehler: Kann momentan nur Bundles mit Observation-, MedicationStatement- oder Patient-Ressourcen verarbeiten.");
       }
     }
+    console.log(data)
     return data;
   }
 
