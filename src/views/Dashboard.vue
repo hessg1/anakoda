@@ -9,7 +9,7 @@
 
     <v-tab>Kennzahlen</v-tab>
     <v-tab-item lazy>
-        <HeadacheDays />
+        <KeyFigures />
     </v-tab-item>
   </v-tabs>
 
@@ -18,7 +18,7 @@
 
 <script>
 import OverallChart from '@/components/OverallChart';
-import HeadacheDays from '@/components/HeadacheDays';
+import KeyFigures from '@/components/KeyFigures';
 import Login from '@/components/Login';
 
 
@@ -30,7 +30,7 @@ export default {
     },
   components: {
     OverallChart,
-    HeadacheDays,
+    KeyFigures,
     Login
   }
 }

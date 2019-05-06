@@ -249,7 +249,7 @@
                   @input="menudateend = false"
                   locale="de-ch"
                   first-day-of-week="1"
-                  :max="date"
+                  :max="today"
                   />
                 </v-menu>
               </v-flex>
