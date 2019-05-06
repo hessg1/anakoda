@@ -6,7 +6,7 @@
     <Feedback :visible="openFeedback" :questions="questions" page="DataView" @close="openFeedback = false" />
 
     <!-- DETAIL VIEW DIALOG-->
-    <v-dialog v-model="dialog" scrollable lazy>
+    <v-dialog v-model="dialog" scrollable lazy max-width="600">
       <v-card  v-if="activeItem != null">
         <v-card-title>
           <span class="headline" v-if="activeItem.category == 'dayEntry'">Tageseintrag vom {{ activeItem.date }}</span>

@@ -178,6 +178,7 @@ export default {
       this.midata.fetchToken().then(() =>{
         this.getPatient();
 
+
         this.loading = false;
 
         // remove the parameters from the url
@@ -203,6 +204,10 @@ export default {
           console.log("Bitte kontaktieren Sie " + warning.contact);
         }
       })
+    }
+    if(this.midata.isReady()){
+      // cache all-observation query
+      this.midata.getData('Observation').then(()=> (console.log('Observation cached')));
     }
 
 
