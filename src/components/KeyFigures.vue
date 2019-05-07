@@ -16,7 +16,7 @@
                   class="mt-0 pt-0">
         </v-select>
         <v-layout row wrap>
-          <v-flex xs12 md6>
+          <v-flex md3>
             <v-menu ref="datestartmenu"
                     v-model="datestartmenu"
                     :close-on-content-click="false"
@@ -31,7 +31,6 @@
                                                   <v-text-field
                                                   v-model="datestartFormatted"
                                                   label="Startdatum"
-                                                  hint="DD.MM.YYYY"
                                                   persistent-hint
                                                   prepend-icon="event"
                                                   v-on="on"
@@ -49,7 +48,7 @@
                              :max="today" />
             </v-menu>
           </v-flex>
-          <v-flex xs12 md6>
+          <v-flex md3>
             <v-menu ref="dateendmenu"
                     v-model="dateendmenu"
                     :close-on-content-click="false"
@@ -64,9 +63,7 @@
                                                   <v-text-field
                                                   v-model="dateendFormatted"
                                                   label="Enddatum"
-                                                  hint="DD.MM.YYYY"
                                                   persistent-hint
-                                                  prepend-icon="event"
                                                   v-on="on"
                                                   @focus="hideKeyboard()"
                                                   @blur="date = parseDate(dateendFormatted)"
@@ -118,9 +115,9 @@
                          fill
                          auto-draw></v-sparkline>
             <v-layout row>
-              <div class="caption grey--text text-uppercase ml-2" v-if="data && headaches.length != 0">{{headaches[0].startTime.toLocaleDateString()}}</div>
+              <div class="caption grey--text text-uppercase ml-2" v-if="data && headaches.length != 0">{{headaches[0].startTime.toLocaleDateString('de-CH')}}</div>
               <v-spacer></v-spacer>
-              <div class="caption grey--text text-uppercase mr-2" v-if="data && headaches.length != 0">{{headaches[headaches.length-1].startTime.toLocaleDateString()}}</div>
+              <div class="caption grey--text text-uppercase mr-2" v-if="data && headaches.length != 0">{{headaches[headaches.length-1].startTime.toLocaleDateString('de-CH')}}</div>
             </v-layout>
           </v-card-text>
           <v-card-text>
@@ -164,9 +161,9 @@
                          fill
                          auto-draw></v-sparkline>
             <v-layout row>
-              <div class="caption grey--text text-uppercase ml-2" v-if="data && symptoms.length != 0">{{symptoms[0].startTime.toLocaleDateString()}}</div>
+              <div class="caption grey--text text-uppercase ml-2" v-if="data && symptoms.length != 0">{{symptoms[0].startTime.toLocaleDateString('de-CH')}}</div>
               <v-spacer></v-spacer>
-              <div class="caption grey--text text-uppercase mr-2" v-if="data && symptoms.length != 0">{{symptoms[symptoms.length-1].startTime.toLocaleDateString()}}</div>
+              <div class="caption grey--text text-uppercase mr-2" v-if="data && symptoms.length != 0">{{symptoms[symptoms.length-1].startTime.toLocaleDateString('de-CH')}}</div>
             </v-layout>
           </v-card-text>
           <v-card-text>
