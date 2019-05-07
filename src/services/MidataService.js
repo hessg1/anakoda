@@ -258,7 +258,6 @@ export default class MidataService {
           query += '?patient=' + this.patient;
         }
       }
-
       const url = this.uri.service + "/" + query;
       const header =  "Bearer " + this.token;
       let that = this;
@@ -268,7 +267,6 @@ export default class MidataService {
         if(that.cacheQueries){
           result = that.getCachedData(query)
         }
-        console.log(result)
         if(result){
           resolve(result);
         }
@@ -563,6 +561,8 @@ export default class MidataService {
 
         if(res.entry[i].resource.dosage){
           med.dosage = res.entry[i].resource.dosage[0].doseQuantity.value;
+          med.effect = res.entry[i].resource.dosage[0].text;
+          med.effect = med.effect == 'Good' ? 'geholfen' : med.effect == 'Bad' ? 'verschlechtert' : 'nicht geholfen';
         }
         else{
           med.dosage = 0;
@@ -580,6 +580,11 @@ export default class MidataService {
         }
         else {
           med.date = new Date(1);
+          invalid = true;
+        }
+
+        // heMIGrania had a bug that persisted medication statements wrong until 10.5.2019
+        if(new Date(res.entry[i].resource.meta.lastUpdated) < new Date("2019-05-10")){
           invalid = true;
         }
 
@@ -603,7 +608,6 @@ export default class MidataService {
         throw("Fehler: Kann momentan nur Bundles mit Observation-, MedicationStatement- oder Patient-Ressourcen verarbeiten.");
       }
     }
-    console.log(data)
     return data;
   }
 
