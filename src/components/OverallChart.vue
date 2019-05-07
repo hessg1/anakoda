@@ -23,7 +23,7 @@
           <v-icon class="mr-5" size="64" color="primary">
             trending_up
           </v-icon>
-
+          <v-spacer />
           <v-layout row wrap>
 
             <v-menu v-model="menu1"
@@ -36,7 +36,7 @@
                     max-width="290px"
                     min-width="290px">
               <template v-slot:activator="{ on }">
-                <v-text-field v-model="formattedDates[0]" label="vom" prepend-icon="event"
+                <v-text-field v-model="formattedDates[0]" label="vom" prepend-inner-icon="event"
                   readonly v-on="on"></v-text-field>
               </template>
               <v-date-picker v-model="displayRange[0]"
@@ -74,7 +74,7 @@
               </v-date-picker>
             </v-menu>
 
-            <v-spacer></v-spacer>
+            <v-spacer />
 
             <v-tooltip bottom v-model="legend">
               <template v-slot:activator="{ on }">
@@ -122,7 +122,7 @@
                   </tr>
                   <tr>
                     <td style="background-color: #FD978F; color: #000;">Migräne-Anfall</td>
-                    <td colspan="5" style="opacity: 0.5">nicht abgestuft</td>
+                    <td colspan="5">nicht abgestuft</td>
                   </tr>
                   <tr>
                     <td style="font-weight: bold">Auffälligkeiten:</td>
@@ -138,19 +138,19 @@
                   </tr>
                   <tr>
                     <td style="background-color: #D5FA80; color: #000;">Zustände</td>
-                    <td colspan="5" style="opacity: 0.5">nicht abgestuft</td>
+                    <td colspan="5">nicht abgestuft</td>
                   </tr>
                   <tr>
                     <td style="font-weight: bold">Sonstiges:</td>
                     <td colspan="5"> </td>
                   </tr>
                   <tr>
-                    <td style="background-color: #921B51; color: #000;">Schlafqualität</td>
-                    <td style="background-color: #921B51; color: #000; opacity: 0.9">9</td>
-                    <td style="background-color: #921B51; color: #000; opacity: 0.7">7</td>
-                    <td style="background-color: #921B51; color: #000; opacity: 0.5">5</td>
-                    <td style="background-color: #921B51; color: #000; opacity: 0.3">3</td>
-                    <td style="background-color: #921B51; color: #000; opacity: 0.1">1</td>
+                    <td style="background-color: #921B51;">Schlafqualität</td>
+                    <td style="background-color: #921B51; opacity: 0.9">9</td>
+                    <td style="background-color: #921B51; opacity: 0.7">7</td>
+                    <td style="background-color: #921B51; opacity: 0.5">5</td>
+                    <td style="background-color: #921B51; opacity: 0.3">3</td>
+                    <td style="background-color: #921B51; opacity: 0.1">1</td>
                   </tr>
                   <tr>
                     <td>Medikamente:</td>
@@ -168,6 +168,7 @@
                 Bewege die Maus über ein Element,<br/>um die Details anzuzeigen.
               </span>
             </v-tooltip>
+            <v-spacer />
           </v-layout>
         </v-card-title>
         <v-card-text>
@@ -696,6 +697,10 @@
   /* this is needed so the google chart always has his needed height. fully aware of the ugliness of this.*/
   .gchart div {
     overflow: visible !important;
+  }
+
+  input {
+    width: 100px !important;
   }
 
 </style>
