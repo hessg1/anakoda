@@ -28,18 +28,18 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                      <v-text-field
-                      v-model="datestartFormatted"
-                      label="Startdatum"
-                      hint="DD.MM.YYYY"
-                      persistent-hint
-                      prepend-icon="event"
-                      v-on="on"
-                      @focus="hideKeyboard()"
-                      @blur="date = parseDate(datestartFormatted)"
-                      color="#0a967a"
-                      />
-                    </template>
+                                          <v-text-field
+                                          v-model="datestartFormatted"
+                                          label="Startdatum"
+                                          hint="DD.MM.YYYY"
+                                          persistent-hint
+                                          prepend-icon="event"
+                                          v-on="on"
+                                          @focus="hideKeyboard()"
+                                          @blur="date = parseDate(datestartFormatted)"
+                                          color="#0a967a"
+                                          />
+                                        </template>
               <v-date-picker v-model="datestartdesired"
                              color="#0a967a"
                              no-title
@@ -61,18 +61,18 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                      <v-text-field
-                      v-model="dateendFormatted"
-                      label="Enddatum"
-                      hint="DD.MM.YYYY"
-                      persistent-hint
-                      prepend-icon="event"
-                      v-on="on"
-                      @focus="hideKeyboard()"
-                      @blur="date = parseDate(dateendFormatted)"
-                      color="#0a967a"
-                      />
-                    </template>
+                                          <v-text-field
+                                          v-model="dateendFormatted"
+                                          label="Enddatum"
+                                          hint="DD.MM.YYYY"
+                                          persistent-hint
+                                          prepend-icon="event"
+                                          v-on="on"
+                                          @focus="hideKeyboard()"
+                                          @blur="date = parseDate(dateendFormatted)"
+                                          color="#0a967a"
+                                          />
+                                        </template>
               <v-date-picker v-model="dateenddesired"
                              color="#0a967a"
                              no-title
@@ -92,7 +92,7 @@
             </v-icon>
             <v-layout column align-start class="ma-0">
               <div class="caption grey--text text-uppercase">
-                ∅ Intensität der Kopfschmerzen
+                ∅ Intensität Kopfschmerzen
               </div>
               <div>
                 <span class="display-2 font-weight-black" v-text="headachintensavg || '—'"></span>
@@ -140,7 +140,7 @@
               </div>
               <div>
                 <span class="display-2 font-weight-black" v-text="symdayavg || '—'"></span>
-                <strong v-if="symdayavg">∅</strong>
+                <strong v-if="symdayavg">Einträge</strong>
               </div>
             </v-layout>
 
@@ -167,6 +167,58 @@
           <v-card-text>
             <div class="caption grey--text">
               Diese Grafik zeigt dir, wie oft am Tag du im definierten Zeitraum neben den Kopfschmerzen andere Symptome angegeben hast.
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+      <v-flex xs12 md6>
+        <v-card class="mx-auto" min-height="360">
+          <v-card-title>
+            <v-layout column align-start class="ma-0">
+              <div class="caption grey--text text-uppercase">
+                Die Häufigsten drei Symptome mit der Anzahl <strong>während</strong> deinen Kopfschmerzen
+              </div>
+              <div>
+                <span class="headline font-weight-black" v-text="syminlabel.toString() || '—'"></span>
+              </div>
+            </v-layout>
+          </v-card-title>
+          <v-card-text>
+            <v-sparkline :value="symin"
+                         color="rgba(10, 150, 122, .5)"
+                         auto-line-width
+                         type="bar"
+                         auto-draw></v-sparkline>
+          </v-card-text>
+          <v-card-text>
+            <div class="caption grey--text">
+              Diese Grafik zeigt die Anzahl der häufigsten drei Symptome während deinen Kopfschmerzen im definierten Zeitraum.
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+      <v-flex xs12 md6>
+        <v-card class="mx-auto" min-height="360">
+          <v-card-title>
+            <v-layout column align-start class="ma-0">
+              <div class="caption grey--text text-uppercase">
+                Die Häufigsten drei Symptome mit der Anzahl <strong>ausserhalb</strong> deiner Kopfschmerzen
+              </div>
+              <div>
+                <span class="headline font-weight-black" v-text="symoutlabel.toString() || '—'"></span>
+              </div>
+            </v-layout>
+          </v-card-title>
+          <v-card-text>
+            <v-sparkline :value="symout"
+                         color="rgba(10, 150, 122, .5)"
+                         auto-line-width
+                         type="bar"
+                         auto-draw></v-sparkline>
+          </v-card-text>
+          <v-card-text>
+            <div class="caption grey--text">
+              Diese Grafik zeigt die Anzahl der häufigsten drei Symptome ausserhalb deiner Kopfschmerzen im definierten Zeitraum.
             </div>
           </v-card-text>
         </v-card>
@@ -198,7 +250,11 @@
       today: new Date().toISOString(),
       headaches: [],
       symptoms: [],
-      symptomscount: []
+      symptomscount: [],
+      symoutheadache: [],
+      symoutheadachecount: [],
+      syminheadache: [],
+      syminheadachecount: []
     }),
 
     created() {
@@ -245,6 +301,58 @@
         }
         avg = Math.round((avg / leng) * 100) / 100
         return avg
+      },
+      symout() {
+        let sym = [0, 0]
+        if (this.symoutheadachecount.length < 3) {
+          for (let i = 0; i < this.symoutheadachecount.length; i++) {
+            sym[i] = this.symoutheadachecount[i].count
+          }
+        } else {
+          for (let i = 0; i <= 2; i++) {
+            sym[i] = this.symoutheadachecount[i].count
+          }
+        }
+        return sym
+      },
+      symoutlabel() {
+        let label = []
+        if (this.symoutheadachecount.length < 3) {
+          for (let i = 0; i < this.symoutheadachecount.length; i++) {
+            label.push(' ' + this.symoutheadachecount[i].symptom + ' (' + this.symoutheadachecount[i].count + ')')
+          }
+        } else {
+          for (let i = 0; i <= 2; i++) {
+            label.push(' ' + this.symoutheadachecount[i].symptom + ' (' + this.symoutheadachecount[i].count + ')')
+          }
+        }
+        return label
+      },
+      symin() {
+        let sym = [0, 0]
+        if (this.syminheadachecount.length < 3) {
+          for (let i = 0; i < this.syminheadachecount.length; i++) {
+            sym[i] = this.syminheadachecount[i].count
+          }
+        } else {
+          for (let i = 0; i <= 2; i++) {
+            sym[i] = this.syminheadachecount[i].count
+          }
+        }
+        return sym
+      },
+      syminlabel() {
+        let label = []
+        if (this.syminheadachecount.length < 3) {
+          for (let i = 0; i < this.syminheadachecount.length; i++) {
+            label.push(' ' + this.syminheadachecount[i].symptom + ' (' + this.syminheadachecount[i].count + ')')
+          }
+        } else {
+          for (let i = 0; i <= 2; i++) {
+            label.push(' ' + this.syminheadachecount[i].symptom + ' (' + this.syminheadachecount[i].count + ')')
+          }
+        }
+        return label
       }
     },
 
@@ -286,9 +394,9 @@
 
     methods: {
       /*
-            Convenience method for filtering an array with any criterium.
-            hessg1 / 2019-04-10
-            */
+                                Convenience method for filtering an array with any criterium.
+                                hessg1 / 2019-04-10
+                                */
       filterArray(filter, array) {
         let newArr = []
         for (var i in array) {
@@ -299,12 +407,12 @@
         return newArr
       },
       /*
-            Format a Date to string in Swiss standard DD.MM.YYYY
-            parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
-            returns:    - a date string in the format DD.MM.YYYY
-            author:     schwf3
-            version:    2019-03-26
-            */
+                                Format a Date to string in Swiss standard DD.MM.YYYY
+                                parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
+                                returns:    - a date string in the format DD.MM.YYYY
+                                author:     schwf3
+                                version:    2019-03-26
+                                */
       formatDate(date) {
         if (!date) return null
 
@@ -313,12 +421,12 @@
       },
 
       /*
-            Format a Date to string to ISO8601 (YYYY-MM-DD)
-            parameters: - date: a date string in the format DD.MM.YYYY
-            returns:    - a date as ISO-string (YYYY-MM-DD)
-            author:     schwf3
-            version:    2019-03-26
-            */
+                                Format a Date to string to ISO8601 (YYYY-MM-DD)
+                                parameters: - date: a date string in the format DD.MM.YYYY
+                                returns:    - a date as ISO-string (YYYY-MM-DD)
+                                author:     schwf3
+                                version:    2019-03-26
+                                */
       parseDate(date) {
         if (!date) return null
 
@@ -342,44 +450,101 @@
               observations = this.filterArray(x => !x.meta.invalid, observations)
             }
 
-            // get all headache ressources and write them in an array
-            this.headaches = this.filterArray(x => x.category == 'Headache', observations)
-            this.headaches.sort((a, b) => {
-              return a.endTime - b.endTime
-            })
+            if (observations.length != 0) {
+              // get all headache ressources and write them in an array
+              this.headaches = this.filterArray(x => x.category == 'Headache', observations)
+              this.headaches.sort((a, b) => {
+                return a.endTime - b.endTime
+              })
 
-            // get all symptom ressources and write them in an array
-            this.symptoms = this.filterArray(
-              x => x.category == 'VariousComplaint' || x.category == 'Condition',
-              observations
-            )
-            this.symptoms.sort((a, b) => {
-              return a.endTime - b.endTime
-            })
+              // get all symptom ressources and write them in an array
+              this.symptoms = this.filterArray(
+                x => x.category == 'VariousComplaint' || x.category == 'Condition',
+                observations
+              )
+              this.symptoms.sort((a, b) => {
+                return a.endTime - b.endTime
+              })
 
-            this.symptomscount = []
-            this.symptomscount.push({ date: this.symptoms[0].endTime.toISOString().substr(0, 10), count: 1 })
-            for (var i = 1; i < this.symptoms.length; i++) {
-              if (
-                this.symptoms[i].endTime.toISOString().substr(0, 10) ==
-                this.symptomscount[this.symptomscount.length - 1].date
-              ) {
-                this.symptomscount[this.symptomscount.length - 1].count += 1
-              } else {
-                this.symptomscount.push({ date: this.symptoms[i].endTime.toISOString().substr(0, 10), count: 1 })
+              this.symptomscount = []
+              this.symptomscount.push({ date: this.symptoms[0].endTime.toISOString().substr(0, 10), count: 1 })
+              for (var i = 1; i < this.symptoms.length; i++) {
+                if (
+                  this.symptoms[i].endTime.toISOString().substr(0, 10) ==
+                  this.symptomscount[this.symptomscount.length - 1].date
+                ) {
+                  this.symptomscount[this.symptomscount.length - 1].count += 1
+                } else {
+                  this.symptomscount.push({ date: this.symptoms[i].endTime.toISOString().substr(0, 10), count: 1 })
+                }
+              }
+
+              this.symoutheadache = []
+              for (let i = 0; i < this.symptoms.length; i++) {
+                if (this.controllTimeRel(this.headaches, this.symptoms[i])) {
+                  this.symoutheadache.push(this.symptoms[i])
+                }
+              }
+
+              this.symoutheadache.sort((a, b) => {
+                return a.de > b.de
+              })
+
+              this.symoutheadachecount = []
+              if (this.symoutheadache.length > 0) {
+                this.symoutheadachecount.push({ symptom: this.symoutheadache[0].de, count: 1 })
+                for (let i = 1; i < this.symoutheadache.length; i++) {
+                  if (
+                    this.symoutheadache[i].de == this.symoutheadachecount[this.symoutheadachecount.length - 1].symptom
+                  ) {
+                    this.symoutheadachecount[this.symoutheadachecount.length - 1].count += 1
+                  } else {
+                    this.symoutheadachecount.push({ symptom: this.symoutheadache[i].de, count: 1 })
+                  }
+                }
+                this.symoutheadachecount.sort((a, b) => {
+                  return a.count < b.count
+                })
+              }
+
+              this.syminheadache = this.symptoms.filter(x => !this.symoutheadache.includes(x))
+
+              this.syminheadachecount = []
+              if (this.syminheadache.length > 0) {
+                this.syminheadachecount.push({ symptom: this.syminheadache[0].de, count: 1 })
+                for (let i = 1; i < this.syminheadache.length; i++) {
+                  if (this.syminheadache[i].de == this.syminheadachecount[this.syminheadachecount.length - 1].symptom) {
+                    this.syminheadachecount[this.syminheadachecount.length - 1].count += 1
+                  } else {
+                    this.syminheadachecount.push({ symptom: this.syminheadache[i].de, count: 1 })
+                  }
+                }
+                this.syminheadachecount.sort((a, b) => {
+                  return a.count < b.count
+                })
               }
             }
           })
         }
       },
 
+      controllTimeRel(arr, obj) {
+        for (let i = 0; i < arr.length; i++) {
+          if (obj.startTime > arr[i].endTime || obj.endTime < arr[i].startTime) {
+            return true
+          } else {
+            return false
+          }
+        }
+      },
+
       /*
-          Helper method for not showing software keyboard on smartphones, when a input-
-          field is clicked (e.g. with date picker)
-          usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
-          author:     hessg1
-          version:    2019-03-29
-          */
+                              Helper method for not showing software keyboard on smartphones, when a input-
+                              field is clicked (e.g. with date picker)
+                              usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
+                              author:     hessg1
+                              version:    2019-03-29
+                              */
       hideKeyboard() {
         document.activeElement.blur()
       }
