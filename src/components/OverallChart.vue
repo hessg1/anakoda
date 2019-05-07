@@ -536,8 +536,6 @@
           }
 
           // merge tablehead and table:
-          console.log("med array")
-          console.log(meds)
           this.chartData = tableHead.concat(headache, meds, compAndCond, sleep);
         }
       },
@@ -627,6 +625,26 @@
       this.displayRange = [lastWeek, new Date().toISOString().slice(0, 10)];
 
       this.putDataIntoChart();
+
+      let allObs = this.$midataService.getCachedData('Observation');
+      if(allObs != null) {
+        allObs = this.$midataService.prepareData(allObs);
+        allObs = this.filterArray(
+          x =>
+            !x.meta.invalid &&
+            (x.category == 'Headache' ||
+              x.category == 'VariousComplaint' ||
+              x.category == 'Condition' ||
+              x.category == 'Sleep'),
+          allObs
+        );
+        for (let i in allObs) {
+          let date = allObs[i].endTime.toISOString().slice(0, 10);
+          if (!this.daysWithEntry.includes(date)) {
+            this.daysWithEntry.push(date);
+          }
+        }
+      }
     },
 
     watch: {
