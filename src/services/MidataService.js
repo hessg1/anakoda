@@ -562,7 +562,7 @@ export default class MidataService {
         if(res.entry[i].resource.dosage){
           med.dosage = res.entry[i].resource.dosage[0].doseQuantity.value;
           med.effect = res.entry[i].resource.dosage[0].text;
-          med.effect = med.effect == 'Good' ? 'geholfen' : med.effect == 'Bad' ? 'verschlechtert' : 'nicht geholfen';
+          med.effect = med.effect == 'Good' ? 'geholfen' : med.effect == 'Bad' ? 'die Situation verschlechtert' : 'nicht geholfen';
         }
         else{
           med.dosage = 0;
@@ -584,9 +584,9 @@ export default class MidataService {
         }
 
         // heMIGrania had a bug that persisted medication statements wrong until 10.5.2019
-        if(new Date(res.entry[i].resource.meta.lastUpdated) < new Date("2019-05-10")){
-          invalid = true;
-        }
+        // if(new Date(res.entry[i].resource.meta.lastUpdated) < new Date("2019-05-10")){
+        //   invalid = true;
+        // }
 
         // create metadata
         let meta = {};

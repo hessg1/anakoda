@@ -142,10 +142,10 @@
                   </tr>
                   <tr>
                     <td style="font-weight: bold">Sonstiges:</td>
-                    <td colspan="5"> (Qualität)</td>
+                    <td colspan="5"> </td>
                   </tr>
                   <tr>
-                    <td style="background-color: #921B51; color: #000;">Schlafdauer</td>
+                    <td style="background-color: #921B51; color: #000;">Schlafqualität</td>
                     <td style="background-color: #921B51; color: #000; opacity: 0.9">9</td>
                     <td style="background-color: #921B51; color: #000; opacity: 0.7">7</td>
                     <td style="background-color: #921B51; color: #000; opacity: 0.5">5</td>
@@ -153,8 +153,8 @@
                     <td style="background-color: #921B51; color: #000; opacity: 0.1">1</td>
                   </tr>
                   <tr>
-                    <td style="background-color: #FD8DD7; color: #000;">Medikamente</td>
-                    <td colspan="5" style="opacity: 0.5">nicht abgestuft</td>
+                    <td>Medikamente:</td>
+                    <td colspan="5">💊</td>
                   </tr>
                 </table>
                 <br /><h3>Optionen</h3>
@@ -295,6 +295,7 @@
           let headache = [];
           let compAndCond = [];
           let sleep = [];
+          let meds = [];
           // bi iterating through data object
           for (let i in data) {
             if (!data[i].meta.invalid) {
@@ -373,13 +374,31 @@
                 compAndCond.push([category, title, tooltip, style, start, end]);
               }
 
+
+              // handling medication
+              if (data[i].category == 'Medication') {
+                let title = '💊';
+                let tooltip =
+                  '<div class="tooltip"><h4>' +
+                  data[i].de +
+                  '</h4><p>' +
+                  data[i].dosage + ' Einheiten um ' +
+                  data[i].date.toLocaleTimeString().slice(0,5) + ' Uhr genommen.<br />' +
+                  'Es hat ' + data[i].effect + '.</p>';
+                let style =
+                  'opacity: 0; stroke-opacity: 0'
+                let start = data[i].date;
+                let end = new Date(data[i].date.getTime() + 1000);
+                meds.push(['Medikament', title, tooltip, style, start, end]);
+              }
+
               // handling sleep
               if (data[i].category == 'SleepPattern') {
                 let title = this.showTitles ? 'Schlaf' : '';
                 let tooltip =
                   '<div class="tooltip"><h4>Schlafqualität ' +
                   data[i].quantity +
-                  '</h4>' +
+                  '</h4><p>' +
                   this.formatDuration(data[i]) +
                   '</p>';
                 let style =
@@ -408,7 +427,6 @@
 
           // now generate the day entries for every day needed:
           let day = firstDate;
-
           let sleepPatterns = this.filterArray(x => x.category == 'SleepPattern', data);
           let eatingHabits = this.filterArray(x => x.category == 'EatingHabit', data);
 
@@ -476,7 +494,7 @@
 
             tableHead.push([
               'Tag:',
-              textDate + eatingShort,
+              textDate, // + eatingShort,
               tooltip,
               this.chartOptions.backgroundColor,
               new Date(day.setHours(0, 0)),
@@ -494,7 +512,7 @@
               'opacity: 0',
               new Date(day - 24 * 60 * 60 * 1000 - 1),
               new Date(day - 24 * 60 * 60 * 1000)
-            ]); //['Kopfschmerzen', "Keine Kopfschmerzen in dem Zeitraum", "m", 'color: grey; opacity: 0.5; stroke-opacity: 0.75', new Date("2019-04-01"), new Date("2019-04-03")]
+            ]);
           }
           if (compAndCond.length == 0) {
             compAndCond.push([
@@ -504,7 +522,7 @@
               'opacity: 0',
               new Date(day - 24 * 60 * 60 * 1000 - 1),
               new Date(day - 24 * 60 * 60 * 1000)
-            ]); //['Kopfschmerzen', "Keine Kopfschmerzen in dem Zeitraum", "m", 'color: grey; opacity: 0.5; stroke-opacity: 0.75', new Date("2019-04-01"), new Date("2019-04-03")]
+            ]);
           }
           if (sleep.length == 0) {
             sleep.push([
@@ -514,11 +532,13 @@
               'opacity: 0',
               new Date(day - 24 * 60 * 60 * 1000 - 1),
               new Date(day - 24 * 60 * 60 * 1000)
-            ]); //['Kopfschmerzen', "Keine Kopfschmerzen in dem Zeitraum", "m", 'color: grey; opacity: 0.5; stroke-opacity: 0.75', new Date("2019-04-01"), new Date("2019-04-03")]
+            ]);
           }
 
           // merge tablehead and table:
-          this.chartData = tableHead.concat(headache, compAndCond, sleep);
+          console.log("med array")
+          console.log(meds)
+          this.chartData = tableHead.concat(headache, meds, compAndCond, sleep);
         }
       },
 
@@ -570,10 +590,30 @@
         return duration;
       },
 
+      putDataIntoChart(){
+        // update data and chart
+        if (this.$midataService.isReady()) {
+          let that = this;
+
+          Promise.all([
+            this.$midataService.getData('Observation?date=ge' + this.displayRange[0] + '&date=le' + this.displayRange[1]),
+            this.$midataService.getData('MedicationStatement') // medication statement query can't be limited by date
+          ]).then(res => {
+            let obs = this.$midataService.prepareData(res[0]);
+            let meds = this.$midataService.prepareData(res[1]);
+            meds = this.filterArray(x => {
+              return x.date >= new Date(this.displayRange[0] + "T00:00") && x.date <= new Date(this.displayRange[1] + "T23:59");
+            }, meds);
+            that.observations = obs.concat(meds);
+            that.fillChart(that.observations);
+          });
+        }
+      },
+
       /*
-                    Convenience method for building a "duration" string
-                    hessg1 / 2019-04-17
-                    */
+        Convenience method for building a "duration" string
+        hessg1 / 2019-04-17
+      */
       formatDuration(item) {
         let start = item.startTime.toLocaleTimeString().slice(0, 5);
         let end = item.endTime.toLocaleTimeString().slice(0, 5);
@@ -582,38 +622,11 @@
     },
 
     mounted() {
-      if (this.$midataService.isReady()) {
-        let that = this;
-        this.$midataService
-          .getData('Observation?date=ge' + this.displayRange[0] + '&date=le' + this.displayRange[1])
-          .then(res => {
-            that.observations = this.$midataService.prepareData(res);
-            this.fillChart(that.observations);
-          });
-
-        let allObs = this.$midataService.getCachedData('Observation');
-        if (allObs != null) {
-          allObs = this.$midataService.prepareData(allObs);
-          allObs = this.filterArray(
-            x =>
-              !x.meta.invalid &&
-              (x.category == 'Headache' ||
-                x.category == 'VariousComplaint' ||
-                x.category == 'Condition' ||
-                x.category == 'Sleep'),
-            allObs
-          );
-          for (let i in allObs) {
-            let date = allObs[i].endTime.toISOString().slice(0, 10);
-            if (!that.daysWithEntry.includes(date)) {
-              that.daysWithEntry.push(date);
-            }
-          }
-        }
-      }
       let today = new Date();
       let lastWeek = new Date(today.setDate(today.getDate() - 7)).toISOString().slice(0, 10);
       this.displayRange = [lastWeek, new Date().toISOString().slice(0, 10)];
+
+      this.putDataIntoChart();
     },
 
     watch: {
@@ -621,17 +634,7 @@
         // update formatted date:
         this.formattedDates[0] = new Date(this.displayRange[0]).toLocaleDateString();
         this.formattedDates[1] = new Date(this.displayRange[1]).toLocaleDateString();
-
-        // update data and chart
-        if (this.$midataService.isReady()) {
-          let that = this;
-          this.$midataService
-            .getData('Observation?date=ge' + this.displayRange[0] + '&date=le' + this.displayRange[1])
-            .then(res => {
-              that.observations = this.$midataService.prepareData(res);
-              this.fillChart(that.observations);
-            });
-        }
+        this.putDataIntoChart();
       },
       showTitles() {
         this.fillChart(this.observations);
