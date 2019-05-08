@@ -114,7 +114,6 @@
 </template>
 
 <script>
-import MidataService from '@/services/MidataService';
 import warnings from '@/assets/messages.json'
 
 export default {
@@ -155,11 +154,15 @@ export default {
 
     // loads patient info from midata
     getPatient(){
-      if(this.midata.isReady()){
+      if(this.$midataService.isReady()){
         // get patient resource and set user name
-        this.midata.getData("Patient").then(res => {
-          this.$patient = this.midata.prepareData(res)[0];
+        this.$midataService.getData("Patient")
+        .then(res => {
+          this.$patient = this.$midataService.prepareData(res)[0];
           this.name = this.$patient.firstName;
+        })
+        .catch(err => {
+          console.log("Fehler: " + err.responseText)
         });
       }
     }
@@ -168,17 +171,15 @@ export default {
   mounted(){
     // link this.midata to app-wide midataService
     this.midata = this.$midataService;
-    // fallback, if something went wrong
-    if(this.midata == "") {
-      this.midata = new MidataService();
-    }
+    // // fallback, if something went wrong
+    // if(this.midata == "") {
+    //   this.midata = new MidataService();
+    // }
     // check if we got any parameters from MIDATA
     if(window.location.search){
       this.loading = true;
       this.midata.fetchToken().then(() =>{
         this.getPatient();
-
-
         this.loading = false;
 
         // remove the parameters from the url
@@ -207,12 +208,14 @@ export default {
     }
     if(this.midata.isReady()){
       // cache all-observation query
-      this.midata.getData('Observation').then(()=> (console.log('Observation cached')));
+      this.midata.getData('Observation')
+      .then(()=> {
+        console.log('Observation cached')
+      })
+      .catch(err => {
+        console.log("Fehler: " + err.responseText)
+      });
     }
-
-
-
-
   }
 }
 </script>

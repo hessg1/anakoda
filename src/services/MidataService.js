@@ -261,32 +261,25 @@ export default class MidataService {
 
       let that = this;
 
-      if(this.tokenExpired()){
-
-        console.log("TODO: refresh token")
-
-      }
-      else{
-        const url = this.uri.service + "/" + query;
-        const header =  "Bearer " + this.token;
-
-        return new Promise(function(resolve, reject){
-          // check in cache
-          let result = null;
-          if(that.cacheQueries){
-            result = that.getCachedData(query)
-          }
-          if(result){
-            resolve(result);
-          }
-          else{
+      return new Promise(function(resolve, reject){
+        // check in cache
+        let result = null;
+        if(that.cacheQueries){
+          result = that.getCachedData(query)
+        }
+        if(result){
+          resolve(result);
+        }
+        else{
+          // get a securely valid token
+          that.getValidToken().then(token => {
             // ajax-request to midata
             $.ajax({
-              url: url,
+              url: that.uri.service + "/" + query,
               type: "GET",
               dataType: "json",
               headers: {
-                  "Authorization": header
+                  "Authorization": "Bearer " + token
               },
             }).done(res => {
               //write query to cache
@@ -298,9 +291,11 @@ export default class MidataService {
               console.log(err)
               reject(err);
             });
-          }
-        });
-      }
+          })
+
+        }
+      });
+
     }
   }
 
@@ -327,44 +322,51 @@ export default class MidataService {
         reject("No token set, check authorization.");
       }
 
-      // prepare settings
-      var ajaxSettings = {
-        "async": true,
-        "crossDomain": true,
-        "url": that.uri.service,
-        "method": "POST",
-        "headers": {
-          "Content-Type": "application/fhir+json",
-          "Authorization": "Bearer " + that.token,
-          "cache-control": "no-cache"
-        },
-        "data": JSON.stringify(data),
-        "error": function(err){
-          console.log(err);
-          reject("An error occured (" + err.status + "): " + err.statusText );
-        },
-        "success": function(response){
-          //console.log(response);
-          resolve("saved to midata: " + response);
+      // get a securely valid token
+      that.getValidToken().then(token => {
+
+        // prepare ajax settings
+        var ajaxSettings = {
+          "async": true,
+          "crossDomain": true,
+          "url": that.uri.service,
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/fhir+json",
+            "Authorization": "Bearer " + token,
+            "cache-control": "no-cache"
+          },
+          "data": JSON.stringify(data),
+          "error": function(err){
+            console.log(err);
+            reject("An error occured (" + err.status + "): " + err.statusText );
+          },
+          "success": function(response){
+            //console.log(response);
+            resolve("saved to midata: " + response);
+          }
         }
-      }
 
-      if(data.resourceType == "Bundle"){
-        ajaxSettings.success = function(response){
-          resolve("bundle saved, id=" + response.id);
+        // do the ajax requests, depending on the type of the resource
+        if(data.resourceType == "Bundle"){
+          ajaxSettings.success = function(response){
+            resolve("bundle saved, id=" + response.id);
+          }
+          $.ajax(ajaxSettings);
         }
-        $.ajax(ajaxSettings);
-
-      }
-      else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
-        // if we have an Observation, we have to adjust the service URI
-        ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
-        $.ajax(ajaxSettings);
-
-      }
-      else {
-        reject("Error: can not handle datatype " + data.resourceType + " yet.");
-      }
+        else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
+          // if we have an Observation, we have to adjust the service URI
+          ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
+          $.ajax(ajaxSettings);
+        }
+        else {
+          reject("Error: can not handle datatype " + data.resourceType + " yet.");
+        }
+      }).catch(err => {
+        console.log("Error: " + err.responseText);
+        console.log(err)
+        reject(err);
+      });
     });
   }
 
@@ -651,7 +653,10 @@ export default class MidataService {
     version     2019-05-09
   */
   isReady(){
-    return (this.token != "" && !this.tokenExpired());
+    if(this.keepToken){
+      return this.token != '';
+    }
+    return (this.token != '' && !this.tokenExpired());
   }
 
   /*
@@ -669,50 +674,64 @@ export default class MidataService {
   /*
     Gets a new valid token when a refreshToken is set.
     parameters  none
-    returns     nothing
+    returns     a Promise with a valid token when possible
     author      hessg1
     version     2019-05-09
   */
-  getNewToken(){
-    if(this.refreshToken == ""){
-      throw("Kein Refresh-Token vorhanden!");
-    }
+  getValidToken(){
     let that = this;
-    var settings = {
-      "crossDomain": true,
-      "url": that.uri.token,
-      "method": "POST",
-      "headers": {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "*/*",
-      },
-      "data": {
-        "grant_type": "refresh_token",
-        "refresh_token": that.refreshToken
-      }
-    }
+    return new Promise(function(resolve, reject){
 
-    $.ajax(settings)
-    .done(res => {
-       console.log("refresh-token successful");
-        that.token = res.access_token;
-        that.refreshToken = res.refresh_token;
-        that.tokenEOL = Date.now() + (1000 * res.expires_in);
-        that.patient = res.patient;
-        // check if logged in patient is the same as last logged in
-        if(localStorage.getItem("patientId") != res.patient){
-          // if we have another patient, there went something wrong and we log out
-          console.log("Fehler: PatientenId stimmt nicht überein. Logout.")
-          this.logout();
+      // when the token is expired, we have to get a new one
+      if(that.tokenExpired()){
+        if(that.refreshToken == ""){
+          reject("Kein Refresh-Token vorhanden!");
         }
-        if(that.keepToken){
-          localStorage.setItem("oauth-token", res.access_token);
-          localStorage.setItem("oauth-refreshtoken", res.refresh_token);
-          localStorage.setItem("oauth-tokeneol", that.tokenEOL);
+
+        var settings = {
+          "crossDomain": true,
+          "url": that.uri.token,
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "*/*",
+          },
+          "data": {
+            "grant_type": "refresh_token",
+            "refresh_token": that.refreshToken
+          }
         }
-    })
-    .catch(err => {
-      console.log(err)
+
+        $.ajax(settings)
+        .done(res => {
+          console.log("refresh-token successful");
+          that.token = res.access_token;
+          that.refreshToken = res.refresh_token;
+          that.tokenEOL = Date.now() + (1000 * res.expires_in);
+          that.patient = res.patient;
+          // check if logged in patient is the same as last logged in
+          if(localStorage.getItem("patientId") != res.patient){
+            // if we have another patient, there went something wrong and we log out
+            console.log("Fehler: PatientenId stimmt nicht überein. Logout.")
+            that.logout();
+          }
+          if(that.keepToken){
+            localStorage.setItem("oauth-token", res.access_token);
+            localStorage.setItem("oauth-refreshtoken", res.refresh_token);
+            localStorage.setItem("oauth-tokeneol", that.tokenEOL);
+          }
+          resolve(that.token);
+        })
+        .catch(err => {
+          console.log(err)
+          reject("Fehler beim Beziehen eines neuen Tokens (siehe Konsole)")
+        });
+      }
+
+      // if the token is still valid, we can just return it
+      else {
+        resolve(that.token);
+      }
     });
   }
 }
