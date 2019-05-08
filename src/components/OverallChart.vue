@@ -3,6 +3,10 @@
   <div>
 
     <v-container v-resize="onResize" fluid grid-list-lg>
+      <p v-if="!isPortrait">
+        Hier siehst du alle deine Kopfschmerzen und Symptome im Zeitverlauf. Bewege deine Maus über einen Eintrag,
+        um Details dazu anzuzeigen.
+      </p>
 
       <!-- warning if screen width is too small-->
       <v-card v-if="isPortrait">
@@ -20,7 +24,7 @@
       <!-- actual content-->
       <v-card v-else>
         <v-card-title>
-          <v-icon class="mr-5" size="64" color="primary">
+          <v-icon class="mr-5" size="64" color="primary" v-if="!isMobile">
             trending_up
           </v-icon>
           <v-spacer />
@@ -173,10 +177,6 @@
         </v-card-title>
         <v-card-text>
           <p>
-            Hier siehst du alle deine Kopfschmerzen und Symptome im Zeitverlauf.<br /> Bewege deine Maus über einen Eintrag,
-            um Details dazu anzuzeigen.
-          </p>
-          <p>
             Leere Tage am Anfang und Ende der Grafik werden ausgeblendet.
           </p>
         </v-card-text>
@@ -210,6 +210,7 @@
         formattedDates: [],
         daysWithEntry: [],
         isPortrait: false,
+        isMobile: false,
         showTitles: false,
         observations: [],
         menu1: false,
@@ -241,6 +242,7 @@
                     */
       onResize() {
         this.isPortrait = window.innerWidth < 480;
+        this.isMobile = window.innerWidth < 600;
       },
 
       /*
@@ -390,7 +392,7 @@
                   'opacity: 0; stroke-opacity: 0'
                 let start = data[i].date;
                 let end = new Date(data[i].date.getTime() + 1000);
-                meds.push(['Medikament', title, tooltip, style, start, end]);
+                meds.push(['Medikamente', title, tooltip, style, start, end]);
               }
 
               // handling sleep
