@@ -484,11 +484,7 @@
                 return a.endTime - b.endTime
               })
 
-<<<<<<< HEAD
-              // get all symptoms exept of migraine attacks ressources and write them in an array
-=======
               // get all symptoms except "attack" resources and write them in an array
->>>>>>> 1d09fa6de70f3c01db4170bec76ebfe774c991df
               this.symptoms = this.filterArray(
                 x => x.category == 'VariousComplaint' || x.category == 'Condition' && x.code != 216299002,
                 observations
