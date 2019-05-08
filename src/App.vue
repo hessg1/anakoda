@@ -62,8 +62,10 @@
           </v-list-tile-action>
           <v-list-tile-title>Impressum</v-list-tile-title>
         </v-list-tile>
-
       </v-list>
+      <v-spacer />
+      <v-btn v-if="$midataService.isReady()" flat small block @click="$midataService.logout()">MIDATA logout</v-btn>
+      <v-spacer />
     </v-navigation-drawer>
 
     <v-toolbar app clipped-left color="primary">
@@ -93,7 +95,7 @@ export default {
   },
   data () {
     return {
-      drawer: "true"
+      drawer: true,
     }
   }
 }
