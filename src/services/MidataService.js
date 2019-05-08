@@ -584,9 +584,9 @@ export default class MidataService {
         }
 
         // heMIGrania had a bug that persisted medication statements wrong until 10.5.2019
-        // if(new Date(res.entry[i].resource.meta.lastUpdated) < new Date("2019-05-10")){
-        //   invalid = true;
-        // }
+        if(res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display.toLowerCase() == 'hemigrania' && new Date(res.entry[i].resource.meta.lastUpdated) < new Date("2019-05-10")){
+          invalid = true;
+        }
 
         // create metadata
         let meta = {};
