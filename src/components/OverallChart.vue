@@ -426,6 +426,8 @@
           // adding a full day to lastDate makes the chart look better
           lastDate.setDate(lastDate.getDate() + 1);
 
+          let numberOfDays = Math.round((lastDate.getTime() - firstDate.getTime()) / (24*60*60*1000))
+
           // now generate the day entries for every day needed:
           let day = firstDate;
           let sleepPatterns = this.filterArray(x => x.category == 'SleepPattern', data);
@@ -481,7 +483,15 @@
               'November',
               'Dezember'
             ];
-            let textDate = day.getDate() + '. ' + months[day.getMonth()];
+            let textDate = day.getDate() + '. '+ months[day.getMonth()];
+            let shortDate = day.getDate() + '.';
+            if(numberOfDays < 10){
+              shortDate = textDate;
+            }
+            else if(numberOfDays < 20){
+              shortDate += '' + (day.getMonth() + 1) + '.';
+            }
+
             let tooltip =
               '<div class="tooltip"><h4>' +
               textDate +
@@ -495,7 +505,7 @@
 
             tableHead.push([
               'Tag:',
-              textDate, // + eatingShort,
+              shortDate, // + eatingShort,
               tooltip,
               this.chartOptions.backgroundColor,
               new Date(day.setHours(0, 0)),
