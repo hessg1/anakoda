@@ -31,11 +31,6 @@ export default class MidataService {
       this.token = localStorage.getItem("oauth-token") || "";
       this.refreshToken = localStorage.getItem("oauth-refreshtoken") || "";
       this.tokenEOL = Number(localStorage.getItem("oauth-tokeneol") || Date.now());
-      // if(this.token == ""){
-      //   this.token = sessionStorage.getItem("oauth-token") || "";
-      //   this.refreshToken = sessionStorage.getItem("oauth-refreshtoken") || "";
-      //   this.tokenEOL = Number(sessionStorage.getItem("oauth-tokeneol") || Date.now());
-      // }
       this.client = client;
       this.patient = localStorage.getItem("patientId") || "";
       this.keepToken = localStorage.getItem("keepToken") == 'true';
@@ -184,11 +179,7 @@ export default class MidataService {
           localStorage.setItem("oauth-refreshtoken", res.refresh_token);
           localStorage.setItem("oauth-tokeneol", that.tokenEOL);
         }
-        // else{
-        //   sessionStorage.setItem("oauth-token", res.access_token);
-        //   sessionStorage.setItem("oauth-refreshtoken", res.refresh_token);
-        //   sessionStorage.setItem("oauth-tokeneol", that.tokenEOL);
-        // }
+
 
         resolve(res);
 
@@ -324,7 +315,7 @@ export default class MidataService {
 
       // get a securely valid token
       that.getValidToken().then(token => {
-
+        let successMessage = "Auf MIDATA gespeichert";
         // prepare ajax settings
         var ajaxSettings = {
           "async": true,
@@ -342,16 +333,24 @@ export default class MidataService {
             reject("An error occured (" + err.status + "): " + err.statusText );
           },
           "success": function(response){
-            //console.log(response);
-            resolve("saved to midata: " + response);
+            if(that.cacheQueries){
+              // if query cache is enabled, we refresh the cache
+              that.queryCache = [];
+              that.getData('Observation')
+              .then(()=> {
+                console.log('Observation cached')
+              })
+              .catch(err => {
+                console.log("Fehler: " + err.responseText)
+              });
+            }
+            resolve(successMessage + " (id:" + response.id +")");
           }
         }
 
         // do the ajax requests, depending on the type of the resource
         if(data.resourceType == "Bundle"){
-          ajaxSettings.success = function(response){
-            resolve("bundle saved, id=" + response.id);
-          }
+          successMessage = "Bundle gespeichert"
           $.ajax(ajaxSettings);
         }
         else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
@@ -632,13 +631,10 @@ export default class MidataService {
   logout(){
     localStorage.removeItem("oauth-client");
     localStorage.removeItem("oauth-refreshtoken");
-    // sessionStorage.removeItem("oauth-refreshtoken");
     localStorage.removeItem("oauth-resources");
     localStorage.removeItem("oauth-state");
     localStorage.removeItem("oauth-token");
-    // sessionStorage.removeItem("oauth-token");
     localStorage.removeItem("oauth-tokeneol");
-    // sessionStorage.removeItem("oauth-tokeneol");
     localStorage.removeItem("oauth-uri");
     localStorage.removeItem("patient");
     location.reload();
