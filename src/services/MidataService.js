@@ -19,11 +19,11 @@ export default class MidataService {
     localStorage.setItem('cacheQueries', true);
 
     this.queryCache = [];
-    let cachedUri = "";
+    let localStorageUri = "";
     if(localStorage.getItem('oauth-uri')){
-      cachedUri = JSON.parse(localStorage.getItem('oauth-uri')).service;
+      localStorageUri = JSON.parse(localStorage.getItem('oauth-uri')).service;
     }
-    if(cachedUri == serviceUri || cachedUri + '/' == serviceUri){ // load midata information from storage
+    if(localStorageUri == serviceUri || localStorageUri + '/' == serviceUri){ // load midata information from storage
       this.uri = JSON.parse(localStorage.getItem("oauth-uri"));
       this.resources = JSON.parse(localStorage.getItem("oauth-resources"));
       this.state = Number(localStorage.getItem("oauth-state"));
@@ -31,11 +31,6 @@ export default class MidataService {
       this.token = localStorage.getItem("oauth-token") || "";
       this.refreshToken = localStorage.getItem("oauth-refreshtoken") || "";
       this.tokenEOL = Number(localStorage.getItem("oauth-tokeneol") || Date.now());
-      if(this.token == ""){
-        this.token = sessionStorage.getItem("oauth-token") || "";
-        this.refreshToken = sessionStorage.getItem("oauth-refreshtoken") || "";
-        this.tokenEOL = Number(sessionStorage.getItem("oauth-tokeneol") || Date.now());
-      }
       this.client = client;
       this.patient = localStorage.getItem("patientId") || "";
       this.keepToken = localStorage.getItem("keepToken") == 'true';
@@ -55,7 +50,7 @@ export default class MidataService {
       this.token = "";
       this.refreshToken = "";
       this.patient = "";
-      this.keepToken = false; // determines if token is kept in localStorage or in sessionStorage (and thus deleted when Browser Tab is closed)
+      this.keepToken = false; // determines if token is kept in localStorage
       this.cacheQueries = true; // determines if queries are cached
 
       // set up given parameters
@@ -94,7 +89,7 @@ export default class MidataService {
   }
 
   /*
-    Opens a new window where the User can enter the credentials.
+    Opens a new window where the user can enter the credentials.
     parameters
                 - redirectUri: the Uri of the app that handles the oAuth2 token
                   request with MIDATA. CAVE: exact URI must be registered on
@@ -184,11 +179,7 @@ export default class MidataService {
           localStorage.setItem("oauth-refreshtoken", res.refresh_token);
           localStorage.setItem("oauth-tokeneol", that.tokenEOL);
         }
-        else{
-          sessionStorage.setItem("oauth-token", res.access_token);
-          sessionStorage.setItem("oauth-refreshtoken", res.refresh_token);
-          sessionStorage.setItem("oauth-tokeneol", that.tokenEOL);
-        }
+
 
         resolve(res);
 
@@ -258,9 +249,9 @@ export default class MidataService {
           query += '?patient=' + this.patient;
         }
       }
-      const url = this.uri.service + "/" + query;
-      const header =  "Bearer " + this.token;
+
       let that = this;
+
       return new Promise(function(resolve, reject){
         // check in cache
         let result = null;
@@ -271,27 +262,29 @@ export default class MidataService {
           resolve(result);
         }
         else{
-          // ajax-request to midata
-          $.ajax({
-            url: url,
-            type: "GET",
-            dataType: "json",
-            headers: {
-                "Authorization": header
-            },
-          }).done(res => {
-            //write query to cache
-            that.queryCache.push([query, res]);
-            resolve(res);
+          // get a securely valid token
+          that.getValidToken().then(token => {
+            // ajax-request to midata
+            $.ajax({
+              url: that.uri.service + "/" + query,
+              type: "GET",
+              dataType: "json",
+              headers: {
+                  "Authorization": "Bearer " + token
+              },
+            }).done(res => {
+              //write query to cache
+              that.queryCache.push([query, res]);
+              resolve(res);
+            })
+            .catch(err => {
+              console.log("Error: " + err.responseText);
+              console.log(err)
+              reject(err);
+            });
           })
-          .catch(err => {
-            console.log("Error: " + err.responseText);
-            reject(err);
-          });
+
         }
-
-
-
       });
 
     }
@@ -313,50 +306,66 @@ export default class MidataService {
     }
 
     //TODO: validate data for FHIR specs?
+
     let that = this;
     return new Promise(function(resolve, reject){
       if(that.token == ""){
         reject("No token set, check authorization.");
       }
 
-      // prepare settings
-      var ajaxSettings = {
-        "async": true,
-        "crossDomain": true,
-        "url": that.uri.service,
-        "method": "POST",
-        "headers": {
-          "Content-Type": "application/fhir+json",
-          "Authorization": "Bearer " + that.token,
-          "cache-control": "no-cache"
-        },
-        "data": JSON.stringify(data),
-        "error": function(err){
-          console.log(err);
-          reject("An error occured (" + err.status + "): " + err.statusText );
-        },
-        "success": function(response){
-          //console.log(response);
-          resolve("saved to midata: " + response);
+      // get a securely valid token
+      that.getValidToken().then(token => {
+        let successMessage = "Auf MIDATA gespeichert";
+        // prepare ajax settings
+        var ajaxSettings = {
+          "async": true,
+          "crossDomain": true,
+          "url": that.uri.service,
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/fhir+json",
+            "Authorization": "Bearer " + token,
+            "cache-control": "no-cache"
+          },
+          "data": JSON.stringify(data),
+          "error": function(err){
+            console.log(err);
+            reject("An error occured (" + err.status + "): " + err.statusText );
+          },
+          "success": function(response){
+            if(that.cacheQueries){
+              // if query cache is enabled, we refresh the cache
+              that.queryCache = [];
+              that.getData('Observation')
+              .then(()=> {
+                console.log('Observation cached')
+              })
+              .catch(err => {
+                console.log("Fehler: " + err.responseText)
+              });
+            }
+            resolve(successMessage + " (id:" + response.id +")");
+          }
         }
-      }
 
-      if(data.resourceType == "Bundle"){
-        ajaxSettings.success = function(response){
-          resolve("bundle saved, id=" + response.id);
+        // do the ajax requests, depending on the type of the resource
+        if(data.resourceType == "Bundle"){
+          successMessage = "Bundle gespeichert"
+          $.ajax(ajaxSettings);
         }
-        $.ajax(ajaxSettings);
-
-      }
-      else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
-        // if we have an Observation, we have to adjust the service URI
-        ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
-        $.ajax(ajaxSettings);
-
-      }
-      else {
-        reject("Error: can not handle datatype " + data.resourceType + " yet.");
-      }
+        else if(data.resourceType == "Observation" || data.resourceType == "MedicationStatement"){
+          // if we have an Observation, we have to adjust the service URI
+          ajaxSettings.url += "/" + data.resourceType; // add "/Observation" to URL
+          $.ajax(ajaxSettings);
+        }
+        else {
+          reject("Error: can not handle datatype " + data.resourceType + " yet.");
+        }
+      }).catch(err => {
+        console.log("Error: " + err.responseText);
+        console.log(err)
+        reject(err);
+      });
     });
   }
 
@@ -622,13 +631,10 @@ export default class MidataService {
   logout(){
     localStorage.removeItem("oauth-client");
     localStorage.removeItem("oauth-refreshtoken");
-    sessionStorage.removeItem("oauth-refreshtoken");
     localStorage.removeItem("oauth-resources");
     localStorage.removeItem("oauth-state");
     localStorage.removeItem("oauth-token");
-    sessionStorage.removeItem("oauth-token");
     localStorage.removeItem("oauth-tokeneol");
-    sessionStorage.removeItem("oauth-tokeneol");
     localStorage.removeItem("oauth-uri");
     localStorage.removeItem("patient");
     location.reload();
@@ -640,11 +646,88 @@ export default class MidataService {
     returns     - true, if a token is set and not expired (cave: token can still be invalid!)
                 - false, if no token is set or token has expired
     author      hessg1
-    version     2019-03-20
+    version     2019-05-09
   */
   isReady(){
-    if(this.token == "" || (this.tokenEOL < Number(Date.now()) - 60000))
-      return false;
-    return true;
+    if(this.keepToken){
+      return this.token != '';
+    }
+    return (this.token != '' && !this.tokenExpired());
+  }
+
+  /*
+    Checks if the set Auth Token is not yet expired (or going to be expired in less than 10 seconds)
+    parameters  none
+    returns     - true: if the token is expired or will be in less than 10 seconds
+                - false: if the token is not expired (cave: token can still be invalid!)
+    author      hessg1
+    version     2019-05-09
+  */
+  tokenExpired(){
+    return (this.tokenEOL < Number(Date.now()) - 10000);
+  }
+
+  /*
+    Gets a new valid token when a refreshToken is set.
+    parameters  none
+    returns     a Promise with a valid token when possible
+    author      hessg1
+    version     2019-05-09
+  */
+  getValidToken(){
+    let that = this;
+    return new Promise(function(resolve, reject){
+
+      // when the token is expired, we have to get a new one
+      if(that.tokenExpired()){
+        if(that.refreshToken == ""){
+          reject("Kein Refresh-Token vorhanden!");
+        }
+
+        var settings = {
+          "crossDomain": true,
+          "url": that.uri.token,
+          "method": "POST",
+          "headers": {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "*/*",
+          },
+          "data": {
+            "grant_type": "refresh_token",
+            "refresh_token": that.refreshToken
+          }
+        }
+
+        $.ajax(settings)
+        .done(res => {
+          console.log("refresh-token successful");
+          that.token = res.access_token;
+          that.refreshToken = res.refresh_token;
+          that.tokenEOL = Date.now() + (1000 * res.expires_in);
+          that.patient = res.patient;
+          // check if logged in patient is the same as last logged in
+          if(localStorage.getItem("patientId") != res.patient){
+            // if we have another patient, there went something wrong and we log out
+            console.log("Fehler: PatientenId stimmt nicht überein. Logout.")
+            that.logout();
+          }
+          if(that.keepToken){
+            localStorage.setItem("oauth-token", res.access_token);
+            localStorage.setItem("oauth-refreshtoken", res.refresh_token);
+            localStorage.setItem("oauth-tokeneol", that.tokenEOL);
+          }
+          resolve(that.token);
+        })
+        .catch(err => {
+          console.log(err)
+          reject("Fehler beim Beziehen eines neuen Tokens (siehe Konsole)")
+        });
+      }
+
+      // if the token is still valid, we can just return it
+      else {
+        resolve(that.token);
+      }
+    });
   }
 }

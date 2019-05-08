@@ -27,7 +27,7 @@
           <v-list-tile-title>Meine Daten</v-list-tile-title>
         </v-list-tile>
 
-        <v-list-group prepend-icon="create" value="true">
+        <v-list-group prepend-icon="create" :value="newEntryFoldedOutness">
           <template v-slot:activator>
             <v-list-tile>
               <v-list-tile-title>Eintrag erfassen</v-list-tile-title>
@@ -63,9 +63,10 @@
           <v-list-tile-title>Impressum</v-list-tile-title>
         </v-list-tile>
       </v-list>
-      <v-spacer />
-      <v-btn v-if="$midataService.isReady()" flat small block @click="$midataService.logout()">MIDATA logout</v-btn>
-      <v-spacer />
+
+      <v-divider />
+
+      <v-btn v-if="$midataService.isReady()" flat  block @click="$midataService.logout()">MIDATA logout</v-btn>
     </v-navigation-drawer>
 
     <v-toolbar app clipped-left color="primary">
@@ -96,6 +97,7 @@ export default {
   data () {
     return {
       drawer: true,
+      newEntryFoldedOutness: false
     }
   }
 }
