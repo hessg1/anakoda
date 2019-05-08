@@ -3,18 +3,17 @@
   <v-layout column wrap>
     <h2>Einstellungen</h2>
     <p>Hier kannst du einige Einstellungen tätigen.</p>
-    <!--v-flex>
+    <v-flex>
       <v-card>
         <v-card-text>
-          Wähle "Eingeloggt bleiben", um die Verbindung mit MIDATA zu behalten, auch wenn du das Browser-Fenster schliesst.<br />
-          Beachte aber, dass in diesem Fall andere Menschen, die den selben Computer benutzen, Zugriff auf deine Daten haben.<br />
-          Ausserdem kann es dennoch vorkommen, dass die Verbindung nach einiger Zeit von MIDATA getrennt wird.
-        </v-card-text>
+          Wähle "Eingeloggt bleiben", um die Verbindung mit MIDATA zu behalten, auch wenn du das Browser-Fenster schliesst oder länger als sechs Stunden eingeloggt bist. Beachte aber, dass in diesem Fall andere Menschen, die den selben Computer benutzen, Zugriff auf deine Daten haben.<br />
+
+          </v-card-text>
         <v-card-actions>
           <v-switch v-model="loggedIn" label="Eingeloggt bleiben"></v-switch>
         </v-card-actions>
       </v-card>
-    </v-flex-->
+    </v-flex>
     <v-flex>
       <v-card>
         <v-card-text>
@@ -57,13 +56,18 @@ export default {
     }
   },
   mounted(){
-    this.loggedin = this.$midataService.keepToken;
+    this.loggedIn = this.$midataService.keepToken;
     this.showInvalid = localStorage.getItem("showInvalid") == 'true';
   },
   watch: {
     loggedIn(){
       this.$midataService.keepToken = this.loggedIn;
       localStorage.setItem("keepToken", this.loggedIn);
+      if(this.loggedIn == false){
+        localStorage.removeItem("oauth-token");
+        localStorage.removeItem("oauth-refreshtoken");
+        localStorage.removeItem("oauth-tokeneol");
+      }
     },
     showInvalid(){
       localStorage.setItem("showInvalid", this.showInvalid);

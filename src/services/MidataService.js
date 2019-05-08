@@ -31,6 +31,11 @@ export default class MidataService {
       this.token = localStorage.getItem("oauth-token") || "";
       this.refreshToken = localStorage.getItem("oauth-refreshtoken") || "";
       this.tokenEOL = Number(localStorage.getItem("oauth-tokeneol") || Date.now());
+      if(this.token == ""){
+        this.token = sessionStorage.getItem("oauth-token") || "";
+        // this.refreshToken = sessionStorage.getItem("oauth-refreshtoken") || "";
+        this.tokenEOL = Number(sessionStorage.getItem("oauth-tokeneol") || Date.now());
+      }
       this.client = client;
       this.patient = localStorage.getItem("patientId") || "";
       this.keepToken = localStorage.getItem("keepToken") == 'true';
@@ -50,7 +55,7 @@ export default class MidataService {
       this.token = "";
       this.refreshToken = "";
       this.patient = "";
-      this.keepToken = false; // determines if token is kept in localStorage
+      this.keepToken = false; // determines if token is kept in localStorage or in sessionStorage (and thus deleted when Browser Tab is closed)
       this.cacheQueries = true; // determines if queries are cached
 
       // set up given parameters
@@ -178,6 +183,11 @@ export default class MidataService {
           localStorage.setItem("oauth-token", res.access_token);
           localStorage.setItem("oauth-refreshtoken", res.refresh_token);
           localStorage.setItem("oauth-tokeneol", that.tokenEOL);
+        }
+        else{
+          sessionStorage.setItem("oauth-token", res.access_token);
+          //sessionStorage.setItem("oauth-refreshtoken", res.refresh_token);
+          sessionStorage.setItem("oauth-tokeneol", that.tokenEOL);
         }
 
 
@@ -631,10 +641,13 @@ export default class MidataService {
   logout(){
     localStorage.removeItem("oauth-client");
     localStorage.removeItem("oauth-refreshtoken");
+    sessionStorage.removeItem("oauth-refreshtoken");
     localStorage.removeItem("oauth-resources");
     localStorage.removeItem("oauth-state");
     localStorage.removeItem("oauth-token");
+    sessionStorage.removeItem("oauth-token");
     localStorage.removeItem("oauth-tokeneol");
+    sessionStorage.removeItem("oauth-tokeneol");
     localStorage.removeItem("oauth-uri");
     localStorage.removeItem("patient");
     location.reload();
