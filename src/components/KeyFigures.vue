@@ -11,7 +11,7 @@
       <v-flex xs12 md12>
         <v-select v-model="dateentry"
                   :items="interval"
-                  hint="Kennzahlen anzeigen für"
+                  label="Kennzahlen anzeigen für"
                   persistent-hint
                   class="mt-0 pt-0">
         </v-select>
@@ -484,9 +484,9 @@
                 return a.endTime - b.endTime
               })
 
-              // get all symptom ressources and write them in an array
+              // get all symptoms except "attack" resources and write them in an array
               this.symptoms = this.filterArray(
-                x => x.category == 'VariousComplaint' || x.category == 'Condition',
+                x => x.category == 'VariousComplaint' || x.category == 'Condition' && x.code != 216299002,
                 observations
               )
               this.symptoms.sort((a, b) => {
