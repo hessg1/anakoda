@@ -1,4 +1,5 @@
 const serviceUri = "https://test.midata.coop/fhir/";
+const cutOffDate = new Date("2019-02-01") // resources saved before this date will not be processed
 const client = "anakoda";
 
 import $ from 'jquery';
@@ -434,7 +435,7 @@ export default class MidataService {
       res.entry.push(res);
     }
     for(var i in res.entry){
-      if(res.entry[i].resource.resourceType == 'Observation'){
+      if(res.entry[i].resource.resourceType == 'Observation' && new Date(res.entry[i].resource.meta.lastUpdated) > cutOffDate){
 
         // create template object from SnomedService
         let code = "";
@@ -443,7 +444,7 @@ export default class MidataService {
           code = res.entry[i].resource.valueCodeableConcept.coding[0].code;
           invalid = false;
         }
-        else if(res.entry[i].resource.component[0].code != undefined) {
+        else if(res.entry[i].resource.component && res.entry[i].resource.component[0].code) {
           code = res.entry[i].resource.component[0].code.coding[0].code;
           invalid = false;
         }
@@ -463,81 +464,81 @@ export default class MidataService {
 
         // if code was not found in SNOMED CT, we abort and throw an error:
         if(templateArr.length == 0){
-          throw("Fehlerhafte Daten: SNOMED-Code " + code + " ist nicht bekannt (Objekt " + i + ").");
+          console.log("Fehlerhafte Daten: SNOMED-Code " + code + " ist nicht bekannt (Objekt " + i + ").\nObjekt übersprungen.");
         }
+        else{
+
+          // we only expect this array to have one entry anyway, since code is unique
+          // we have to do the json stringify dance, so the object is later not passed by reference,
+          // which was causing strange errors
+          let template = JSON.parse(JSON.stringify(templateArr[0]));
+
+          // fill template with actual values from resource
+          if(template.category == 'EatingHabit' || template.category == 'Diagnosis'){ // EatingHabit and diagnosis has only one Time
+            if(res.entry[i].resource.effectiveDateTime){
+              template.date = new Date(res.entry[i].resource.effectiveDateTime);
+
+              // mark entries with invalid time values
+              invalid = template.startTime > new Date();
+            }
+            else {
+              template.date = new Date(1);
+              invalid = true;
+            }
+          }
+          else { // all other have start and end times
+            if(res.entry[i].resource.effectivePeriod){
+              template.startTime = new Date(res.entry[i].resource.effectivePeriod.start);
+              template.endTime = new Date(res.entry[i].resource.effectivePeriod.end);
+
+              // mark entries with invalid time values
+              invalid = (template.startTime > template.endTime) || (template.startTime > new Date());
+            }
+            else{ // some older entries don't even have time entries, and are thus invalid
+              template.startTime = new Date(0);
+              template.endTime = new Date(1);
+              invalid = true;
+            }
+          }
+
+          if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
+            // these Categories have intensities
+
+            if(res.entry[i].resource.component && res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
+              template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
+            }
+            else{
+              invalid = true;
+            }
+          }
 
 
-        // we only expect this array to have one entry anyway, since code is unique
-        // we have to do the json stringify dance, so the object is later not passed by reference,
-        // which was causing strange errors
-        let template = JSON.parse(JSON.stringify(templateArr[0]));
+          if(template.category == 'Headache'){
+            // headaches also have body sites
+            if(res.entry[i].resource.bodySite.coding[0]){
+              template.bodySiteSCT = res.entry[i].resource.bodySite.coding[0].code;
+              template.bodySiteDE = sct.getGerman(template.bodySiteSCT);
+            }
+            else{
+              invalid = true;
+            }
+          }
 
-        // fill template with actual values from resource
-        if(template.category == 'EatingHabit' || template.category == 'Diagnosis'){ // EatingHabit and diagnosis has only one Time
-          if(res.entry[i].resource.effectiveDateTime){
-            template.date = new Date(res.entry[i].resource.effectiveDateTime);
-
-            // mark entries with invalid time values
-            invalid = template.startTime > new Date();
+          // create metadata
+          let meta = {};
+          meta.id = res.entry[i].resource.id;
+          if(res.entry[i].resource.meta){
+            meta.versionId = res.entry[i].resource.meta.versionId;
+            meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
+            meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display;
           }
           else {
-            template.date = new Date(1);
             invalid = true;
           }
+          meta.invalid = invalid;
+          template.meta = meta;
+          data.push(template);
         }
-        else { // all other have start and end times
-          if(res.entry[i].resource.effectivePeriod){
-            template.startTime = new Date(res.entry[i].resource.effectivePeriod.start);
-            template.endTime = new Date(res.entry[i].resource.effectivePeriod.end);
-
-            // mark entries with invalid time values
-            invalid = (template.startTime > template.endTime) || (template.startTime > new Date());
-          }
-          else{ // some older entries don't even have time entries, and are thus invalid
-            template.startTime = new Date(0);
-            template.endTime = new Date(1);
-            invalid = true;
-          }
-        }
-
-        if(template.category == 'VariousComplaint' || template.category == 'Headache' || template.category == 'SleepPattern'){
-          // these Categories have intensities
-
-          if(res.entry[i].resource.component && res.entry[i].resource.component[0].valueQuantity){ // catch old faulty entries
-            template.quantity = res.entry[i].resource.component[0].valueQuantity.value;
-          }
-          else{
-            invalid = true;
-          }
-
-        }
-
-
-        if(template.category == 'Headache'){
-          // headaches also have body sites
-          if(res.entry[i].resource.bodySite.coding[0]){
-            template.bodySiteSCT = res.entry[i].resource.bodySite.coding[0].code;
-            template.bodySiteDE = sct.getGerman(template.bodySiteSCT);
-          }
-          else{
-            invalid = true;
-          }
-        }
-
-        // create metadata
-        let meta = {};
-        meta.id = res.entry[i].resource.id;
-        if(res.entry[i].resource.meta){
-          meta.versionId = res.entry[i].resource.meta.versionId;
-          meta.timestamp = new Date(res.entry[i].resource.meta.lastUpdated);
-          meta.source = res.entry[i].resource.meta.extension[0].extension[0].valueCoding.display;
-        }
-        else {
-          invalid = true;
-        }
-        meta.invalid = invalid;
-        template.meta = meta;
-        data.push(template);
       }
 
       else if(res.entry[i].resource.resourceType == 'Patient'){
@@ -563,7 +564,7 @@ export default class MidataService {
         pat.meta = meta;
         data.push(pat);
       }
-      else if(res.entry[i].resource.resourceType == 'MedicationStatement'){
+      else if(res.entry[i].resource.resourceType == 'MedicationStatement' && new Date(res.entry[i].resource.meta.lastUpdated) > cutOffDate){
         let med = {
           code: 'medication',
           category: 'Medication',
@@ -572,13 +573,13 @@ export default class MidataService {
         };
         let invalid = true;
 
-        if(res.entry[i].resource.medicationCodeableConcept.coding){
+        if(res.entry[i].resource.medicationCodeableConcept && res.entry[i].resource.medicationCodeableConcept.coding){
           med.en = res.entry[i].resource.medicationCodeableConcept.coding[0].display;
           med.de = med.en;
           invalid = false;
         }
 
-        if(res.entry[i].resource.dosage){
+        if(res.entry[i].resource.dosage && res.entry[i].resource.dosage[0].doseQuantity){
           med.dosage = res.entry[i].resource.dosage[0].doseQuantity.value;
           med.effect = res.entry[i].resource.dosage[0].text;
           med.effect = med.effect == 'Good' ? 'geholfen' : med.effect == 'Bad' ? 'die Situation verschlechtert' : 'nicht geholfen';
@@ -624,8 +625,11 @@ export default class MidataService {
         data.push(med);
       }
       else{
-        throw("Fehler: Kann momentan nur Bundles mit Observation-, MedicationStatement- oder Patient-Ressourcen verarbeiten.");
+        if(new Date(res.entry[i].resource.meta.lastUpdated) > cutOffDate){
+          throw("Fehler: Kann momentan nur Bundles mit Observation-, MedicationStatement- oder Patient-Ressourcen verarbeiten.");
+        }
       }
+
     }
     return data;
   }

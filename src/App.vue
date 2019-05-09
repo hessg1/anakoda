@@ -66,7 +66,9 @@
 
       <v-divider />
 
-      <v-btn v-if="$midataService.isReady()" flat  block @click="$midataService.logout()">MIDATA logout</v-btn>
+      <v-btn v-if="$midataService.isReady()" to="/" flat block @click="$midataService.logout()">MIDATA logout</v-btn>
+
+
     </v-navigation-drawer>
 
     <v-toolbar app clipped-left color="primary">
@@ -97,8 +99,11 @@ export default {
   data () {
     return {
       drawer: true,
-      newEntryFoldedOutness: false
+      newEntryFoldedOutness: false,
     }
+  },
+  computed: {
+
   }
 }
 </script>
