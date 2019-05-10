@@ -96,7 +96,7 @@
           <v-tooltip bottom v-model="legend">
             <template v-slot:activator="{ on }">
               <!--v-icon @click="legend = !legend" large>info</v-icon-->
-              <v-btn flat @click="legend = !legend">legende</v-btn>
+              <v-btn flat absolute right @click="legend = !legend">legende</v-btn>
             </template>
             <span @blur="legend = false">
               <v-icon class="closeIcon" @click="legend = false">close</v-icon>
@@ -235,7 +235,7 @@
             isHtml: true
           },
           avoidOverlappingGridLines: false,
-          height: 300,
+          height: 270,
           backgroundColor: '#fff',
           animation: { startup: true }
         }
@@ -525,7 +525,7 @@
             // increment date by one
             day.setDate(day.getDate() + 1);
           }
-          this.chartOptions.height = 300;
+          this.chartOptions.height = 270;
           //
           if (headache.length == 0) {
             this.chartOptions.height -= 42;
