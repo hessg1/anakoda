@@ -3,9 +3,6 @@
   <v-container fluid grid-list-lg>
     <v-layout row wrap>
       <v-flex xs12 md12>
-        <h2>Kennzahlen</h2>
-      </v-flex>
-      <v-flex xs12 md12>
         <p>Hier findest du berechnete Kennzahlen über deine persönlichen Daten.</p>
       </v-flex>
       <v-flex xs12 md12>
@@ -28,17 +25,17 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                                                  <v-text-field
-                                                  v-model="datestartFormatted"
-                                                  label="Startdatum"
-                                                  persistent-hint
-                                                  prepend-icon="event"
-                                                  v-on="on"
-                                                  @focus="hideKeyboard()"
-                                                  @blur="date = parseDate(datestartFormatted)"
-                                                  color="#0a967a"
-                                                  />
-                                                </template>
+                                                                  <v-text-field
+                                                                  v-model="datestartFormatted"
+                                                                  label="Startdatum"
+                                                                  persistent-hint
+                                                                  prepend-icon="event"
+                                                                  v-on="on"
+                                                                  @focus="hideKeyboard()"
+                                                                  @blur="date = parseDate(datestartFormatted)"
+                                                                  color="#0a967a"
+                                                                  />
+                                                                </template>
               <v-date-picker v-model="datestartdesired"
                              color="#0a967a"
                              no-title
@@ -60,16 +57,16 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                                                  <v-text-field
-                                                  v-model="dateendFormatted"
-                                                  label="Enddatum"
-                                                  persistent-hint
-                                                  v-on="on"
-                                                  @focus="hideKeyboard()"
-                                                  @blur="date = parseDate(dateendFormatted)"
-                                                  color="#0a967a"
-                                                  />
-                                                </template>
+                                                                  <v-text-field
+                                                                  v-model="dateendFormatted"
+                                                                  label="Enddatum"
+                                                                  persistent-hint
+                                                                  v-on="on"
+                                                                  @focus="hideKeyboard()"
+                                                                  @blur="date = parseDate(dateendFormatted)"
+                                                                  color="#0a967a"
+                                                                  />
+                                                                </template>
               <v-date-picker v-model="dateenddesired"
                              color="#0a967a"
                              no-title
@@ -82,29 +79,28 @@
         </v-layout>
       </v-flex>
       <v-flex xs12 md6>
-        <v-card class="mx-auto" min-height="360">
+        <v-card class="mx-auto">
           <v-card-title>
-            <v-icon class="mr-5" size="64" color="primary">
+            <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
               face
             </v-icon>
             <v-layout column align-start class="ma-0">
               <div class="caption grey--text text-uppercase">
-                ∅ Intensität deiner Kopfschmerzen
-              </div>
-              <div>
-                <span class="display-2 font-weight-black" v-text="headachintensavg || '—'"></span>
-                <strong v-if="symdayavg">/10</strong>
-              </div>
-            </v-layout>
-
-            <v-layout column align-start class="ma-0">
-              <div class="caption grey--text text-uppercase">
-                Kopfschmerzeinträge
+                Kopfschmerzen
               </div>
               <div>
                 <span class="display-2 font-weight-black" v-text="data && headaches.length || '—'"></span>
                 <strong v-if="data && headaches.length != 1">Einträge</strong>
                 <strong v-if="data && headaches.length == 1">Eintrag</strong>
+              </div>
+            </v-layout>
+            <v-layout column align-start class="ma-0">
+              <div class="caption grey--text text-uppercase">
+                ∅ Intensität
+              </div>
+              <div>
+                <span class="display-2 font-weight-black" v-text="headachintensavg || '—'"></span>
+                <strong v-if="symdayavg">/10</strong>
               </div>
             </v-layout>
           </v-card-title>
@@ -121,21 +117,23 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            <div class="body-1">
-              Diese Grafik zeigt dir, wie sich die Intensitäten deiner Kopfschmerzeinträge verändert haben.
+            <div class="body-1" v-if="data && headaches.length != 0">
+              Zwischen dem {{headaches[0].startTime.toLocaleDateString('de-CH')}} und {{headaches[headaches.length-1].startTime.toLocaleDateString('de-CH')}}
+              hast du {{headaches.length}} Mal Kopfschmerzen gehabt, mit einer durchschnittlichen Intensität von {{headachintensavg}}.
+              In der Grafik siehst du, wie sich die Schmerzintensität im Lauf der Zeit verändert hat.
             </div>
           </v-card-text>
         </v-card>
       </v-flex>
       <v-flex xs12 md6>
-        <v-card class="mx-auto" min-height="360">
+        <v-card class="mx-auto">
           <v-card-title>
-            <v-icon class="mr-5" size="64" color="primary">
+            <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
               loyalty
             </v-icon>
             <v-layout column align-start class="ma-0">
               <div class="caption grey--text text-uppercase">
-                Andere Symptome
+                Auffälligkeiten
               </div>
               <div>
                 <span class="display-2 font-weight-black" v-text="data && symptoms.length || '—'"></span>
@@ -149,7 +147,7 @@
               </div>
               <div>
                 <span class="display-2 font-weight-black" v-text="symdayavg || '—'"></span>
-                <strong v-if="symdayavg">Einträge/Tag</strong>
+                <strong v-if="symdayavg">Einträge</strong>
               </div>
             </v-layout>
 
@@ -167,24 +165,23 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            <div class="body-1">
-              Diese Grafik zeigt dir den Verlauf deiner täglichen Eingabe von anderen Symptomen.
+            <div class="body-1" v-if="data && symptoms.length != 0">
+              Für den Zeitraum vom {{symptoms[0].startTime.toLocaleDateString('de-CH')}} und dem {{symptoms[symptoms.length-1].startTime.toLocaleDateString('de-CH')}}
+              hast du {{symptoms.length}} sonstige Auffälligkeiten notiert. Das sind durchschnittlich {{symdayavg}} pro Tag.
+              In der Grafik siehst du die Veränderung im Zeitverlauf.
             </div>
           </v-card-text>
         </v-card>
       </v-flex>
       <v-flex xs12 md6>
-        <v-card class="mx-auto" min-height="360">
+        <v-card class="mx-auto">
           <v-card-title>
-            <v-icon class="mr-5" size="64" color="primary">
-              link
-            </v-icon>
-            <v-layout column align-start class="ma-0">
-              <div class="caption grey--text text-uppercase">
-                Die Häufigsten anderen Symptome <strong>während</strong> deinen Kopfschmerzen
-              </div>
-              <div>
-                <span class="headline font-weight-black" v-text="syminlabel.toString() || '—'"></span>
+            <v-layout row align-start class="ma-0">
+              <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
+                link
+              </v-icon>
+              <div class="subheading grey--text text-uppercase">
+                <strong>Während</strong> deinen Kopfschmerzen
               </div>
             </v-layout>
           </v-card-title>
@@ -194,26 +191,33 @@
                          auto-line-width
                          type="bar"
                          auto-draw></v-sparkline>
+            <v-layout class="hidden-xs-only" wrap row v-if="data">
+              <v-flex v-for="sym in syminlabel" :key="sym.index">
+                <div class="body-2 text-truncate text-xs-center" :key="sym.index">{{sym.toString()}}</div>
+              </v-flex>
+            </v-layout>
+            <v-layout class="hidden-sm-and-up" wrap column v-if="data">
+              <v-flex v-for="sym in syminlabel" :key="sym.index">
+                <div class="body-2 text-truncate" :key="sym.index">{{sym.toString()}}</div>
+              </v-flex>
+            </v-layout>
           </v-card-text>
           <v-card-text>
             <div class="body-1">
-              Diese Grafik zeigt die Anzahl der häufigsten <strong>während</strong> deinen Kopfschmerzen.
+              Hier siehst du, welche Auffälligkeiten am häufigsten gleichzeitig mit Kopfschmerzen aufgetreten sind.
             </div>
           </v-card-text>
         </v-card>
       </v-flex>
       <v-flex xs12 md6>
-        <v-card class="mx-auto" min-height="360">
+        <v-card class="mx-auto">
           <v-card-title>
-            <v-icon class="mr-5" size="64" color="primary">
-              link_off
-            </v-icon>
-            <v-layout column align-start class="ma-0">
-              <div class="caption grey--text text-uppercase">
-                Die Häufigsten anderen Symptome <strong>ausserhalb</strong> deiner Kopfschmerzen
-              </div>
-              <div>
-                <span class="headline font-weight-black" v-text="symoutlabel.toString() || '—'"></span>
+            <v-layout row align-start class="ma-0">
+              <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
+                link_off
+              </v-icon>
+              <div class="subheading grey--text text-uppercase">
+                <strong>Ausserhalb</strong> deiner Kopfschmerzen
               </div>
             </v-layout>
           </v-card-title>
@@ -223,11 +227,19 @@
                          auto-line-width
                          type="bar"
                          auto-draw></v-sparkline>
+            <v-layout class="hidden-xs-only" wrap row v-if="data">
+              <v-flex v-for="sym in symoutlabel" :key="sym.index">
+                <div class="body-2 text-truncate text-xs-center" :key="sym.index">{{sym.toString()}}</div>
+              </v-flex>
+            </v-layout>
+            <v-layout class="hidden-sm-and-up" wrap column v-if="data">
+              <v-flex v-for="sym in symoutlabel" :key="sym.index">
+                <div class="body-2 text-truncate" :key="sym.index">{{sym.toString()}}</div>
+              </v-flex>
+            </v-layout>
           </v-card-text>
           <v-card-text>
-            <div class="body-1">
-              Diese Grafik zeigt die Anzahl der häufigsten <strong>ausserhalb</strong> deiner Kopfschmerzen.
-            </div>
+            Hier siehst du, welche Auffälligkeiten am häufigsten bei dir vorkahmen, ohne dass du dabei Kopfschmerzen hattest.
           </v-card-text>
         </v-card>
       </v-flex>
@@ -420,9 +432,9 @@
 
     methods: {
       /*
-                                        Convenience method for filtering an array with any criterium.
-                                        hessg1 / 2019-04-10
-                                        */
+                                                        Convenience method for filtering an array with any criterium.
+                                                        hessg1 / 2019-04-10
+                                                        */
       filterArray(filter, array) {
         let newArr = []
         for (var i in array) {
@@ -433,12 +445,12 @@
         return newArr
       },
       /*
-                                        Format a Date to string in Swiss standard DD.MM.YYYY
-                                        parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
-                                        returns:    - a date string in the format DD.MM.YYYY
-                                        author:     schwf3
-                                        version:    2019-03-26
-                                        */
+                                                        Format a Date to string in Swiss standard DD.MM.YYYY
+                                                        parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
+                                                        returns:    - a date string in the format DD.MM.YYYY
+                                                        author:     schwf3
+                                                        version:    2019-03-26
+                                                        */
       formatDate(date) {
         if (!date) return null
 
@@ -447,12 +459,12 @@
       },
 
       /*
-                                        Format a Date to string to ISO8601 (YYYY-MM-DD)
-                                        parameters: - date: a date string in the format DD.MM.YYYY
-                                        returns:    - a date as ISO-string (YYYY-MM-DD)
-                                        author:     schwf3
-                                        version:    2019-03-26
-                                        */
+                                                        Format a Date to string to ISO8601 (YYYY-MM-DD)
+                                                        parameters: - date: a date string in the format DD.MM.YYYY
+                                                        returns:    - a date as ISO-string (YYYY-MM-DD)
+                                                        author:     schwf3
+                                                        version:    2019-03-26
+                                                        */
       parseDate(date) {
         if (!date) return null
 
@@ -486,7 +498,7 @@
 
               // get all symptoms except "attack" resources and write them in an array
               this.symptoms = this.filterArray(
-                x => x.category == 'VariousComplaint' || x.category == 'Condition' && x.code != 216299002,
+                x => x.category == 'VariousComplaint' || (x.category == 'Condition' && x.code != 216299002),
                 observations
               )
               this.symptoms.sort((a, b) => {
@@ -568,12 +580,12 @@
       },
 
       /*
-                                      Helper method for not showing software keyboard on smartphones, when a input-
-                                      field is clicked (e.g. with date picker)
-                                      usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
-                                      author:     hessg1
-                                      version:    2019-03-29
-                                      */
+                                                      Helper method for not showing software keyboard on smartphones, when a input-
+                                                      field is clicked (e.g. with date picker)
+                                                      usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
+                                                      author:     hessg1
+                                                      version:    2019-03-29
+                                                      */
       hideKeyboard() {
         document.activeElement.blur()
       }
