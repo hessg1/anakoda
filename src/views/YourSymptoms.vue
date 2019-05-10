@@ -245,7 +245,8 @@
               class="text-truncate">
               <strong>{{ data.item.de }}</strong>
               <span v-if="data.item.flag == true && data.item.category != 'Condition'" class="hidden-sm-and-down text-truncate">&nbsp;{{data.item.quality}}</span>
-              <span v-if="data.item.flag == true" class="hidden-sm-and-down text-truncate">&nbsp;({{data.item.start}} - {{data.item.end}})</span>
+              <span v-if="data.item.flag == true" class="hidden-sm-and-down text-truncate">({{data.item.start}} - {{data.item.end}})</span>
+              <span v-else class="hidden-sm-and-down text-truncate">&nbsp;(Details fehlen)</span>
             </v-chip>
           </v-badge>
         </template>
@@ -350,7 +351,7 @@
 </v-card-text>
 <v-subheader v-if="controll==false">
   <v-icon color="red">warning</v-icon>
-  Klicke auf dein erfasstes Symptom um alle Angaben zu erfassen.
+  Klicke auf dein erfasstes Symptom um die fehlenden Details zu erfassen.
 </v-subheader>
 <v-card-actions>
   <v-btn v-if="midata != null && controll == false && midata.isReady()"
