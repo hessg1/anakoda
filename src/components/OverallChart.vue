@@ -80,112 +80,120 @@
 
             <v-spacer />
 
-            <v-tooltip bottom v-model="legend">
-              <template v-slot:activator="{ on }">
-                <v-icon @click="legend = !legend" large>info</v-icon>
-              </template>
-              <span @blur="legend = false">
-                <v-icon class="closeIcon" @click="legend = false">close</v-icon>
-                <h3>Legende</h3>
-                <table class="legend">
-                  <tr>
-                    <td style="font-weight: bold">Kopfschmerzen:</td>
-                    <td colspan="5"> (Intensität)</td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #7B84FC; color: #000;">Pulsierende K.</td>
-                    <td style="background-color: #7B84FC; color: #000; opacity: 0.9">9</td>
-                    <td style="background-color: #7B84FC; color: #000; opacity: 0.7">7</td>
-                    <td style="background-color: #7B84FC; color: #000; opacity: 0.5">5</td>
-                    <td style="background-color: #7B84FC; color: #000; opacity: 0.3">3</td>
-                    <td style="background-color: #7B84FC; color: #000; opacity: 0.1">1</td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #7AD6FD; color: #000;">Einschiessende K.</td>
-                    <td style="background-color: #7AD6FD; color: #000; opacity: 0.9">9</td>
-                    <td style="background-color: #7AD6FD; color: #000; opacity: 0.7">7</td>
-                    <td style="background-color: #7AD6FD; color: #000; opacity: 0.5">5</td>
-                    <td style="background-color: #7AD6FD; color: #000; opacity: 0.3">3</td>
-                    <td style="background-color: #7AD6FD; color: #000; opacity: 0.1">1</td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #79FDFE; color: #000;">Stechende K.</td>
-                    <td style="background-color: #79FDFE; color: #000; opacity: 0.9">9</td>
-                    <td style="background-color: #79FDFE; color: #000; opacity: 0.7">7</td>
-                    <td style="background-color: #79FDFE; color: #000; opacity: 0.5">5</td>
-                    <td style="background-color: #79FDFE; color: #000; opacity: 0.3">3</td>
-                    <td style="background-color: #79FDFE; color: #000; opacity: 0.1">1</td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #79FBD6; color: #000;">Andere K.</td>
-                    <td style="background-color: #79FBD6; color: #000; opacity: 0.9">9</td>
-                    <td style="background-color: #79FBD6; color: #000; opacity: 0.7">7</td>
-                    <td style="background-color: #79FBD6; color: #000; opacity: 0.5">5</td>
-                    <td style="background-color: #79FBD6; color: #000; opacity: 0.3">3</td>
-                    <td style="background-color: #79FBD6; color: #000; opacity: 0.1">1</td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #FD978F; color: #000;">Migräne-Anfall</td>
-                    <td colspan="5">nicht abgestuft</td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight: bold">Auffälligkeiten:</td>
-                    <td colspan="5"> (Intensität)</td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #FED37F; color: #000;">Beschwerden</td>
-                    <td style="background-color: #FED37F; color: #000; opacity: 0.9">9</td>
-                    <td style="background-color: #FED37F; color: #000; opacity: 0.7">7</td>
-                    <td style="background-color: #FED37F; color: #000; opacity: 0.5">5</td>
-                    <td style="background-color: #FED37F; color: #000; opacity: 0.3">3</td>
-                    <td style="background-color: #FED37F; color: #000; opacity: 0.1">1</td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #D5FA80; color: #000;">Zustände</td>
-                    <td colspan="5">nicht abgestuft</td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight: bold">Sonstiges:</td>
-                    <td colspan="5"> </td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #921B51;">Schlafqualität</td>
-                    <td style="background-color: #921B51; opacity: 0.9">9</td>
-                    <td style="background-color: #921B51; opacity: 0.7">7</td>
-                    <td style="background-color: #921B51; opacity: 0.5">5</td>
-                    <td style="background-color: #921B51; opacity: 0.3">3</td>
-                    <td style="background-color: #921B51; opacity: 0.1">1</td>
-                  </tr>
-                  <tr>
-                    <td>Medikamente:</td>
-                    <td colspan="5">💊</td>
-                  </tr>
-                </table>
-                <br /><h3>Optionen</h3>
-                <table>
-                  <tr>
-                    <td>
-                    <v-switch v-model="showTitles" label=""></v-switch>
-                  </td>
-                  <td>Beschreibungen in <br/>Grafik anzeigen</td>
-                </tr></table>
-                Bewege die Maus über ein Element,<br/>um die Details anzuzeigen.
-              </span>
-            </v-tooltip>
+
             <v-spacer />
           </v-layout>
         </v-card-title>
-        <v-card-text>
-          <p>
-            Leere Tage am Anfang und Ende der Grafik werden ausgeblendet.
-          </p>
-        </v-card-text>
-
+        <v-layout row wrap>
+        <v-flex xs9>
+          <v-card-text>
+            <p>
+              Leere Tage am Anfang und Ende der Grafik werden ausgeblendet.
+            </p>
+          </v-card-text>
+        </v-flex>
+        <v-flex xs3>
+          <v-tooltip bottom v-model="legend">
+            <template v-slot:activator="{ on }">
+              <!--v-icon @click="legend = !legend" large>info</v-icon-->
+              <v-btn flat @click="legend = !legend">legende</v-btn>
+            </template>
+            <span @blur="legend = false">
+              <v-icon class="closeIcon" @click="legend = false">close</v-icon>
+              <h3>Legende</h3>
+              <table class="legend">
+                <tr>
+                  <td style="font-weight: bold">Kopfschmerzen:</td>
+                  <td colspan="5"> (Intensität)</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #7B84FC; color: #000;">Pulsierende K.</td>
+                  <td style="background-color: #7B84FC; color: #000; opacity: 0.9">9</td>
+                  <td style="background-color: #7B84FC; color: #000; opacity: 0.7">7</td>
+                  <td style="background-color: #7B84FC; color: #000; opacity: 0.5">5</td>
+                  <td style="background-color: #7B84FC; color: #000; opacity: 0.3">3</td>
+                  <td style="background-color: #7B84FC; color: #000; opacity: 0.1">1</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #7AD6FD; color: #000;">Einschiessende K.</td>
+                  <td style="background-color: #7AD6FD; color: #000; opacity: 0.9">9</td>
+                  <td style="background-color: #7AD6FD; color: #000; opacity: 0.7">7</td>
+                  <td style="background-color: #7AD6FD; color: #000; opacity: 0.5">5</td>
+                  <td style="background-color: #7AD6FD; color: #000; opacity: 0.3">3</td>
+                  <td style="background-color: #7AD6FD; color: #000; opacity: 0.1">1</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #79FDFE; color: #000;">Stechende K.</td>
+                  <td style="background-color: #79FDFE; color: #000; opacity: 0.9">9</td>
+                  <td style="background-color: #79FDFE; color: #000; opacity: 0.7">7</td>
+                  <td style="background-color: #79FDFE; color: #000; opacity: 0.5">5</td>
+                  <td style="background-color: #79FDFE; color: #000; opacity: 0.3">3</td>
+                  <td style="background-color: #79FDFE; color: #000; opacity: 0.1">1</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #79FBD6; color: #000;">Andere K.</td>
+                  <td style="background-color: #79FBD6; color: #000; opacity: 0.9">9</td>
+                  <td style="background-color: #79FBD6; color: #000; opacity: 0.7">7</td>
+                  <td style="background-color: #79FBD6; color: #000; opacity: 0.5">5</td>
+                  <td style="background-color: #79FBD6; color: #000; opacity: 0.3">3</td>
+                  <td style="background-color: #79FBD6; color: #000; opacity: 0.1">1</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #FD978F; color: #000;">Migräne-Anfall</td>
+                  <td colspan="5">nicht abgestuft</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold">Auffälligkeiten:</td>
+                  <td colspan="5"> (Intensität)</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #FED37F; color: #000;">Beschwerden</td>
+                  <td style="background-color: #FED37F; color: #000; opacity: 0.9">9</td>
+                  <td style="background-color: #FED37F; color: #000; opacity: 0.7">7</td>
+                  <td style="background-color: #FED37F; color: #000; opacity: 0.5">5</td>
+                  <td style="background-color: #FED37F; color: #000; opacity: 0.3">3</td>
+                  <td style="background-color: #FED37F; color: #000; opacity: 0.1">1</td>
+                </tr>
+                <tr>
+                  <td style="background-color: #D5FA80; color: #000;">Zustände</td>
+                  <td colspan="5">nicht abgestuft</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold">Sonstiges:</td>
+                  <td colspan="5"> </td>
+                </tr>
+                <tr>
+                  <td style="background-color: #921B51;">Schlafqualität</td>
+                  <td style="background-color: #921B51; opacity: 0.9">9</td>
+                  <td style="background-color: #921B51; opacity: 0.7">7</td>
+                  <td style="background-color: #921B51; opacity: 0.5">5</td>
+                  <td style="background-color: #921B51; opacity: 0.3">3</td>
+                  <td style="background-color: #921B51; opacity: 0.1">1</td>
+                </tr>
+                <tr>
+                  <td>Medikamente:</td>
+                  <td colspan="5">💊</td>
+                </tr>
+              </table>
+              <br /><h3>Optionen</h3>
+              <table>
+                <tr>
+                  <td>
+                  <v-switch v-model="showTitles" label=""></v-switch>
+                </td>
+                <td>Beschreibungen in <br/>Grafik anzeigen</td>
+              </tr></table>
+              Bewege die Maus über ein Element,<br/>um die Details anzuzeigen.
+            </span>
+          </v-tooltip>
+        </v-flex>
+      </v-layout>
         <GChart class="gchart"
                 id="chart"
                 :settings="{packages: ['timeline'], language: 'de'}"
                 :data="chartData"
                 :options="chartOptions"
+                :resizeDebounce="1"
                 :createChart="(el, google) => new google.visualization.Timeline(el)" />
 
       </v-card>
@@ -227,8 +235,8 @@
             isHtml: true
           },
           avoidOverlappingGridLines: false,
-          height: 100,
-          backgroundColor: '#fafafa',
+          height: 300,
+          backgroundColor: '#fff',
           animation: { startup: true }
         }
       };
@@ -258,6 +266,7 @@
         data = this.filterArray(x => !x.meta.invalid, data);
 
         if (data.length == 0) {
+          this.chartOptions.height = 45;
           let name =
             'Leider gibt es keine Einträge zum Anzeigen zwischen ' +
             this.displayRange[0] +
@@ -276,7 +285,7 @@
               { type: 'date', id: 'Start' },
               { type: 'date', id: 'End' }
             ],
-            ['Fehler', name, tooltip, style, new Date(this.displayRange[0]), new Date(this.displayRange[1])]
+            ['Fehler', name, tooltip, style, new Date(this.displayRange[0]+ "T00:00:00"), new Date(this.displayRange[1] + "T00:00:01")]
           ];
         } else {
           // first, set the categories available in the table (for table header)
@@ -516,8 +525,10 @@
             // increment date by one
             day.setDate(day.getDate() + 1);
           }
+          this.chartOptions.height = 300;
           //
           if (headache.length == 0) {
+            this.chartOptions.height -= 42;
             headache.push([
               'Kopfschmerzen',
               'Keine Kopfschmerzen in dem Zeitraum.',
@@ -528,6 +539,7 @@
             ]);
           }
           if (compAndCond.length == 0) {
+            this.chartOptions.height -= 42;
             compAndCond.push([
               'Auffälligkeiten',
               'Keine Auffälligkeiten in dem Zeitraum.',
@@ -546,6 +558,9 @@
               new Date(day - 24 * 60 * 60 * 1000 - 1),
               new Date(day - 24 * 60 * 60 * 1000)
             ]);
+          }
+          if(meds.length == 0){
+            this.chartOptions.height -= 42;
           }
 
           // merge tablehead and table:
