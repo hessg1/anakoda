@@ -284,6 +284,7 @@ export default class MidataService {
                   "Authorization": "Bearer " + token
               },
             }).done(res => {
+              //console.log(res)
               //write query to cache
               that.queryCache.push([query, res]);
               resolve(res);

@@ -89,14 +89,15 @@
           <v-card-text>
             <p>
               Leere Tage am Anfang und Ende der Grafik werden ausgeblendet.
-            </p>
+            <br />
+            <span v-if="numberOfDays > 20">Die Grafik ist für mittlere Zeitspannen optimiert. Auf kleinen Bildschirmen kann es bei längeren Zeitspannen zu Grafikfehlern kommen.</span></p>
           </v-card-text>
         </v-flex>
         <v-flex xs3>
           <v-tooltip bottom v-model="legend">
             <template v-slot:activator="{ on }">
               <!--v-icon @click="legend = !legend" large>info</v-icon-->
-              <v-btn flat absolute right @click="legend = !legend">legende</v-btn>
+              <v-btn flat absolute right @click="legend = !legend">Legende</v-btn>
             </template>
             <span @blur="legend = false">
               <v-icon class="closeIcon" @click="legend = false">close</v-icon>
@@ -181,7 +182,7 @@
                   <td>
                   <v-switch v-model="showTitles" label=""></v-switch>
                 </td>
-                <td>Beschreibungen in <br/>Grafik anzeigen</td>
+                <td>Beschreibungen in <br/>Grafik einblenden<br />(wo Platz vorhanden).</td>
               </tr></table>
               Bewege die Maus über ein Element,<br/>um die Details anzuzeigen.
             </span>
@@ -217,6 +218,7 @@
         displayRange: ['2019-03-20', '2019-04-03'],
         formattedDates: [],
         daysWithEntry: [],
+        numberOfDays: 7,
         isPortrait: false,
         isMobile: false,
         showTitles: false,
@@ -437,7 +439,7 @@
           // adding a full day to lastDate makes the chart look better
           lastDate.setDate(lastDate.getDate() + 1);
 
-          let numberOfDays = Math.round((lastDate.getTime() - firstDate.getTime()) / (24*60*60*1000))
+          this.numberOfDays = Math.round((lastDate.getTime() - firstDate.getTime()) / (24*60*60*1000))
 
           // now generate the day entries for every day needed:
           let day = firstDate;
@@ -461,12 +463,17 @@
               sleepQuality =
                 'Durchschnittliche Schlafqualität: ' + Math.round((10 * sum) / sleepQuality.length) / 10 + '/10.';
             } else {
-              sleepQuality = 'Schlafqualität unbekannt.';
+              sleepQuality = 'Schlafqualität: Keine Daten.';
             }
             let hours = sleepDuration > 59 ? Math.round(sleepDuration / 60) : 0;
             let minutes = Math.round(sleepDuration % 60);
-            sleepDuration =
-              'Gesamte Schlafdauer: ' + hours + (minutes < 10 ? ':0' + minutes : ':' + minutes) + ' Stunden.';
+            if(sleepDuration == 0){
+              sleepDuration = 'Gesamte Schlafdauer: Keine Daten.'
+            }
+            else {
+              sleepDuration = 'Gesamte Schlafdauer: ' + hours + (minutes < 10 ? ':0' + minutes : ':' + minutes) + ' Stunden.';
+            }
+
 
             // get the eating habit for a day
             let eatingShort = '';
@@ -477,7 +484,7 @@
                 eatingShort = ' (' + eatingHabits[i].de.slice(0, 1) + ')';
               }
             }
-            eating = eating == '' ? 'Unbekanntes Essverhalten.<br />' : eating;
+            eating = eating == '' ? 'Essverhalten: Keine Daten.<br />' : eating;
             eatingShort = eatingShort == 'U' ? '' : eatingShort;
 
             let months = [
@@ -496,10 +503,10 @@
             ];
             let textDate = day.getDate() + '. '+ months[day.getMonth()];
             let shortDate = day.getDate() + '.';
-            if(numberOfDays < 10){
+            if(this.numberOfDays < 10){
               shortDate = textDate;
             }
-            else if(numberOfDays < 20){
+            else if(this.numberOfDays < 20){
               shortDate += '' + (day.getMonth() + 1) + '.';
             }
 
@@ -526,7 +533,9 @@
             day.setDate(day.getDate() + 1);
           }
           this.chartOptions.height = 270;
-          //
+          if(this.numberOfDays > 30){
+            this.chartOptions.height += 100;
+          }
           if (headache.length == 0) {
             this.chartOptions.height -= 42;
             headache.push([
@@ -681,10 +690,11 @@
         this.formattedDates[0] = new Date(this.displayRange[0]).toLocaleDateString();
         this.formattedDates[1] = new Date(this.displayRange[1]).toLocaleDateString();
         this.putDataIntoChart();
+
       },
       showTitles() {
         this.fillChart(this.observations);
-      }
+      },
     }
   };
 

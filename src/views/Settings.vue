@@ -68,6 +68,11 @@ export default {
         localStorage.removeItem("oauth-refreshtoken");
         localStorage.removeItem("oauth-tokeneol");
       }
+      else{
+        localStorage.setItem("oauth-token", this.$midataService.token);
+        localStorage.setItem("oauth-refreshtoken", this.$midataService.refreshToken);
+        localStorage.setItem("oauth-tokeneol", this.$midataService.tokenEOL);
+      }
     },
     showInvalid(){
       localStorage.setItem("showInvalid", this.showInvalid);
