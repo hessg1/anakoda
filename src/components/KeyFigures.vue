@@ -106,7 +106,7 @@
           </v-card-title>
           <v-card-text>
             <v-sparkline :value="headacheintens"
-                         color="#40c9a2"
+                         color="#7AD6FD"
                          smooth
                          fill
                          auto-draw></v-sparkline>
@@ -154,7 +154,7 @@
           </v-card-title>
           <v-card-text>
             <v-sparkline :value="sympday"
-                         color="#40c9a2"
+                         color="#FED37F"
                          smooth
                          fill
                          auto-draw></v-sparkline>
@@ -187,7 +187,7 @@
           </v-card-title>
           <v-card-text>
             <v-sparkline :value="symin"
-                         color="#40c9a2"
+                         color="#7AD6FD"
                          auto-line-width
                          type="bar"
                          auto-draw></v-sparkline>
@@ -223,7 +223,7 @@
           </v-card-title>
           <v-card-text>
             <v-sparkline :value="symout"
-                         color="#40c9a2"
+                         color="#FED37F"
                          auto-line-width
                          type="bar"
                          auto-draw></v-sparkline>
