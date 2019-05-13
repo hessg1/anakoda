@@ -7,6 +7,7 @@
       </v-flex>
       <v-flex xs12 md12>
         <v-select v-model="dateentry"
+                  :key="interval.index"
                   :items="interval"
                   label="Kennzahlen anzeigen für"
                   persistent-hint
@@ -258,6 +259,7 @@
   export default {
     data: app => ({
       interval: ['alle Daten', 'diesen Monat', 'letzten Monat', 'einen anderen Zeitraum...'],
+      monthname: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
       dateentry: 'alle Daten',
       datestart: null,
       datestartdesired: ds.toISOString().substr(0, 10),
@@ -280,6 +282,7 @@
 
     created() {
       this.getData()
+      this.defineIntervall()
     },
 
     computed: {
@@ -321,14 +324,28 @@
         }
         return day
       },
+
       symdayavg() {
         let avg = 0
-        let leng = this.symptomscount.length
+        let l = this.symptomscount.length
+        let d = new Date()
         if (this.data) {
-          for (let i = 0; i < leng; i++) {
+          for (let i = 0; i < l; i++) {
             avg += this.symptomscount[i].count
           }
-          avg = Math.round((avg / leng) * 100) / 100
+          console.log(this.headacheintenslabels[0]);
+          console.log(this.headacheintenslabels[this.headacheintenslabels.length-1]);
+          if(this.dateentry.includes('diesen')){
+            avg = Math.round((avg / d.getDate()) * 100) / 100
+          }
+          if(this.dateentry.includes('letzten')){
+            d.setMonth(d.getMonth(), 0)
+            avg = Math.round((avg / d.getDate()) * 100) / 100
+          }
+          else{
+
+            avg = Math.round((avg / d.getDate()) * 100) / 10
+          }
         }
         return avg
       },
@@ -396,13 +413,13 @@
 
     watch: {
       dateentry() {
-        if (this.dateentry == 'diesen Monat') {
+        if (this.dateentry.includes('diesen')) {
           var ds1 = new Date()
           ds1.setMonth(ds1.getMonth(), 1)
           this.datestart = ds1.toISOString().substr(0, 10)
           this.dateend = new Date().toISOString().substr(0, 10)
         }
-        if (this.dateentry == 'letzten Monat') {
+        if (this.dateentry.includes('letzten')) {
           var ds2 = new Date()
           ds2.setMonth(ds2.getMonth() - 1, 1)
           this.datestart = ds2.toISOString().substr(0, 10)
@@ -472,6 +489,12 @@
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
       },
 
+      defineIntervall(){
+        let d = new Date()
+        this.interval[1] = "diesen Monat (" + this.monthname[d.getMonth()] + ")"
+        this.interval[2] = "letzten Monat (" + this.monthname[d.getMonth()-1] + ")"
+      },
+
       getData() {
         var query
         if (this.datestart && this.dateend) {
@@ -484,9 +507,8 @@
             observations = this.$midataService.prepareData(res)
 
             // only display valid entries
-            if (!JSON.parse(localStorage.getItem('showInvalid'))) {
-              observations = this.filterArray(x => !x.meta.invalid, observations)
-            }
+            observations = this.filterArray(x => !x.meta.invalid, observations)
+
 
             if (observations.length != 0) {
               this.data = true
@@ -520,7 +542,7 @@
 
               this.symoutheadache = []
               for (let i = 0; i < this.symptoms.length; i++) {
-                if (this.controllTimeRel(this.headaches, this.symptoms[i])) {
+                if (!this.controlInHeadache(this.headaches, this.symptoms[i])) {
                   this.symoutheadache.push(this.symptoms[i])
                 }
               }
@@ -569,14 +591,13 @@
         }
       },
 
-      controllTimeRel(arr, obj) {
+      controlInHeadache(arr, obj) {
         for (let i = 0; i < arr.length; i++) {
-          if (obj.startTime > arr[i].endTime || obj.endTime < arr[i].startTime) {
+          if (obj.startTime < arr[i].endTime && obj.endTime > arr[i].startTime) {
             return true
-          } else {
-            return false
           }
         }
+        return false
       },
 
       /*
