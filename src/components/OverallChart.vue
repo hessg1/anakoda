@@ -660,6 +660,7 @@
     },
 
     mounted() {
+      this.showTitles = localStorage.getItem('oChartShowTitles') == 'true';
       let today = new Date();
       let lastWeek = new Date(today.setDate(today.getDate() - 7)).toISOString().slice(0, 10);
       this.displayRange = [lastWeek, new Date().toISOString().slice(0, 10)];
@@ -697,6 +698,7 @@
       },
       showTitles() {
         this.fillChart(this.observations);
+        localStorage.setItem('oChartShowTitles', this.showTitles);
       },
     }
   };
