@@ -33,11 +33,18 @@
           <v-layout row wrap>
           <v-flex xs12 md6>
             <div class="headline">Hallo<span v-if="name!=''">, {{name}}!</span></div>
-            <span>Herzlich Willkommen bei anakoda. Aktuell kannst du Daten erfassen und einsehen.
-              Wir arbeiten daran, dir so schnell wie möglich erste
-               Analysen deiner Kopfschmerz-Daten geben zu können.<br>Bis dahin ist
-               es wichtig, dass du regelmässig Daten erfasst. Nur so können wir
-               dir später eine möglichst detaillierte Analyse bieten.</span>
+            <b>Es gibt Neuigkeiten!</b><br/>
+            <p>Und zwar ist das Dashboard ist nun verfügbar.<br />
+              Ausserdem gibt es unsere Partner-App heMIgrania neu auch fürs iPhone. Mit heMIgrania
+              kannst du deine Kopfschmerz-Daten komfortabel am Handy erfassen. Die App gibt es auf
+              Anfrage an <a href="mailto:migraine.i4mi@bfh.ch">migraine.i4mi@bfh.ch</a>.</p>
+
+             <p>Ausserdem haben wir das Login-Verhalten von MIDATA verbessert:
+              Du kannst nun einstellen, dass du mit anakoda bei MIDATA eingeloggt
+              bleibst, auch wenn du dein Browser-Fenster schliesst. Beachte aber,
+              dass spätere Benutzer des gleichen Computers Zugriff auf deine Daten haben,
+               wenn du dich nicht ausloggst!
+             </p>
           </v-flex>
           <v-flex xs12 md6>
               <v-img
@@ -51,13 +58,30 @@
         </v-card-title>
       </v-card>
     </v-flex>
+
+    <v-flex xs12 v-if="midata != '' && midata.isReady()">
+      <v-card color="#e5f9e0" class="primary--text">
+        <v-card-title primary-title>
+          <div>
+            <div class="headline"><v-icon color="primary">dashboard</v-icon>
+              Dashboard</div>
+            <p>Sehe all deine Kopfschmerz- und Migränedaten im Zeitverlauf, grafisch übersichtlich aufbereitet.<br />
+            Ausserdem bietet dir das Dashboard einige Kennzahlen zu deinen Daten.</p>
+          </div>
+        </v-card-title>
+        <v-card-actions>
+          <v-btn class="primary--text" to="/dashboard">Dashboard</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+
     <v-flex xs12 v-if="midata != '' && midata.isReady()">
       <v-card color="#e5f9e0" class="primary--text">
         <v-card-title primary-title>
           <div>
             <div class="headline"><v-icon color="primary">description</v-icon>
               Daten einsehen</div>
-            <span>Lasse dir all deine Daten anzeigen, unabhängig mit welcher Applikation du sie abgespeichert hast.</span>
+            <p>Lasse dir all deine Daten anzeigen, unabhängig mit welcher Applikation du sie abgespeichert hast.</p>
           </div>
         </v-card-title>
         <v-card-actions>
@@ -65,38 +89,19 @@
         </v-card-actions>
       </v-card>
     </v-flex>
+
     <v-flex xs12 v-if="midata != '' && midata.isReady()">
-      <v-card color="#e5f9e0" class="primary--text">
+      <v-card class="primary--text">
         <v-card-title primary-title>
           <div>
-            <div class="headline"><v-icon color="primary">today</v-icon>
-              Alltägliche Einträge erfassen</div>
-            <span>Um herauszufinden ob dein alltägliches Wohlbefinden einen Einfluss
-              auf deine Kopfschmerzen hat, kannst du es hier mit nur wenigen
-              Klicks erfassen.</span>
+            <div class="headline"><v-icon color="primary">comment</v-icon>
+              Dein Feedback</div>
+            <p>Wusstest du, dass du auf verschiedenen Seiten Feedback zu den Funktionen von anakoda geben kann? Damit hilfst du uns bei der Entwicklung neuer Funktionen. Klicke dafür auf den Feedback-Button oben rechts im Dashboard oder bei Meine Daten.</p>
           </div>
         </v-card-title>
-        <v-card-actions>
-          <v-btn class="primary--text" to="/yourday">Mein Tag</v-btn>
-        </v-card-actions>
       </v-card>
     </v-flex>
-    <v-flex xs12 v-if="midata != '' && midata.isReady()">
-      <v-card color="#e5f9e0" class="primary--text">
-        <v-card-title primary-title>
-          <div>
-            <div class="headline"><v-icon color="primary">face</v-icon> Symptome erfassen</div>
-            <span>Es ist wichtig, dass du neben deinen Kopfschmerzen alle weitere Auffälligkeiten angibst,
-              die dir aufgefallen sind. So kannst du herausfinden, ob diese einen Einfluss
-              auf deine Kopfschmerzen haben.</span>
-            <span></span>
-          </div>
-        </v-card-title>
-        <v-card-actions>
-          <v-btn class="primary--text" to="/yoursymptoms">Meine Auffälligkeiten</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
+
     <v-flex xs12 v-if="midata != '' && midata.isReady()">
       <v-card class="primary--text">
         <v-card-title primary-title>
@@ -135,7 +140,7 @@ export default {
       if(!url.includes('localhost') && url.includes('/app/')){
         url = 'https://anakoda.ch/app/';
       }
-      else if(!url.includes('localhost') && url.includes('/preview/')){
+      else if(!url.includes('localhost')){
         url = 'https://anakoda.ch/preview/';
       }
       else{
@@ -147,7 +152,6 @@ export default {
           url = url + '/';
         }
       }
-
       // if everything is ok, we can call midata
       this.midata.requestAuth(url);
     },

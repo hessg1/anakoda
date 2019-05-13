@@ -1,10 +1,10 @@
 <template>
   <v-dialog v-model="show" max-width="700px">
     <v-card>
-      <v-card-title
-      class="headline"
-      primary-title>
-      Deine Meinung ist uns wichtig!
+      <v-card-title class="headline" primary-title>
+      Dein Feedback zum {{page}}
+      <v-spacer />
+      <v-icon large>comment</v-icon>
     </v-card-title>
     <v-card-text>
       Damit wir anakoda stetig verbessern können, ist uns deine Meinung sehr wichtig!<br />
