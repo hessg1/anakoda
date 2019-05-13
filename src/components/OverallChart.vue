@@ -338,9 +338,6 @@
                 let end = data[i].endTime;
                 headache.push(['Kopfschmerzen', title, tooltip, style, start, end]);
 
-                // if(!this.legendContent.contains({text: "Kopfschmerzen", style: ""})){
-                //   this.legendContent.push({text: "Kopfschmerzen", style: ""})
-                // }
               }
 
               // handling complaint
@@ -404,15 +401,21 @@
                 let start = data[i].date;
                 let end = new Date(data[i].date.getTime() + 1000);
                 meds.push(['Medikamente', title, tooltip, style, start, end]);
+
+                if (data[i].date < firstDate) {
+                  firstDate = new Date(data[i].date);
+                }
+                if (data[i].date > lastDate) {
+                  lastDate = new Date(data[i].date);
+                }
               }
 
               // handling sleep
               if (data[i].category == 'SleepPattern') {
                 let title = this.showTitles ? 'Schlaf' : '';
                 let tooltip =
-                  '<div class="tooltip"><h4>Schlafqualität ' +
-                  data[i].quantity +
-                  '</h4><p>' +
+                  '<div class="tooltip"><h4>Schlaf</h4><p>' +
+                  'Schlafqualität: ' + data[i].quantity + "/10 <br/>" +
                   this.formatDuration(data[i]) +
                   '</p>';
                 let style =
