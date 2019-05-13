@@ -185,7 +185,7 @@
           <v-card-title>
             <v-layout row align-start class="ma-0">
               <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
-                link
+                report
               </v-icon>
               <div class="subheading grey--text text-uppercase">
                 <strong>Während</strong> deinen Kopfschmerzen
@@ -224,7 +224,7 @@
           <v-card-title>
             <v-layout row align-start class="ma-0">
               <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
-                link_off
+                report_off
               </v-icon>
               <div class="subheading grey--text text-uppercase">
                 <strong>Ausserhalb</strong> deiner Kopfschmerzen
@@ -249,10 +249,10 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            <div class="body-1" v-if="syminheadache.length != 0">
-              Hier siehst du, welche Auffälligkeiten am häufigsten bei dir vorkahmen, ohne dass du dabei Kopfschmerzen hattest.
+            <div class="body-1" v-if="symoutheadache.length != 0">
+              Hier siehst du, welche Auffälligkeiten am häufigsten bei dir vorkamen, ohne dass du dabei Kopfschmerzen hattest.
             </div>
-            <div class="body-1" v-if="syminheadache.length == 0">
+            <div class="body-1" v-if="symoutheadache.length == 0">
               Du hast <strong>keine Auffälligkeiten</strong> ausserhalb deiner Kopfschmerzen im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
@@ -269,7 +269,6 @@
 
   var dds = new Date()
   dds.setDate( dds.getDate() - 10 )
-  console.log(dds);
 
   export default {
     data: app => ({
@@ -320,6 +319,9 @@
           for (let i = 0; i < this.headaches.length; i++) {
             intensity[i] = this.headaches[i].quantity
           }
+          if(this.headaches.length == 1){
+            intensity[1] = this.headaches[0].quantity
+          }
         }
         return intensity
       },
@@ -348,6 +350,9 @@
         if (this.data) {
           for (let i = 0; i < this.symptomscount.length; i++) {
             day[i] = this.symptomscount[i].count
+          }
+          if(this.symptomscount.length == 1){
+            day[1] = this.symptomscount[0].quantity
           }
         }
         return day
@@ -398,8 +403,6 @@
           if (this.dateentry.includes('anderen')) {
             ds = new Date(this.datestart)
             de = new Date(this.dateend)
-            console.log(ds);
-            console.log(de);
             let dif = Math.round(
               (de.getTime() - ds.getTime()) /
                 24 /
@@ -407,7 +410,6 @@
                 60 /
                 1000
             )
-            console.log(dif);
             avg = Math.round((count / dif) * 100) / 100
           }
         }
