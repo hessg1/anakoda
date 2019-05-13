@@ -26,17 +26,17 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                                                                  <v-text-field
-                                                                  v-model="datestartFormatted"
-                                                                  label="Startdatum"
-                                                                  persistent-hint
-                                                                  prepend-icon="event"
-                                                                  v-on="on"
-                                                                  @focus="hideKeyboard()"
-                                                                  @blur="date = parseDate(datestartFormatted)"
-                                                                  color="#0a967a"
-                                                                  />
-                                                                </template>
+                                                                    <v-text-field
+                                                                    v-model="datestartFormatted"
+                                                                    label="Startdatum"
+                                                                    persistent-hint
+                                                                    prepend-icon="event"
+                                                                    v-on="on"
+                                                                    @focus="hideKeyboard()"
+                                                                    @blur="date = parseDate(datestartFormatted)"
+                                                                    color="#0a967a"
+                                                                    />
+                                                                  </template>
               <v-date-picker v-model="datestartdesired"
                              color="#0a967a"
                              no-title
@@ -58,16 +58,16 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                                                                  <v-text-field
-                                                                  v-model="dateendFormatted"
-                                                                  label="Enddatum"
-                                                                  persistent-hint
-                                                                  v-on="on"
-                                                                  @focus="hideKeyboard()"
-                                                                  @blur="date = parseDate(dateendFormatted)"
-                                                                  color="#0a967a"
-                                                                  />
-                                                                </template>
+                                                                    <v-text-field
+                                                                    v-model="dateendFormatted"
+                                                                    label="Enddatum"
+                                                                    persistent-hint
+                                                                    v-on="on"
+                                                                    @focus="hideKeyboard()"
+                                                                    @blur="date = parseDate(dateendFormatted)"
+                                                                    color="#0a967a"
+                                                                    />
+                                                                  </template>
               <v-date-picker v-model="dateenddesired"
                              color="#0a967a"
                              no-title
@@ -120,8 +120,11 @@
           <v-card-text>
             <div class="body-1" v-if="data && headaches.length != 0">
               Zwischen dem {{headaches[0].startTime.toLocaleDateString('de-CH')}} und {{headaches[headaches.length-1].startTime.toLocaleDateString('de-CH')}}
-              hast du {{headaches.length}} Mal Kopfschmerzen gehabt, mit einer durchschnittlichen Intensität von {{headachintensavg}}.
+              hast du {{headaches.length}} Mal Kopfschmerzen protokolliert, mit einer durchschnittlichen Intensität von {{headachintensavg}}.
               In der Grafik siehst du, wie sich die Schmerzintensität im Lauf der Zeit verändert hat.
+            </div>
+            <div class="body-1" v-if="headaches.length == 0">
+              Du hast <strong>keine Kopfschmerzen</strong> im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
         </v-card>
@@ -171,6 +174,9 @@
               hast du {{symptoms.length}} sonstige Auffälligkeiten notiert. Das sind durchschnittlich {{symdayavg}} pro Tag.
               In der Grafik siehst du die Veränderung im Zeitverlauf.
             </div>
+            <div class="body-1" v-if="symptoms.length == 0">
+              Du hast <strong>keine Auffälligkeiten</strong> im angegebenen Zeitraum erfasst.
+            </div>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -204,8 +210,11 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            <div class="body-1">
+            <div class="body-1" v-if="syminheadache.length != 0">
               Hier siehst du, welche Auffälligkeiten am häufigsten gleichzeitig mit Kopfschmerzen aufgetreten sind.
+            </div>
+            <div class="body-1" v-if="syminheadache.length == 0">
+              Du hast <strong>keine Auffälligkeiten</strong> während deinen Kopfschmerzen im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
         </v-card>
@@ -240,7 +249,12 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            Hier siehst du, welche Auffälligkeiten am häufigsten bei dir vorkahmen, ohne dass du dabei Kopfschmerzen hattest.
+            <div class="body-1" v-if="syminheadache.length != 0">
+              Hier siehst du, welche Auffälligkeiten am häufigsten bei dir vorkahmen, ohne dass du dabei Kopfschmerzen hattest.
+            </div>
+            <div class="body-1" v-if="syminheadache.length == 0">
+              Du hast <strong>keine Auffälligkeiten</strong> ausserhalb deiner Kopfschmerzen im angegebenen Zeitraum erfasst.
+            </div>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -253,24 +267,38 @@
 
   let observations = []
 
-  var ds = new Date()
-  ds.setMonth(ds.getMonth(), 1)
+  var dds = new Date()
+  dds.setDate( dds.getDate() - 10 )
+  console.log(dds);
 
   export default {
     data: app => ({
       interval: ['alle Daten', 'diesen Monat', 'letzten Monat', 'einen anderen Zeitraum...'],
-      monthname: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+      monthname: [
+        'Januar',
+        'Februar',
+        'März',
+        'April',
+        'Mai',
+        'Juni',
+        'Juli',
+        'August',
+        'September',
+        'Oktober',
+        'November',
+        'Dezember'
+      ],
       dateentry: 'alle Daten',
       datestart: null,
-      datestartdesired: ds.toISOString().substr(0, 10),
+      datestartdesired: dds.toISOString().substr(0, 10),
       datestartmenu: false,
-      datestartFormatted: app.formatDate(new Date().toISOString().substr(0, 10)),
+      datestartFormatted: app.formatDate(dds.toISOString().substr(0, 10)),
       dateend: null,
       dateenddesired: new Date().toISOString().substr(0, 10),
       dateendmenu: false,
       dateendFormatted: app.formatDate(new Date().toISOString().substr(0, 10)),
       today: new Date().toISOString(),
-      data: true,
+      data: false,
       headaches: [],
       symptoms: [],
       symptomscount: [],
@@ -326,25 +354,61 @@
       },
 
       symdayavg() {
+        let count = 0
         let avg = 0
-        let l = this.symptomscount.length
-        let d = new Date()
+        let ds = new Date()
+        let de = new Date()
         if (this.data) {
-          for (let i = 0; i < l; i++) {
-            avg += this.symptomscount[i].count
+          for (let i = 0; i < this.symptomscount.length; i++) {
+            count += this.symptomscount[i].count
           }
-          console.log(this.headacheintenslabels[0]);
-          console.log(this.headacheintenslabels[this.headacheintenslabels.length-1]);
-          if(this.dateentry.includes('diesen')){
-            avg = Math.round((avg / d.getDate()) * 100) / 100
+          if (this.dateentry.includes('alle')) {
+            let dif = Math.round(
+              (this.symptoms[this.symptoms.length - 1].startTime.getTime() - this.symptoms[0].startTime.getTime()) /
+                24 /
+                60 /
+                60 /
+                1000
+            )
+            avg = Math.round((count / dif) * 100) / 100
           }
-          if(this.dateentry.includes('letzten')){
-            d.setMonth(d.getMonth(), 0)
-            avg = Math.round((avg / d.getDate()) * 100) / 100
+          if (this.dateentry.includes('diesen')) {
+            ds.setMonth(ds.getMonth(), 1)
+            let dif = Math.round(
+              (de.getTime() - ds.getTime()) /
+                24 /
+                60 /
+                60 /
+                1000
+            )
+            avg = Math.round((count / dif) * 100) / 100
           }
-          else{
-
-            avg = Math.round((avg / d.getDate()) * 100) / 10
+          if (this.dateentry.includes('letzten')) {
+            ds.setMonth(ds.getMonth() - 1, 1)
+            de.setMonth(de.getMonth(), 0)
+            let dif = Math.round(
+              (de.getTime() - ds.getTime()) /
+                24 /
+                60 /
+                60 /
+                1000
+            )
+            avg = Math.round((count / dif) * 100) / 100
+          }
+          if (this.dateentry.includes('anderen')) {
+            ds = new Date(this.datestart)
+            de = new Date(this.dateend)
+            console.log(ds);
+            console.log(de);
+            let dif = Math.round(
+              (de.getTime() - ds.getTime()) /
+                24 /
+                60 /
+                60 /
+                1000
+            )
+            console.log(dif);
+            avg = Math.round((count / dif) * 100) / 100
           }
         }
         return avg
@@ -413,23 +477,26 @@
 
     watch: {
       dateentry() {
+        let ds = new Date()
+        let de = new Date()
         if (this.dateentry.includes('diesen')) {
-          var ds1 = new Date()
-          ds1.setMonth(ds1.getMonth(), 1)
-          this.datestart = ds1.toISOString().substr(0, 10)
-          this.dateend = new Date().toISOString().substr(0, 10)
+          ds.setMonth(ds.getMonth(), 1)
+          this.datestart = ds.toISOString().substr(0, 10)
+          this.dateend = de.toISOString().substr(0, 10)
         }
         if (this.dateentry.includes('letzten')) {
-          var ds2 = new Date()
-          ds2.setMonth(ds2.getMonth() - 1, 1)
-          this.datestart = ds2.toISOString().substr(0, 10)
-          var de2 = new Date()
-          de2.setMonth(de2.getMonth(), 0)
-          this.dateend = de2.toISOString().substr(0, 10)
+          ds.setMonth(ds.getMonth() - 1, 1)
+          this.datestart = ds.toISOString().substr(0, 10)
+          de.setMonth(de.getMonth(), 0)
+          this.dateend = de.toISOString().substr(0, 10)
         }
         if (this.dateentry == 'alle Daten') {
           this.datestart = null
           this.dateend = null
+        }
+        if (this.dateentry == 'einen anderen Zeitraum...') {
+          this.datestart = this.datestartdesired
+          this.dateend = this.dateenddesired
         }
         this.getData()
       },
@@ -449,9 +516,9 @@
 
     methods: {
       /*
-                                                        Convenience method for filtering an array with any criterium.
-                                                        hessg1 / 2019-04-10
-                                                        */
+                                                          Convenience method for filtering an array with any criterium.
+                                                          hessg1 / 2019-04-10
+                                                          */
       filterArray(filter, array) {
         let newArr = []
         for (var i in array) {
@@ -462,12 +529,12 @@
         return newArr
       },
       /*
-                                                        Format a Date to string in Swiss standard DD.MM.YYYY
-                                                        parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
-                                                        returns:    - a date string in the format DD.MM.YYYY
-                                                        author:     schwf3
-                                                        version:    2019-03-26
-                                                        */
+                                                          Format a Date to string in Swiss standard DD.MM.YYYY
+                                                          parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
+                                                          returns:    - a date string in the format DD.MM.YYYY
+                                                          author:     schwf3
+                                                          version:    2019-03-26
+                                                          */
       formatDate(date) {
         if (!date) return null
 
@@ -476,12 +543,12 @@
       },
 
       /*
-                                                        Format a Date to string to ISO8601 (YYYY-MM-DD)
-                                                        parameters: - date: a date string in the format DD.MM.YYYY
-                                                        returns:    - a date as ISO-string (YYYY-MM-DD)
-                                                        author:     schwf3
-                                                        version:    2019-03-26
-                                                        */
+                                                          Format a Date to string to ISO8601 (YYYY-MM-DD)
+                                                          parameters: - date: a date string in the format DD.MM.YYYY
+                                                          returns:    - a date as ISO-string (YYYY-MM-DD)
+                                                          author:     schwf3
+                                                          version:    2019-03-26
+                                                          */
       parseDate(date) {
         if (!date) return null
 
@@ -489,10 +556,10 @@
         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
       },
 
-      defineIntervall(){
+      defineIntervall() {
         let d = new Date()
-        this.interval[1] = "diesen Monat (" + this.monthname[d.getMonth()] + ")"
-        this.interval[2] = "letzten Monat (" + this.monthname[d.getMonth()-1] + ")"
+        this.interval[1] = 'diesen Monat (' + this.monthname[d.getMonth()] + ')'
+        this.interval[2] = 'letzten Monat (' + this.monthname[d.getMonth() - 1] + ')'
       },
 
       getData() {
@@ -508,7 +575,6 @@
 
             // only display valid entries
             observations = this.filterArray(x => !x.meta.invalid, observations)
-
 
             if (observations.length != 0) {
               this.data = true
@@ -570,6 +636,10 @@
 
               this.syminheadache = this.symptoms.filter(x => !this.symoutheadache.includes(x))
 
+              this.syminheadache.sort((a, b) => {
+                return a.de > b.de
+              })
+
               this.syminheadachecount = []
               if (this.syminheadache.length > 0) {
                 this.syminheadachecount.push({ symptom: this.syminheadache[0].de, count: 1 })
@@ -585,6 +655,13 @@
                 })
               }
             } else {
+              this.headaches = []
+              this.symptoms = []
+              this.symptomscount = []
+              this.symoutheadache = []
+              this.symoutheadachecount = []
+              this.syminheadache = []
+              this.syminheadachecount = []
               this.data = false
             }
           })
@@ -601,12 +678,12 @@
       },
 
       /*
-                                                      Helper method for not showing software keyboard on smartphones, when a input-
-                                                      field is clicked (e.g. with date picker)
-                                                      usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
-                                                      author:     hessg1
-                                                      version:    2019-03-29
-                                                      */
+                                                        Helper method for not showing software keyboard on smartphones, when a input-
+                                                        field is clicked (e.g. with date picker)
+                                                        usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
+                                                        author:     hessg1
+                                                        version:    2019-03-29
+                                                        */
       hideKeyboard() {
         document.activeElement.blur()
       }
