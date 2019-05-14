@@ -431,8 +431,6 @@
             }
           }
         }
-        console.log("symout")
-        console.log(sym)
         return sym;
       },
       symoutlabel() {
@@ -463,8 +461,6 @@
             }
           }
         }
-        console.log("symin")
-        console.log(sym)
         return sym;
       },
       syminlabel() {

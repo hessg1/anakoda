@@ -3,7 +3,7 @@
     <h1>Versionsverlauf</h1>
 
     <h2>anakoda 0.3</h2>
-    <p>13.05.2019</p>
+    <p>14.05.2019</p>
     <p>
       <ul>
         <li>Dashboard
