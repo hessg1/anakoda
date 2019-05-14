@@ -118,8 +118,17 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            <div class="body-1" v-if="data && headaches.length != 0">
+            <div class="body-1" v-if="data && headaches.length != 0 && this.dateentry.includes('alle')">
               Zwischen dem {{headaches[0].startTime.toLocaleDateString('de-CH')}} und {{headaches[headaches.length-1].startTime.toLocaleDateString('de-CH')}}
+              hast du {{headaches.length}} Mal Kopfschmerzen protokolliert, mit einer durchschnittlichen Intensität von {{headachintensavg}}.
+              In der Grafik siehst du, wie sich die Schmerzintensität im Lauf der Zeit verändert hat.
+            </div>
+            <div class="body-1" v-if="data && headaches.length != 0  && this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
+              Im {{currentmonth}} hast du {{headaches.length}} Mal Kopfschmerzen protokolliert, mit einer durchschnittlichen Intensität von {{headachintensavg}}.
+              In der Grafik siehst du, wie sich die Schmerzintensität im Lauf der Zeit verändert hat.
+            </div>
+            <div class="body-1" v-if="data && headaches.length != 0 && this.dateentry.includes('anderen')">
+              Zwischen dem {{this.datestartFormatted}} und {{this.dateendFormatted}}
               hast du {{headaches.length}} Mal Kopfschmerzen protokolliert, mit einer durchschnittlichen Intensität von {{headachintensavg}}.
               In der Grafik siehst du, wie sich die Schmerzintensität im Lauf der Zeit verändert hat.
             </div>
@@ -151,7 +160,8 @@
               </div>
               <div>
                 <span class="display-2 font-weight-black" v-text="symdayavg || '—'"></span>
-                <strong v-if="symdayavg">Einträge</strong>
+                <strong v-if="data && symdayavg != 1">Einträge</strong>
+                <strong v-if="data && symdayavg == 1">Eintrag</strong>
               </div>
             </v-layout>
 
@@ -169,8 +179,18 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            <div class="body-1" v-if="data && symptoms.length != 0">
-              Für den Zeitraum vom {{symptoms[0].startTime.toLocaleDateString('de-CH')}} und dem {{symptoms[symptoms.length-1].startTime.toLocaleDateString('de-CH')}}
+            <div class="body-1" v-if="data && symptoms.length != 0 && this.dateentry.includes('alle')">
+              Für den Zeitraum vom {{symptoms[0].startTime.toLocaleDateString('de-CH')}} und dem {{symptoms[headaches.length-1].startTime.toLocaleDateString('de-CH')}}
+              hast du {{symptoms.length}} sonstige Auffälligkeiten notiert. Das sind durchschnittlich {{symdayavg}} pro Tag.
+              In der Grafik siehst du die Veränderung im Zeitverlauf.
+            </div>
+            <div class="body-1" v-if="data && symptoms.length != 0  && this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
+              Im {{this.currentmonth}}
+              hast du {{symptoms.length}} sonstige Auffälligkeiten notiert. Das sind durchschnittlich {{symdayavg}} pro Tag.
+              In der Grafik siehst du die Veränderung im Zeitverlauf.
+            </div>
+            <div class="body-1" v-if="data && symptoms.length != 0 && this.dateentry.includes('anderen')">
+              Für den Zeitraum vom {{this.datestartFormatted}} und dem {{this.dateendFormatted}}
               hast du {{symptoms.length}} sonstige Auffälligkeiten notiert. Das sind durchschnittlich {{symdayavg}} pro Tag.
               In der Grafik siehst du die Veränderung im Zeitverlauf.
             </div>
@@ -185,7 +205,7 @@
           <v-card-title>
             <v-layout row align-start class="ma-0">
               <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
-                report
+                blur_on
               </v-icon>
               <div class="subheading grey--text text-uppercase">
                 <strong>Während</strong> deinen Kopfschmerzen
@@ -224,7 +244,7 @@
           <v-card-title>
             <v-layout row align-start class="ma-0">
               <v-icon class="mr-5 hidden-xs-only" size="64" color="primary">
-                report_off
+                blur_off
               </v-icon>
               <div class="subheading grey--text text-uppercase">
                 <strong>Ausserhalb</strong> deiner Kopfschmerzen
@@ -288,6 +308,7 @@
         'Dezember'
       ],
       dateentry: 'alle Daten',
+      currentmonth: null,
       datestart: null,
       datestartdesired: dds.toISOString().substr(0, 10),
       datestartmenu: false,
@@ -352,7 +373,7 @@
             day[i] = this.symptomscount[i].count
           }
           if(this.symptomscount.length == 1){
-            day[1] = this.symptomscount[0].quantity
+            day[1] = this.symptomscount[0].count
           }
         }
         return day
@@ -375,6 +396,7 @@
                 60 /
                 1000
             )
+            dif = dif == 0 ? 1 : dif;
             avg = Math.round((count / dif) * 100) / 100
           }
           if (this.dateentry.includes('diesen')) {
@@ -386,6 +408,7 @@
                 60 /
                 1000
             )
+            dif = dif == 0 ? 1 : dif;
             avg = Math.round((count / dif) * 100) / 100
           }
           if (this.dateentry.includes('letzten')) {
@@ -398,6 +421,7 @@
                 60 /
                 1000
             )
+            dif = dif == 0 ? 1 : dif;
             avg = Math.round((count / dif) * 100) / 100
           }
           if (this.dateentry.includes('anderen')) {
@@ -410,6 +434,7 @@
                 60 /
                 1000
             )
+            dif = dif == 0 ? 1 : dif;
             avg = Math.round((count / dif) * 100) / 100
           }
         }
@@ -479,18 +504,21 @@
 
     watch: {
       dateentry() {
+        let d = new Date()
         let ds = new Date()
         let de = new Date()
         if (this.dateentry.includes('diesen')) {
           ds.setMonth(ds.getMonth(), 1)
           this.datestart = ds.toISOString().substr(0, 10)
           this.dateend = de.toISOString().substr(0, 10)
+          this.currentmonth = this.monthname[d.getMonth()]
         }
         if (this.dateentry.includes('letzten')) {
           ds.setMonth(ds.getMonth() - 1, 1)
           this.datestart = ds.toISOString().substr(0, 10)
           de.setMonth(de.getMonth(), 0)
           this.dateend = de.toISOString().substr(0, 10)
+          this.currentmonth = this.monthname[d.getMonth() - 1]
         }
         if (this.dateentry == 'alle Daten') {
           this.datestart = null
@@ -513,7 +541,7 @@
         this.dateend = this.dateenddesired
         this.dateendFormatted = this.formatDate(this.dateend)
         this.getData()
-      }
+      },
     },
 
     methods: {

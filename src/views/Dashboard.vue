@@ -61,7 +61,7 @@ export default {
             questiontext: false,
             questiontextrule: ""
           },
-          { question: "Hast du Anregungen zur Übersichts-Grafik??",
+          { question: "Hast du Anregungen zur Übersichts-Grafik?",
             answers: ["Ja", "Nein"],
             modelname: "overallChartInput",
             model: "",
