@@ -13,7 +13,7 @@
 
     <v-divider></v-divider>
 
-    <v-form ref="form" id="feedback" action="http://anakoda.ch/preview/backend/feedbackMailer.php" method="post">
+    <v-form ref="form" id="feedback" action="http://anakoda.ch/app/backend/feedbackMailer.php" method="post">
 
       <input type="hidden" name='page' :value="page">
 
