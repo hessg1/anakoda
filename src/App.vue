@@ -62,9 +62,18 @@
           </v-list-tile-action>
           <v-list-tile-title>Impressum</v-list-tile-title>
         </v-list-tile>
-      </v-list>
 
-      <v-divider />
+      <v-divider v-if="cameFromFeedback"/>
+
+      <v-list-tile :to="'/feedback'" v-if="cameFromFeedback">
+        <v-list-tile-action>
+          <v-icon>comment</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-title>Feedback</v-list-tile-title>
+      </v-list-tile>
+    </v-list>
+
+    <v-divider />
 
       <v-btn v-if="$midataService.isReady()" to="/" flat block @click="$midataService.logout()">MIDATA logout</v-btn>
 
@@ -100,9 +109,14 @@ export default {
     return {
       drawer: true,
       newEntryFoldedOutness: false,
+      cameFromFeedback: false
     }
   },
   computed: {
+
+  },
+  mounted() {
+    this.cameFromFeedback = sessionStorage.getItem('cameFromFeedback') == 'true';
 
   }
 }

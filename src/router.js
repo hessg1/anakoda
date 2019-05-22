@@ -24,13 +24,13 @@ export default new Router({
     {
       path: '/yourday',
       name: 'yourday',
-      component: () => import(/* webpackChunkName: "yourdata" */'./views/YourDay.vue')
+      component: () => import(/* webpackChunkName: "yourday" */'./views/YourDay.vue')
     },
 
     {
       path: '/yoursymptoms',
       name: 'yoursymptoms',
-      component: () => import(/* webpackChunkName: "yourdata" */'./views/YourSymptoms.vue')
+      component: () => import(/* webpackChunkName: "yoursymptoms" */'./views/YourSymptoms.vue')
     },
 
     {
@@ -49,13 +49,17 @@ export default new Router({
       name: 'settings',
       component: () => import(/* webpackChunkName: "settings" */'./views/Settings.vue')
     },
-
+    {
+      path: '/feedback',
+      name: 'feedback',
+      component: () => import(/* webpackChunkName: "feedback" */'./views/Evaluation.vue')
+    },
 
     // important: the following entry has to be commented for productive build
-    // {
-    //   path: '/test',
-    //   name: 'test',
-    //   component: () => import(/* webpackChunkName: "test" */'./views/Test.vue')
-    // }
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import(/* webpackChunkName: "test" */'./views/Test.vue')
+    }
   ]
 })

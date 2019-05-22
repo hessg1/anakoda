@@ -35,7 +35,7 @@
   </v-card-text>
 
   <v-card-text>
-    Alles in allem: Wie viele Sterne gibst du anakoda?
+    <b>Alles in allem:</b><br/>Wie viele Sterne gibst du anakoda?
     <v-rating
     v-model="rating"
     hover
@@ -48,6 +48,7 @@
 <v-divider></v-divider>
 
 <v-card-text>
+  <b>Und zum Abschluss noch zwei Fragen zu deiner Person:</b><br /><br />
   In welcher Altersgruppe befindest du dich?
   <v-select
   :items="ageoption"
@@ -67,6 +68,7 @@
   label="">
 </v-select>
 <input type="hidden" name='skill' :value="skill">
+<input type="hidden" name='feedbackcounter' :value="JSON.stringify(feedbacks)">
 </v-card-text>
 
 <v-divider></v-divider>
