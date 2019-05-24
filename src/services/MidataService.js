@@ -447,6 +447,13 @@ export default class MidataService {
         }
         else if(res.entry[i].resource.component && res.entry[i].resource.component[0].code) {
           code = res.entry[i].resource.component[0].code.coding[0].code;
+
+          if(res.entry[i].resource.code.coding[0].code == 162306000){
+            // this is a fix for headache resources that miss a valueCodeableConcept
+            // since it is possible to save such with heMIGrania
+            code = "74964007h"
+          }
+
           invalid = false;
         }
 
@@ -463,7 +470,7 @@ export default class MidataService {
         // get the template for the sct code from snomed service
         const templateArr = sct.getFiltered(x => (x.code == code));
 
-        // if code was not found in SNOMED CT, we abort and throw an error:
+        // if code was not found in SNOMED CT, we abort and log an error:
         if(templateArr.length == 0){
           console.log("Fehlerhafte Daten: SNOMED-Code " + code + " ist nicht bekannt (Objekt " + i + ").\nObjekt übersprungen.");
         }
@@ -516,12 +523,13 @@ export default class MidataService {
 
           if(template.category == 'Headache'){
             // headaches also have body sites
-            if(res.entry[i].resource.bodySite.coding[0]){
+            if(res.entry[i].resource.bodySite && res.entry[i].resource.bodySite.coding[0]){
               template.bodySiteSCT = res.entry[i].resource.bodySite.coding[0].code;
               template.bodySiteDE = sct.getGerman(template.bodySiteSCT);
             }
             else{
-              invalid = true;
+              template.bodySiteSCT = "";
+              template.bodySiteDE = "unbekannte Seite"
             }
           }
 
