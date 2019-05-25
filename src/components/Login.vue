@@ -2,14 +2,14 @@
   <v-dialog v-model="dialog" width="500" persistent>
     <v-card>
       <v-card-title
-        class="headline red lighten-2"
+        class="headline primary lighten-2"
         primary-title
       >
-        MIDATA nicht bereit!
+        Noch nicht eingeloggt
       </v-card-title>
 
       <v-card-text>
-        <p>Verbinde dich auf der Startseite mit MIDATA, um Einträge erfassen zu können.
+        <p>Melde dich auf der Startseite mit MIDATA an, damit du anakoda nutzen kannst.
       </p>
       </v-card-text>
 

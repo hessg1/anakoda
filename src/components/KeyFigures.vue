@@ -26,16 +26,16 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                            <v-text-field
-                            v-model="datestartFormatted"
-                            label="Startdatum"
-                            persistent-hint
-                            prepend-icon="event"
-                            v-on="on"
-                            @focus="hideKeyboard()"
-                            @blur="date = parseDate(datestartFormatted)"
-                            color="#0a967a"/>
-                          </template>
+                              <v-text-field
+                              v-model="datestartFormatted"
+                              label="Startdatum"
+                              persistent-hint
+                              prepend-icon="event"
+                              v-on="on"
+                              @focus="hideKeyboard()"
+                              @blur="date = parseDate(datestartFormatted)"
+                              color="#0a967a"/>
+                            </template>
               <v-date-picker v-model="datestartdesired"
                              color="#0a967a"
                              no-title
@@ -57,15 +57,15 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                            <v-text-field
-                            v-model="dateendFormatted"
-                            label="Enddatum"
-                            persistent-hint
-                            v-on="on"
-                            @focus="hideKeyboard()"
-                            @blur="date = parseDate(dateendFormatted)"
-                            color="#0a967a"/>
-                                      </template>
+                              <v-text-field
+                              v-model="dateendFormatted"
+                              label="Enddatum"
+                              persistent-hint
+                              v-on="on"
+                              @focus="hideKeyboard()"
+                              @blur="date = parseDate(dateendFormatted)"
+                              color="#0a967a"/>
+                                        </template>
               <v-date-picker v-model="dateenddesired"
                              color="#0a967a"
                              no-title
@@ -353,6 +353,11 @@
           <v-card-text>
             <apexchart type=bar height=350 :options="medoptions" :series="medeffect" />
           </v-card-text>
+          <v-card-text>
+            <div class="body-1" v-if="!hasmed">
+              Du hast <strong>keine Medikamente</strong> im angegebenen Zeitraum erfasst.
+            </div>
+          </v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
@@ -409,29 +414,8 @@
       syminheadache: [],
       syminheadachecount: [],
       sleeps: [],
-      medicaments: null,
-      series: [
-        {
-          name: 'Positive Wirkung',
-          data: [44, 55, 41]
-        },
-        {
-          name: 'Keine Wirkung',
-          data: [13, 23, 20]
-        },
-        {
-          name: 'Negative Wirkung',
-          data: [11, 17, 15]
-        }
-      ],
-      chartOptions: {
-        chart: {
-          stacked: true
-        },
-        xaxis: {
-          categories: ['Dafalgan', 'Penicilin', 'Antibiotika']
-        }
-      }
+      hasmed: false,
+      medicaments: null
     }),
 
     created() {
@@ -622,46 +606,53 @@
 
       medoptions() {
         let names = []
-        if (this.medicaments) {
+        let options = {
+          chart: { stacked: true, toolbar: { show: false}},
+          toolbar: { show: false,  tools: {download: false,}},
+          colors: ['#a3f7b5','#40c9a2','#664147'],
+          dataLabels: { enabled: false },
+          legend: { show: false },
+          xaxis: { categories: names }
+        }
+        if (this.hasmed) {
           names.push(this.medicaments[0].de)
           for (let i = 1; i < this.medicaments.length; i++) {
-            if(names[names.length - 1] != this.medicaments[i].de){
+            if (names[names.length - 1] != this.medicaments[i].de) {
               names.push(this.medicaments[i].de)
             }
           }
-          return { chart: { stacked: true }, xaxis: { categories: names } }
+          return options
         }
-        return { chart: { stacked: true }, xaxis: { categories: [] } }
+        return options
       },
 
       medeffect() {
         let effcount = []
         let effresult = []
 
-        if (this.medicaments) {
-          for(let med in this.medicaments){
-            let id = effcount.findIndex(i => i.name === this.medicaments[med].de);
-            if(id != -1){
-              if(this.medicaments[med].effect == "geholfen"){
-                effcount[id].good +=1
+        if (this.hasmed) {
+          for (let med in this.medicaments) {
+            let id = effcount.findIndex(i => i.name === this.medicaments[med].de)
+            if (id != -1) {
+              if (this.medicaments[med].effect == 'geholfen') {
+                effcount[id].good += 1
               }
-              if(this.medicaments[med].effect == "nicht geholfen"){
-                effcount[id].not +=1
+              if (this.medicaments[med].effect == 'nicht geholfen') {
+                effcount[id].not += 1
               }
-              if(this.medicaments[med].effect == "die Situation verschlechtert"){
-                effcount[id].worse +=1
+              if (this.medicaments[med].effect == 'die Situation verschlechtert') {
+                effcount[id].worse += 1
               }
-            }
-            else{
-              effcount.push({name: this.medicaments[med].de, good: 0, not: 0, worse: 0})
-              if(this.medicaments[med].effect == "geholfen"){
-                 effcount[effcount.length-1].good +=1
+            } else {
+              effcount.push({ name: this.medicaments[med].de, good: 0, not: 0, worse: 0 })
+              if (this.medicaments[med].effect == 'geholfen') {
+                effcount[effcount.length - 1].good += 1
               }
-              if(this.medicaments[med].effect == "nicht geholfen"){
-                effcount[effcount.length-1].not +=1
+              if (this.medicaments[med].effect == 'nicht geholfen') {
+                effcount[effcount.length - 1].not += 1
               }
-              if(this.medicaments[med].effect == "die Situation verschlechtert"){
-                effcount[effcount.length-1].worse +=1
+              if (this.medicaments[med].effect == 'die Situation verschlechtert') {
+                effcount[effcount.length - 1].worse += 1
               }
             }
           }
@@ -670,15 +661,15 @@
           let notmed = []
           let worsemed = []
 
-          for(let eff in effcount){
+          for (let eff in effcount) {
             goodmed.push(effcount[eff].good)
             notmed.push(effcount[eff].not)
             worsemed.push(effcount[eff].worse)
           }
 
-          effresult.push({name: 'Positive Wirkung', data: goodmed})
-          effresult.push({name: 'Keine Wirkung', data: notmed})
-          effresult.push({name: 'Negative Wirkung', data: worsemed})
+          effresult.push({ name: 'Positive Wirkung', data: goodmed })
+          effresult.push({ name: 'Keine Wirkung', data: notmed })
+          effresult.push({ name: 'Negative Wirkung', data: worsemed })
         }
         return effresult
       }
@@ -731,9 +722,9 @@
 
     methods: {
       /*
-                                                                        Convenience method for filtering an array with any criterium.
-                                                                        hessg1 / 2019-04-10
-                                                                        */
+                                                                          Convenience method for filtering an array with any criterium.
+                                                                          hessg1 / 2019-04-10
+                                                                          */
       filterArray(filter, array) {
         let newArr = []
         for (var i in array) {
@@ -744,12 +735,12 @@
         return newArr
       },
       /*
-                                                                        Format a Date to string in Swiss standard DD.MM.YYYY
-                                                                        parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
-                                                                        returns:    - a date string in the format DD.MM.YYYY
-                                                                        author:     schwf3
-                                                                        version:    2019-03-26
-                                                                        */
+                                                                          Format a Date to string in Swiss standard DD.MM.YYYY
+                                                                          parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
+                                                                          returns:    - a date string in the format DD.MM.YYYY
+                                                                          author:     schwf3
+                                                                          version:    2019-03-26
+                                                                          */
       formatDate(date) {
         if (!date) return null
 
@@ -758,12 +749,12 @@
       },
 
       /*
-                    Format a Date to string to ISO8601 (YYYY-MM-DD)
-                    parameters: - date: a date string in the format DD.MM.YYYY
-                    returns:    - a date as ISO-string (YYYY-MM-DD)
-                    author:     schwf3
-                    version:    2019-03-26
-                  */
+                      Format a Date to string to ISO8601 (YYYY-MM-DD)
+                      parameters: - date: a date string in the format DD.MM.YYYY
+                      returns:    - a date as ISO-string (YYYY-MM-DD)
+                      author:     schwf3
+                      version:    2019-03-26
+                    */
       parseDate(date) {
         if (!date) return null
 
@@ -791,7 +782,7 @@
       },
 
       getObservations() {
-        var query
+        let query
         if (this.datestart && this.dateend) {
           query = 'Observation?date=ge' + this.datestart + '&date=le' + this.dateend
         } else {
@@ -895,20 +886,21 @@
       },
 
       getMedicaments() {
-        var query
-        if (this.datestart && this.dateend) {
-          query = 'MedicationStatement?date=ge' + this.datestart + '&date=le' + this.dateend
-        } else {
-          query = 'MedicationStatement'
-        }
         if (this.$midataService.isReady()) {
-          this.$midataService.getData(query).then(res => {
+          this.$midataService.getData('MedicationStatement').then(res => {
             this.medicaments = this.$midataService.prepareData(res)
 
             // only display valid entries
             this.medicaments = this.filterArray(x => !x.meta.invalid, this.medicaments)
-
-            this.medicaments.sort((a, b) => (a.de > b.de ? 1 : b.de > a.de ? -1 : 0))
+            if (this.medicaments.length != 0) {
+              this.hasmed = true
+              for(let med in this.medicaments){
+                this.medicaments[med].de = this.medicaments[med].de.toUpperCase();
+              }
+              this.medicaments.sort((a, b) => (a.de > b.de ? 1 : b.de > a.de ? -1 : 0))
+            } else {
+              this.hasmed = false
+            }
           })
         }
       },
@@ -923,12 +915,12 @@
       },
 
       /*
-                    Helper method for not showing software keyboard on smartphones, when a input-
-                    field is clicked (e.g. with date picker)
-                    usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
-                    author:     hessg1
-                    version:    2019-03-29
-                  */
+                      Helper method for not showing software keyboard on smartphones, when a input-
+                      field is clicked (e.g. with date picker)
+                      usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
+                      author:     hessg1
+                      version:    2019-03-29
+                    */
       hideKeyboard() {
         document.activeElement.blur()
       }

@@ -1,14 +1,15 @@
 <template>
-  <v-dialog v-model="show" max-width="700px">
-    <v-card>
-      <v-card-title class="headline" primary-title>
-      Dein Feedback zum {{page}}
+
+  <v-card>
+    <v-card-title class="headline" primary-title>
+      Deine Meinung ist uns Wichtig!
       <v-spacer />
       <v-icon large>comment</v-icon>
     </v-card-title>
     <v-card-text>
-      Damit wir anakoda stetig verbessern können, ist uns deine Meinung sehr wichtig!<br />
-      Bitte fülle dafür die folgenden Felder aus. Deine Antworten werden anonym übermittelt.
+      <p>Danke, dass du anakoda benutzt!</p>
+      <p>Wir wollen herausfinden, wie du das Onlinetool anakoda einschätzt. Dazu brauchen wir deine
+        Unterstützung. Mit dem Beantworten der folgenden Fragen hilfst du uns, anakoda weiter zu verbessern.</p>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -16,211 +17,206 @@
     <v-form ref="form" id="feedback" action="http://anakoda.ch/app/backend/feedbackMailer.php" method="post">
 
       <input type="hidden" name='page' :value="page">
+      <input type="hidden" name='userID' :value="userID">
+
+      <v-card-text>
+        <b>Alles in allem:</b><br/>Wie viele Sterne gibst du anakoda?
+        <v-rating v-model="stars" hover background-color="primary">
+        </v-rating>
+        <input type="hidden" name='stars' :value="stars">
+      </v-card-text>
+
+      <v-divider></v-divider>
 
       <v-card-text v-for="question in questions" :key="question.index">
         {{question.question}}
-        <v-select
-        :items="question.answers"
-        v-model="question.model"
-        :rules="[v => !!v || 'Bitte wähle etwas aus.']"
-        label="">
-      </v-select>
-      <input type="hidden" :name='question.modelname' :value="question.model">
-      <v-textarea
-      :name="question.modelname+'-text'"
-      solo
-      :label="question.questiontext"
-      v-if="question.questiontext && question.questiontextrule  === question.model">
-    </v-textarea>
-  </v-card-text>
+        <v-select :items="question.answers"
+                  v-model="question.model"
+                  v-if="question.type == 'select'"
+                  :rules="[v => !!v || 'Bitte wähle etwas aus.']"
+                  label="">
+        </v-select>
+        <v-textarea :name="question.modelname+'-text'" solo
+                    :label="question.questiontext"
+                    v-if="question.questiontext && question.questiontextrule  === question.model">
+        </v-textarea>
+        <v-rating v-model="question.model" hover
+                  v-if="question.type == 'rating'"
+                  empty-icon="panorama_fish_eye"
+                  full-icon="lens"
+                  background-color="primary">
+        </v-rating>
+        <input type="hidden" :name='question.modelname' :value="question.model">
+      </v-card-text>
 
-  <v-card-text>
-    <b>Alles in allem:</b><br/>Wie viele Sterne gibst du anakoda?
-    <v-rating
-    v-model="rating"
-    hover
-    background-color="primary">
-  </v-rating>
-  <input type="hidden" name='rating' :value="rating">
-  <input type="hidden" name='userID' :value="userID">
-</v-card-text>
+      <v-divider></v-divider>
 
-<v-divider></v-divider>
+      <v-card-text>
+        <b>Und zum Abschluss noch zwei Fragen zu deiner Person:</b><br /><br /> In welcher Altersgruppe befindest du dich?
+        <v-select :items="ageoption"
+                  :rules="[v => !!v || 'Bitte wähle etwas aus.']"
+                  v-model="agegroup"
+                  label="">
+        </v-select>
+        <input type="hidden" name='agegroup' :value="agegroup">
+      </v-card-text>
 
-<v-card-text>
-  <b>Und zum Abschluss noch zwei Fragen zu deiner Person:</b><br /><br />
-  In welcher Altersgruppe befindest du dich?
-  <v-select
-  :items="ageoption"
-  :rules="[v => !!v || 'Bitte wähle etwas aus.']"
-  v-model="agegroup"
-  label="">
-</v-select>
-<input type="hidden" name='agegroup' :value="agegroup">
-</v-card-text>
+      <v-card-text>
+        Wie häufig nutzt du Webanwendungen, wie Onlinebanking, ÖV-Fahrplan usw.?
+        <v-select :items="skilloption"
+                  v-model="skill"
+                  :rules="[v => !!v || 'Bitte wähle etwas aus.']"
+                  label="">
+        </v-select>
+        <input type="hidden" name='skill' :value="skill">
+        <input type="hidden" name='feedbackcounter' :value="JSON.stringify(feedbacks)">
+      </v-card-text>
 
-<v-card-text>
-  Wie häufig nutzt du Webanwendungen, wie Onlinebanking, ÖV-Fahrplan usw.?
-  <v-select
-  :items="skilloption"
-  v-model="skill"
-  :rules="[v => !!v || 'Bitte wähle etwas aus.']"
-  label="">
-</v-select>
-<input type="hidden" name='skill' :value="skill">
-<input type="hidden" name='feedbackcounter' :value="JSON.stringify(feedbacks)">
-</v-card-text>
+      <v-divider></v-divider>
 
-<v-divider></v-divider>
+      <v-card-actions class="justify-space-between">
+        <v-btn v-if="page != 'anakoda'" flat @click.stop="show=false">
+          Abbrechen
+        </v-btn>
+        <v-btn color="primary" flat @click="send()">
+          Jetzt Bewerten
+        </v-btn>
+      </v-card-actions>
 
+    </v-form>
 
-<v-card-actions class="justify-space-between">
-  <v-btn flat @click.stop="show=false">
-    Abbrechen
-  </v-btn>
-  <v-btn
-  color="primary"
-  flat
-  @click="send()"
-  >
-  Jetzt Bewerten
-</v-btn>
-</v-card-actions>
+  </v-card>
 
-</v-form>
-
-</v-card>
-</v-dialog>
 </template>
 
 <script>
-const crypto = require('crypto');
-import $ from 'jquery';
 
-export default {
-  data() {
-    return {
-      ageoption: ["unter 25", "unter 40", "unter 65", "über 65"],
-      agegroup: "",
-      skilloption: ["mehrmals am Tag", "einmal am Tag", "wöchentlich", "monatlich", "wenige Male im Jahr", "nie"],
-      skill: "",
-      userID: "",
-      rating: 0,
-      show: false,
-      feedbacks: {},
-      filled: false,
-    }
-  },
+  const crypto = require('crypto')
+  import $ from 'jquery'
 
-  props: {
-    questions: Array,
-    page: String,
-    visible: Boolean,
-  },
+  export default {
+    data() {
+      return {
+        ageoption: ['unter 25', 'unter 40', 'unter 65', 'über 65'],
+        agegroup: '',
+        skilloption: ['mehrmals am Tag', 'einmal am Tag', 'wöchentlich', 'monatlich', 'wenige Male im Jahr', 'nie'],
+        skill: '',
+        userID: '',
+        stars: 0,
+        show: false,
+        feedbacks: {},
+        filled: false
+      }
+    },
 
-  methods:{
-    /*
-    Controls whether all fields are filled,
-    stores the profile data in the local memory
-    and submits the form.
-    parameters: none
-    returns:    none
-    author:     schwf3 / hessg1
-    version:    2019-04-28
-    */
-    send(){
-      if (this.$refs.form.validate()) {
+    props: {
+      questions: Array,
+      page: String,
+      visible: Boolean
+    },
 
-        // persist demographic values locally
-        if(this.agegroup){
-          localStorage.setItem("agegroup", this.agegroup);
-        }
-        if(this.skill){
-          localStorage.setItem("skill", this.skill);
-        }
+    methods: {
+      /*
+        Controls whether all fields are filled,
+        stores the profile data in the local memory
+        and submits the form.
+        parameters: none
+        returns:    none
+        author:     schwf3 / hessg1
+        version:    2019-04-28
+        */
+      send() {
+        if (this.$refs.form.validate()) {
+          // persist demographic values locally
+          if (this.agegroup) {
+            localStorage.setItem('agegroup', this.agegroup)
+          }
+          if (this.skill) {
+            localStorage.setItem('skill', this.skill)
+          }
 
-        // actually send form
-        let that = this;
-        $.ajax({
-          type: 'POST',
-          url: "https://anakoda.ch/preview/backend/feedbackMailer.php",
-          data: $("form").serialize(),
-          dataType: "json"
-        }).done(function(res, text, header){
-            console.log("feedback verschickt, status: " + header.status)
-            that.show = false;
+          // actually send form
+          let that = this
+          $.ajax({
+            type: 'POST',
+            url: 'https://anakoda.ch/preview/backend/feedbackMailer.php',
+            data: $('form').serialize(),
+            dataType: 'json'
+          })
+            .done(function(res, text, header) {
+              console.log('feedback verschickt, status: ' + header.status)
+              that.show = false
 
-            that.feedbacks[that.page] = "filled";
-            localStorage.setItem("feedback",  JSON.stringify(that.feedbacks));
-
-            // reset form:
-            that.$refs.form.reset();
-
-        }).catch(function(err, text, header) {
-            if(err.status == 0){
-              console.log("Feedbackformular: Fehler \n(beim Testen von localhost vermutlich Cross-Origin blockiert)");
-
-              // for testing locally, we assume everything was alright
-
-              that.show = false;
-              that.feedbacks[that.page] = "filled";
-              localStorage.setItem("feedback",  JSON.stringify(that.feedbacks));
+              that.feedbacks[that.page] = 'filled'
+              localStorage.setItem('feedback', JSON.stringify(that.feedbacks))
 
               // reset form:
-              that.$refs.form.reset();
-            }
-            else{
-              console.log("Feedbackformular: Fehler (Status: " + header.status + ")");
-              console.log(err);
-              alert("Ups, da ist etwas schiefgegangen.");
-            }
-          });
-      }
-    }
+              that.$refs.form.reset()
+            })
+            .catch(function(err, text, header) {
+              if (err.status == 0) {
+                console.log('Feedbackformular: Fehler \n(beim Testen von localhost vermutlich Cross-Origin blockiert)')
 
-  },
+                // for testing locally, we assume everything was alright
 
-  mounted(){
-    // set profile data in locale storage
-    if(localStorage.getItem("agegroup")){
-      this.agegroup = localStorage.getItem("agegroup");
-    }
-    if(localStorage.getItem("skill")){
-      this.skill = localStorage.getItem("skill");
-    }
-    //create an anonymous, but distinct user id
-    let user = this.$midataService.patient + this.$patient.firstName;
-    this.userID = crypto.createHash('md5').update(user).digest('hex');
+                that.show = false
+                that.feedbacks[that.page] = 'filled'
+                localStorage.setItem('feedback', JSON.stringify(that.feedbacks))
 
-    // show feedback automaticly every fifth time if not filled in
-    if(localStorage.getItem("feedback") && localStorage.getItem("feedback") != 'undefined'){
-      this.feedbacks = JSON.parse(localStorage.getItem("feedback"));
-    }
-    if(this.feedbacks[this.page]){
-      if(this.feedbacks[this.page] != "filled"){
-        this.feedbacks[this.page] += 1;
-        if(this.feedbacks[this.page] % 5 == 0){
-          this.show = true;
+                // reset form:
+                that.$refs.form.reset()
+              } else {
+                console.log('Feedbackformular: Fehler (Status: ' + header.status + ')')
+                console.log(err)
+                alert('Ups, da ist etwas schiefgegangen.')
+              }
+            })
         }
       }
-    }
-    else{
-      this.feedbacks[this.page] = 1;
-    }
-    localStorage.setItem("feedback",  JSON.stringify(this.feedbacks))
-
-  },
-
-  watch: {
-    visible(){
-      this.show = this.visible;
     },
-    show(){
-      if(!this.show){
-        this.$emit('close');
+
+    mounted() {
+      // set profile data in locale storage
+      if (localStorage.getItem('agegroup')) {
+        this.agegroup = localStorage.getItem('agegroup')
+      }
+      if (localStorage.getItem('skill')) {
+        this.skill = localStorage.getItem('skill')
+      }
+      //create an anonymous, but distinct user id
+      let user = this.$midataService.patient + this.$patient.firstName
+      this.userID = crypto
+        .createHash('md5')
+        .update(user)
+        .digest('hex')
+
+      // show feedback automaticly every fifth time if not filled in
+      if (localStorage.getItem('feedback') && localStorage.getItem('feedback') != 'undefined') {
+        this.feedbacks = JSON.parse(localStorage.getItem('feedback'))
+      }
+      if (this.feedbacks[this.page]) {
+        if (this.feedbacks[this.page] != 'filled') {
+          this.feedbacks[this.page] += 1
+          if (this.feedbacks[this.page] % 5 == 0) {
+            this.show = true
+          }
+        }
+      } else {
+        this.feedbacks[this.page] = 1
+      }
+      localStorage.setItem('feedback', JSON.stringify(this.feedbacks))
+    },
+
+    watch: {
+      visible() {
+        this.show = this.visible
+      },
+      show() {
+        if (!this.show) {
+          this.$emit('close')
+        }
       }
     }
   }
-}
 
 </script>

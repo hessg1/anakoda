@@ -3,7 +3,9 @@
     <Login />
 
     <!-- FEEDBACK DIALOG -->
-    <Feedback :visible="openFeedback" :questions="questions" page="Dashboard" @close="openFeedback = false" />
+    <v-dialog v-model="openFeedback" max-width="700px">
+      <Feedback :visible="openFeedback" :questions="questions" page="Dashboard" @close="openFeedback = false" />
+    </v-dialog>
 
     <!-- Feedback floating action button-->
     <v-tooltip left>
@@ -59,35 +61,40 @@ export default {
             modelname: "overallChart",
             model: "",
             questiontext: false,
-            questiontextrule: ""
+            questiontextrule: "",
+            type: "select"
           },
           { question: "Hast du Anregungen zur Übersichts-Grafik?",
             answers: ["Ja", "Nein"],
             modelname: "overallChartInput",
             model: "",
             questiontext: "Welche?",
-            questiontextrule: "Ja"
+            questiontextrule: "Ja",
+            type: "select"
           },
           { question: "Sind die berechneten Kennzahlen hilfreich für dich?",
             answers: ["Ja", "Nein"],
             modelname: "otherdata",
             model: "",
             questiontext: false,
-            questiontextrule: ""
+            questiontextrule: "",
+            type: "select"
           },
           { question: "Würdest du gerne weitere (oder andere) Kennzahlen sehen?",
             answers: ["Ja", "Nein"],
             modelname: "otherdata",
             model: "",
             questiontext: "Welche anderen Kennzahlen würdest du gerne aufbereitet haben?",
-            questiontextrule: "Ja"
+            questiontextrule: "Ja",
+            type: "select"
           },
           { question: "Gab es bei dir Darstellungsprobleme mit den Grafiken",
             answers: ["Ja", "Nein"],
             modelname: "graphicalProblems",
             model: "",
             questiontext: "Mit welcher Grafik? Beschreibe das Problem so gut wie möglich.",
-            questiontextrule: "Ja"
+            questiontextrule: "Ja",
+            type: "select"
           },
         ]
       }

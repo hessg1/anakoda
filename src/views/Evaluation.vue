@@ -1,6 +1,6 @@
 <template>
   <v-container fluid grid-list-lg>
-    <v-dialog v-model="showLoginReminder" max-width="400">
+    <v-dialog v-if="feedbacks.anakoda != 'filled'" v-model="showLoginReminder" max-width="400">
       <v-card>
         <v-card-title class="headline primary lighten-2" >
           Willkommen!
@@ -23,7 +23,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="showAlreadyUsed" max-width="400">
+    <v-dialog v-if="feedbacks.anakoda != 'filled'" v-model="showAlreadyUsed" max-width="400">
       <v-card>
         <v-card-title class="headline primary lighten-2" >
           Willkommen!
@@ -48,25 +48,17 @@
       </v-card>
     </v-dialog>
 
-    <Feedback :visible="openFeedback" :questions="questions" page="anakoda Webapp" @close="openFeedback = false" />
-
-    <v-card>
-      <v-card-title class="headline lighten-2" >
-        Dein Feedback
+    <v-card v-if="feedbacks.anakoda === 'filled'">
+      <v-card-title class="headline" primary-title>
+        Herzlichen Dank für dein Feedback!
       </v-card-title>
       <v-card-text>
-        <p>Danke, dass du anakoda benutzt!</p>
-        <p>Wir wollen herausfinden, ob die von
-        anakoda aufbereiteten Daten im Dashboard hilfreich sind. Dazu brauchen wir
-        deine Unterstützung. Mit dem Beantworten von {{questions.length + 2}} Fragen hilfst du uns,
-        anakoda weiter zu verbessern.</p>
-        <p>Klicke auf den untenstehenden Button, um den Fragebogen zu auszufüllen - es dauert nur wenige Minuten.</p>
-
+        Du hast bereits ein Feedback abgegeben.<br>
       </v-card-text>
-      <v-card-actions>
-        <v-btn flat block color="primary" @click="openFeedback = true">Fragebogen jetzt ausfüllen</v-btn>
-        </v-card-actions>
     </v-card>
+
+    <Feedback :questions="questions" page="anakoda" v-if="feedbacks.anakoda != 'filled'"/>
+
   </v-container>
 </template>
 
@@ -83,21 +75,71 @@
       return {
         showLoginReminder: false,
         showAlreadyUsed: false,
-        openFeedback: false,
+        feedbacks: {},
         questions: [
-          { question: "Sein oder nicht sein?",
-            answers: ["Ja", "Nein"],
-            modelname: "quest1",
-            model: "",
-            questiontext: "Das ist hier die Frage",
-            questiontextrule: "Ja"
+          { question: "Wie oft hast du das Onlinetool anakoda besucht?",
+            answers: ["täglich", "wöchentlich", " weniger als zehn Mal", "weniger als fünf Mal", "heute zum ersten Mal"],
+            modelname: "useCount",
+            model: "useCount",
+            questiontext: false,
+            questiontextrule: "",
+            type: "select"
           },
-          { question: "zu definierende Frage",
+          { question: "Welche Funktion hast du am meisten genutzt?",
+            answers: ["Dashboard", "Meine Daten", "Tag erfassen", "Auffälligkeit erfassen", "weiss ich nicht"],
+            modelname: "mostUsed",
+            model: "mostUsed",
+            questiontext: false,
+            questiontextrule: "",
+            type: "select"
+          },
+          { question: "Wie hoch schätzt du den Aufwand, um mit dem Onlinetool anakoda einen Überblick über deine Daten zu erhalten? (volle Kreise = hoher Aufwand)",
+            answers: false,
+            modelname: "expenditure",
+            model: null,
+            questiontext: "",
+            questiontextrule: "",
+            type: "rating"
+          },
+          { question: "Konntest du mit dem “Dashboard“ oder der Auflistung in “Meine Daten“ fördernde Rückschlüsse über dein Verhalten ziehen, die dir zuvor noch nicht bekannt waren?",
             answers: ["Ja", "Nein"],
-            modelname: "quest2",
+            modelname: "conclusions",
+            model: "conclusions",
+            questiontext: false,
+            questiontextrule: "",
+            type: "select"
+          },
+          { question: "Hast du schone einmal einen Eintrag im Onlinetool anakoda erfasst?",
+            answers: ["Ja", "Nein"],
+            modelname: "dataCollectionAnakoda",
+            model: "dataCollectionAnakoda",
+            questiontext: false,
+            questiontextrule: "",
+            type: "select"
+          },
+          { question: "Wie oft hattest du Technische- oder Verständnisprobleme mit dem Onlinetool anakoda? (volle Kreise = häufig)",
+            answers: false,
+            modelname: "problems",
+            model: null,
+            questiontext: "",
+            questiontextrule: "",
+            type: "rating"
+          },
+          { question: "Was hat dir am Onlinetool anakoda besonders gefallen?",
+            answers: false,
+            modelname: "good",
             model: "",
-            questiontext: "zu definierende Unterfrage",
-            questiontextrule: "Ja"
+            questiontext: "Deine Antwort...",
+            questiontextrule: "",
+            type: ""
+          },
+          { question: "Was sollte aus deiner Sicht verbessert werden?",
+            answers: false,
+            modelname: "bad",
+            model: "",
+            questiontext: "Deine Antwort...",
+            questiontextrule: "",
+            type: ""
           },
         ]
       };
@@ -130,6 +172,10 @@
       this.showAlreadyUsed = !this.showLoginReminder;
 
       sessionStorage.setItem('cameFromFeedback', true);
+
+      if (localStorage.getItem('feedback') && localStorage.getItem('feedback') != 'undefined') {
+        this.feedbacks = JSON.parse(localStorage.getItem('feedback'))
+      }
     },
     watch: {
       showLoginReminder(){

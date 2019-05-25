@@ -3,7 +3,9 @@
     <Login />
 
     <!-- FEEDBACK DIALOG -->
-    <Feedback :visible="openFeedback" :questions="questions" page="DataView" @close="openFeedback = false" />
+    <v-dialog v-model="openFeedback" max-width="700px">
+      <Feedback :visible="openFeedback" :questions="questions" page="DataView" @close="openFeedback = false" />
+    </v-dialog>
 
     <!-- DETAIL VIEW DIALOG-->
     <v-dialog v-model="dialog" scrollable lazy max-width="600">
@@ -258,28 +260,32 @@ export default {
           modelname: "clear arrangement",
           model: "",
           questiontext: "Was stört dich?",
-          questiontextrule: "Nein"
+          questiontextrule: "Nein",
+          type: "select"
         },
         { question: "Würdest du gerne weitere Informationen einsehen?",
           answers: ["Ja", "Nein"],
           modelname: "otherdata",
           model: "",
           questiontext: "Welche?",
-          questiontextrule: "Ja"
+          questiontextrule: "Ja",
+          type: "select"
         },
         { question: "Helfen dir die Auflistungen deiner Daten dabei deine Krankheit besser zu verstehen?",
           answers: ["Ja", "Nein"],
           modelname: "otherdata",
           model: "",
           questiontext: false,
-          questiontextrule: ""
+          questiontextrule: "",
+          type: "select"
         },
         { question: "Hattest du bei anakoda mit technischen Problemen zu kämpfen?",
           answers: ["Ja", "Nein"],
           modelname: "problems",
           model: "",
           questiontext: "Bitte beschreibe dein Problem und wo es aufgetreten ist.",
-          questiontextrule: "Ja"
+          questiontextrule: "Ja",
+          type: "select"
         },
 
       ]

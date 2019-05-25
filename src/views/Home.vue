@@ -34,7 +34,7 @@
           <v-card-title primary-title>
             <v-layout row wrap>
               <v-flex xs12 md6>
-                <div class="headline">Hallo<span v-if="name!=''">, {{name}}!</span></div><br/>
+                <div class="headline">Hallo<span v-if="name!=''">, {{name}}! <br> <b>Ana</b>lysiere jetzt deine <b>Ko</b>pfschmerz-<b>Da</b>ten!</span></div><br/>
                 <p class="subheading">Wir haben neue Funktionen für dich:</p><br/>
               </v-flex>
               <v-flex xs12 md6>
