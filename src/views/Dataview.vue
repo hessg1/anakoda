@@ -175,7 +175,8 @@
         <template v-slot:items="props">
           <tr @click="clicked(props.item)">
             <td>{{ props.item.date }}</td>
-            <td>{{ calcDuration(props.item.sleep[0].startTime, props.item.sleep[0].endTime)}}</td>
+            <td v-if="props.item.sleep.length > 0">{{ calcDuration(props.item.sleep[0].startTime, props.item.sleep[0].endTime)}}</td>
+            <td v-else>unbekannt</td>
             <td>{{ props.item.eat.de }}</td>
         </tr>
         </template>
@@ -248,7 +249,7 @@ export default {
           text: 'Eintrag vom',
           align: 'left',
           sortable: true,
-          value: 'sleep[0].endTime'
+          value: 'sortableDate'
         },
         { text: 'Schlaf', sortable: false, align: 'left'},
         { text: 'Essgewohnheit', sortable: false, align: 'left'}
@@ -415,6 +416,8 @@ export default {
 
         // get all sleep patterns and write them to the days array
         let sleep = this.filterArray(x => (x.category == 'SleepPattern'), observations);
+        console.log("sleep")
+        console.log(sleep)
         for(let i in sleep){
           let dayEntry = null;
           // check if there is already an array entry for this day
@@ -426,6 +429,7 @@ export default {
           if(dayEntry == null){
             this.days.push({
               date: sleep[i].endTime.toLocaleDateString(),
+              sortableDate: sleep[i].endTime.getTime(),
               category: "dayEntry",
               sleep: [sleep[i]],
               eat: {de: "Unbekanntes Essverhalten"},
@@ -455,16 +459,12 @@ export default {
             }
           }
           if(dayEntry == null){
-            eat[i].meta.invalid = true; // if we don't have a sleep pattern, it's not valid
             this.days.push({
               date: eat[i].date.toLocaleDateString(),
+              sortableDate: eat[i].date.getTime(),
               category: "dayEntry",
               eat: [eat[i]],
-              sleep: [{
-                startTime: new Date(0),
-                endTime: new Date(1),
-                quantity: -1
-              }],
+              sleep: [],
               meta: eat[i].meta
             })
           }
