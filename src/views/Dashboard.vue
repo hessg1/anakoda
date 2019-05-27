@@ -27,14 +27,14 @@
     </v-tooltip>
 
     <v-tabs color="#40c9a2" slider-color="#a3f7b5">
-    <v-tab>Zeitstrahl</v-tab>
-    <v-tab-item lazy>
-      <OverallChart />
-    </v-tab-item>
-
     <v-tab>Kennzahlen</v-tab>
     <v-tab-item lazy>
-        <KeyFigures />
+      <KeyFigures />
+    </v-tab-item>
+
+    <v-tab>Zeitstrahl</v-tab>
+    <v-tab-item lazy>
+        <OverallChart />
     </v-tab-item>
   </v-tabs>
 

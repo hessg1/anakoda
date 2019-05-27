@@ -7,10 +7,8 @@
       <v-icon large>comment</v-icon>
     </v-card-title>
     <v-card-text>
-      <p>Danke, dass du anakoda benutzt!</p>
-      <p>Wir wollen herausfinden, ob dir anakoda hilft, deine Kopfschmerzen besser zu verstehen.
-        <br />Dazu brauchen wir deine
-        Unterstützung. Mit dem Beantworten der Fragen hilfst du uns, anakoda weiter zu verbessern.</p>
+      <p>Herzlichen Dank für deine Zeit! <br />
+      Das Beantworten der Fragen ist anonym und hilft uns anakoda zu verbessern.</p>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -78,7 +76,7 @@
       <v-divider></v-divider>
 
       <v-card-actions class="justify-space-between">
-        <v-btn v-if="page != 'anakoda'" flat @click.stop="show=false">
+        <v-btn flat @click.stop="show=false">
           Abbrechen
         </v-btn>
         <v-btn color="primary" flat @click="send()">
@@ -206,7 +204,7 @@
       if (this.feedbacks[this.page]) {
         if (this.feedbacks[this.page] != 'filled') {
           this.feedbacks[this.page] += 1
-          if (this.feedbacks[this.page] % 5 == 0) {
+          if (this.feedbacks[this.page] % 5 == 0 && this.page != "anakoda") {
             this.show = true
           }
         }
