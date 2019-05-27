@@ -82,6 +82,15 @@
             type: 'rating'
           },
           {
+            question: 'Hat dir anakoda geholfen, deine Kopfschmerzen besser zu verstehen?',
+            answers: ['Ja', 'Nein'],
+            modelname: 'problems',
+            model: null,
+            questiontext: '',
+            questiontextrule: '',
+            type: 'select'
+          },
+          {
             question: 'Hast du seit der Nutzung von anakoda dein Verhalten verändert?',
             answers: ['Ja', 'Nein'],
             modelname: 'conclusions',
@@ -93,15 +102,6 @@
           {
             question: 'Bist du bei der Bedienung von anakoda auf Probleme gestossen?',
             answers: ['Nein', 'Ja, anakoda ist zu kompliziert.', 'Ja, anakoda hatte technische Fehler.', 'Ja, beides.'],
-            modelname: 'problems',
-            model: null,
-            questiontext: '',
-            questiontextrule: '',
-            type: 'select'
-          },
-          {
-            question: 'Hat dir anakoda geholfen, deine Kopfschmerzen besser zu verstehen?',
-            answers: ['Ja', 'Nein'],
             modelname: 'problems',
             model: null,
             questiontext: '',
@@ -150,11 +150,15 @@
         this.$midataService.requestAuth(url)
       }
     },
+    beforeCreate(){
+      console.log("going to create feedback")
+      sessionStorage.setItem('cameFromFeedback', true)
+    },
     // mounted() is executed when the component is mounted
     mounted() {
       this.showLoginReminder = !this.$midataService.isReady()
 
-      sessionStorage.setItem('cameFromFeedback', true)
+      //sessionStorage.setItem('cameFromFeedback', true)
 
       if (localStorage.getItem('feedback') && localStorage.getItem('feedback') != 'undefined') {
         this.feedbacks = JSON.parse(localStorage.getItem('feedback'))

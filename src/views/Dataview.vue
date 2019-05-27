@@ -459,7 +459,7 @@ export default {
               date: eat[i].date.toLocaleDateString(),
               sortableDate: eat[i].date.getTime(),
               category: "dayEntry",
-              eat: [eat[i]],
+              eat: eat[i],
               sleep: [],
               meta: eat[i].meta
             })
