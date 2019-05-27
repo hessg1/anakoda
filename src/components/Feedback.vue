@@ -1,15 +1,16 @@
 <template>
-
+<v-dialog v-model="show" max-width="700px">
   <v-card>
     <v-card-title class="headline" primary-title>
-      Deine Meinung ist uns Wichtig!
+      Deine Meinung ist uns wichtig!
       <v-spacer />
       <v-icon large>comment</v-icon>
     </v-card-title>
     <v-card-text>
       <p>Danke, dass du anakoda benutzt!</p>
-      <p>Wir wollen herausfinden, wie du das Onlinetool anakoda einschätzt. Dazu brauchen wir deine
-        Unterstützung. Mit dem Beantworten der folgenden Fragen hilfst du uns, anakoda weiter zu verbessern.</p>
+      <p>Wir wollen herausfinden, ob dir anakoda hilft, deine Kopfschmerzen besser zu verstehen.
+        <br />Dazu brauchen wir deine
+        Unterstützung. Mit dem Beantworten der Fragen hilfst du uns, anakoda weiter zu verbessern.</p>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -18,13 +19,6 @@
 
       <input type="hidden" name='page' :value="page">
       <input type="hidden" name='userID' :value="userID">
-
-      <v-card-text>
-        <b>Alles in allem:</b><br/>Wie viele Sterne gibst du anakoda?
-        <v-rating v-model="stars" hover background-color="primary">
-        </v-rating>
-        <input type="hidden" name='stars' :value="stars">
-      </v-card-text>
 
       <v-divider></v-divider>
 
@@ -49,7 +43,16 @@
         <input type="hidden" :name='question.modelname' :value="question.model">
       </v-card-text>
 
-      <v-divider></v-divider>
+      <v-divider />
+
+      <v-card-text>
+        <b>Alles in allem:</b><br/>Wie viele Sterne gibst du anakoda?
+        <v-rating v-model="stars" hover background-color="primary">
+        </v-rating>
+        <input type="hidden" name='stars' :value="stars">
+      </v-card-text>
+
+      <v-divider />
 
       <v-card-text>
         <b>Und zum Abschluss noch zwei Fragen zu deiner Person:</b><br /><br /> In welcher Altersgruppe befindest du dich?
@@ -79,14 +82,14 @@
           Abbrechen
         </v-btn>
         <v-btn color="primary" flat @click="send()">
-          Jetzt Bewerten
+          Feedback abschicken
         </v-btn>
       </v-card-actions>
 
     </v-form>
 
   </v-card>
-
+</v-dialog>
 </template>
 
 <script>
@@ -184,11 +187,17 @@
         this.skill = localStorage.getItem('skill')
       }
       //create an anonymous, but distinct user id
-      let user = this.$midataService.patient + this.$patient.firstName
-      this.userID = crypto
-        .createHash('md5')
-        .update(user)
-        .digest('hex')
+      if(this.$midataService && this.$patient){
+        let user = this.$midataService.patient + this.$patient.firstName
+        this.userID = crypto
+          .createHash('md5')
+          .update(user)
+          .digest('hex')
+      }
+      else{
+        // when a user answers the feedback on evaluation page without being logged in
+        this.userID = "an unknown stranger"
+      }
 
       // show feedback automaticly every fifth time if not filled in
       if (localStorage.getItem('feedback') && localStorage.getItem('feedback') != 'undefined') {

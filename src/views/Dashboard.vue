@@ -3,9 +3,7 @@
     <Login />
 
     <!-- FEEDBACK DIALOG -->
-    <v-dialog v-model="openFeedback" max-width="700px">
-      <Feedback :visible="openFeedback" :questions="questions" page="Dashboard" @close="openFeedback = false" />
-    </v-dialog>
+    <Feedback :visible="openFeedback" :questions="questions" page="Dashboard" @close="openFeedback = false" />
 
     <!-- Feedback floating action button-->
     <v-tooltip left>
@@ -29,7 +27,7 @@
     </v-tooltip>
 
     <v-tabs color="#40c9a2" slider-color="#a3f7b5">
-    <v-tab>Übersicht</v-tab>
+    <v-tab>Zeitstrahl</v-tab>
     <v-tab-item lazy>
       <OverallChart />
     </v-tab-item>

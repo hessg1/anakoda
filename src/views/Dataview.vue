@@ -3,9 +3,7 @@
     <Login />
 
     <!-- FEEDBACK DIALOG -->
-    <v-dialog v-model="openFeedback" max-width="700px">
-      <Feedback :visible="openFeedback" :questions="questions" page="DataView" @close="openFeedback = false" />
-    </v-dialog>
+    <Feedback :visible="openFeedback" :questions="questions" page="DataView" @close="openFeedback = false" />
 
     <!-- DETAIL VIEW DIALOG-->
     <v-dialog v-model="dialog" scrollable lazy max-width="600">
@@ -416,8 +414,6 @@ export default {
 
         // get all sleep patterns and write them to the days array
         let sleep = this.filterArray(x => (x.category == 'SleepPattern'), observations);
-        console.log("sleep")
-        console.log(sleep)
         for(let i in sleep){
           let dayEntry = null;
           // check if there is already an array entry for this day
