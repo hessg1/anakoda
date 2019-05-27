@@ -2,11 +2,17 @@
   <v-container>
     <h1>Versionsverlauf</h1>
     <h2>anakoda 0.3.1</h2>
-    <p>22.05.2019</p>
+    <p>24.05.2019</p>
     <p>
       <ul>
         <li>Fragebogen zur Evaluation hinzugefügt</li>
         <li>kleine Anpassungen an Feedback-Funktion</li>
+        <li>
+          Bugfix: Unter Umständen können Daten von heMIgrania unvollständig gespeichert werden.
+          Solche unvollständigen Daten hatten anakoda derart verwirrt, dass sie bei einigen Usern im "Meine Daten" und "Dashboard" gleich gar nicht dargestellt wurden.
+          Diesen Fehler haben wir behoben.
+        </li>
+        <li>Weitere kleine Bugfixes in "Meine Daten"</li>
       </ul>
     </p>
     <h2>anakoda 0.3</h2>

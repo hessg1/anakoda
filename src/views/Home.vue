@@ -34,14 +34,15 @@
           <v-card-title primary-title>
             <v-layout row wrap>
               <v-flex xs12 md6>
-                <div class="headline">Hallo<span v-if="name!=''">, {{name}}! <br> <b>Ana</b>lysiere jetzt deine <b>Ko</b>pfschmerz-<b>Da</b>ten!</span></div><br/>
-                <p class="subheading">Wir haben neue Funktionen für dich:</p><br/>
+                <div class="headline"> <b>Ana</b>lysiere deine <b>Ko</b>pfschmerz-<b>Da</b>ten</div><br/>
+
+                <p class="subheading">Hallo<span v-if="name!=''">, {{name}}</span>!<br />Wir haben neue Funktionen für dich:</p><br/>
               </v-flex>
               <v-flex xs12 md6>
-                <v-img :src="require('../assets/logo.png')"
-                       class="my-3"
-                       contain
-                       height="100"></v-img>
+              <v-img :src="require('../assets/logo.png')"
+                     class="my-3"
+                     contain
+                     height="100"></v-img>
               </v-flex>
             </v-layout>
             <v-card-text>
@@ -173,7 +174,8 @@
               this.name = this.$patient.firstName;
             })
             .catch(err => {
-              console.log('Fehler: ' + err.responseText);
+              console.log('Fehler');
+              console.log(err)
             });
         }
       }

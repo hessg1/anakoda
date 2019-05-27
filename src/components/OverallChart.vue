@@ -90,7 +90,7 @@
             <p>
               Leere Tage am Anfang und Ende der Grafik werden ausgeblendet.
             <br />
-            <span v-if="numberOfDays > 20">Die Grafik ist für mittlere Zeitspannen optimiert. Auf kleinen Bildschirmen kann es bei längeren Zeitspannen zu Grafikfehlern kommen.</span></p>
+            <span v-if="numberOfDays > 20">Der Zeitstrahl ist für mittlere Zeitspannen optimiert. Auf kleinen Bildschirmen kann es bei längeren Zeitspannen zu Grafikfehlern kommen.</span></p>
           </v-card-text>
         </v-flex>
         <v-flex xs3>
