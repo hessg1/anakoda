@@ -290,7 +290,7 @@ export default class MidataService {
               resolve(res);
             })
             .catch(err => {
-              console.log("Error: " + err.responseText);
+              console.log("Error: ");
               console.log(err)
               reject(err);
             });
@@ -755,5 +755,78 @@ export default class MidataService {
         resolve(that.token);
       }
     });
+  }
+
+  /*
+    This method filters a JSON with FHIR ressources, as retrieved from a MIDATA query,
+    in such a way that only entries within a given time frame are contained.
+    parameters  - input: the FHIR bundle with the query result that should be filtered
+                - start: the start date, from which the subset should be calculated
+                         as date object or data-compatible string (e.g. '2019-05-10')
+                - end: the end date, to which the subset should be calculated (end included)
+                       as date object or data-compatible string (e.g. '2019-05-10')
+    returns     A JSON similar to the given queryRes, but only with entries in the given
+                timespan
+    author      hessg1
+    version     2019-05-27
+  */
+  filterByDate(input, start, end){
+    if(!input || input.length < 1){
+      throw("Error in filterByDate(): input is empty or null");
+    }
+    if(!input.entry){
+      throw("Error in filterByDate(): input is not a FHIR bundle")
+    }
+    let startDate = new Date(start);
+    let endDate = new Date(end);
+    if(!start || isNaN(startDate.getTime())){
+      throw("Error in filterByDate(): invalid start date");
+    }
+    if(!end || isNaN(endDate.getTime())){
+      throw("Error in filterByDate(): invalid end date");
+    }
+    if(endDate < startDate){
+      throw("Error in filterByDate(): end before start");
+    }
+    if(typeof end === 'string' && end.length <= 10){
+      // if we only get a date string (e.g. '2019-05-10'), we want it to als
+      // include entries that occured ON this exact day
+      endDate.setHours(24);
+    }
+    if(typeof start === 'string' && start.length <= 10){
+      // take into account the time difference to UTC
+      startDate.setMinutes(startDate.getTimezoneOffset())
+    }
+
+    // clone input object so we don't adversely modify it
+    let queryRes = JSON.parse(JSON.stringify(input));
+
+    let entries = queryRes.entry;
+    let ret = [];
+
+    for(var i in entries){
+      let obsStart = null;
+      let obsEnd = null;
+      // get correct start / end times
+      if(entries[i].resource.effectivePeriod){
+        obsStart = new Date(entries[i].resource.effectivePeriod.start);
+        obsEnd = new Date(entries[i].resource.effectivePeriod.end);
+      }
+      if(entries[i].resource.effectiveDateTime){
+        obsStart = new Date(entries[i].resource.effectiveDateTime);
+        obsEnd = new Date (entries[i].resource.effectiveDateTime);
+      }
+      // filter objects with start / end times in time frame
+      if(obsStart > startDate && obsEnd < endDate){
+        ret.push(entries[i]);
+      }
+    }
+
+    queryRes.entry = ret;
+    queryRes.total = ret.length;
+    queryRes.id = null;
+    queryRes.meta = null;
+    queryRes.link[0].url = queryRes.link[0].url + '?date=ge' + startDate.toISOString().slice(0,10) + '&date=le' + endDate.toISOString().slice(0,10);
+    return queryRes;
   }
 }
