@@ -26,16 +26,16 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                              <v-text-field
-                              v-model="datestartFormatted"
-                              label="Startdatum"
-                              persistent-hint
-                              prepend-icon="event"
-                              v-on="on"
-                              @focus="hideKeyboard()"
-                              @blur="date = parseDate(datestartFormatted)"
-                              color="#0a967a"/>
-                            </template>
+                                        <v-text-field
+                                        v-model="datestartFormatted"
+                                        label="Startdatum"
+                                        persistent-hint
+                                        prepend-icon="event"
+                                        v-on="on"
+                                        @focus="hideKeyboard()"
+                                        @blur="date = parseDate(datestartFormatted)"
+                                        color="#0a967a"/>
+                                      </template>
               <v-date-picker v-model="datestartdesired"
                              color="#0a967a"
                              no-title
@@ -57,15 +57,15 @@
                     min-width="290px"
                     v-if="dateentry === 'einen anderen Zeitraum...'">
               <template v-slot:activator="{ on }">
-                              <v-text-field
-                              v-model="dateendFormatted"
-                              label="Enddatum"
-                              persistent-hint
-                              v-on="on"
-                              @focus="hideKeyboard()"
-                              @blur="date = parseDate(dateendFormatted)"
-                              color="#0a967a"/>
-                                        </template>
+                                        <v-text-field
+                                        v-model="dateendFormatted"
+                                        label="Enddatum"
+                                        persistent-hint
+                                        v-on="on"
+                                        @focus="hideKeyboard()"
+                                        @blur="date = parseDate(dateendFormatted)"
+                                        color="#0a967a"/>
+                                                  </template>
               <v-date-picker v-model="dateenddesired"
                              color="#0a967a"
                              no-title
@@ -104,35 +104,27 @@
             </v-layout>
           </v-card-title>
           <v-card-text>
-            <v-sparkline :value="headacheintens"
-                         color="#7AD6FD"
-                         smooth
-                         fill
-                         auto-draw>
-            </v-sparkline>
-            <v-layout row>
-              <div class="caption grey--text text-uppercase ml-2" v-if="data && headaches.length != 0">{{headaches[0].startTime.toLocaleDateString('de-CH')}}</div>
-              <v-spacer></v-spacer>
-              <div class="caption grey--text text-uppercase mr-2" v-if="data && headaches.length != 0">{{headaches[headaches.length-1].startTime.toLocaleDateString('de-CH')}}</div>
-            </v-layout>
+            <apexchart type=area height=250 :options="headoption" :series="headacheintens" />
           </v-card-text>
-          <v-card-text>
-            <div class="body-1" v-if="data && headaches.length != 0 && this.dateentry.includes('alle')">
+          <v-card-text v-if="data && headaches.length != 0">
+            <div class="body-1" v-if="this.dateentry.includes('alle')">
               Zwischen dem {{headaches[0].startTime.toLocaleDateString('de-CH')}} und {{headaches[headaches.length-1].startTime.toLocaleDateString('de-CH')}}
               hast du {{headaches.length}} Mal Kopfschmerzen protokolliert, mit einer durchschnittlichen Intensität von {{headachintensavg}}.
               In der Grafik siehst du, wie sich die Schmerzintensität im Lauf der Zeit verändert hat*.
             </div>
-            <div class="body-1" v-if="data && headaches.length != 0  && this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
+            <div class="body-1" v-if="this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
               Im {{currentmonth}} hast du {{headaches.length}} Mal Kopfschmerzen protokolliert, mit einer durchschnittlichen Intensität
               von {{headachintensavg}}. In der Grafik siehst du, wie sich die Schmerzintensität im Lauf der Zeit verändert
               hat*.
             </div>
-            <div class="body-1" v-if="data && headaches.length != 0 && this.dateentry.includes('anderen')">
+            <div class="body-1" v-if="this.dateentry.includes('anderen')">
               Zwischen dem {{this.datestartFormatted}} und {{this.dateendFormatted}} hast du {{headaches.length}} Mal Kopfschmerzen protokolliert,
               mit einer durchschnittlichen Intensität von {{headachintensavg}}. In der Grafik siehst du, wie sich die Schmerzintensität
               im Lauf der Zeit verändert hat*.
             </div>
-            <div class="body-1" v-if="headaches.length == 0">
+          </v-card-text>
+          <v-card-text v-if="headaches.length == 0">
+            <div class="body-1">
               Du hast <strong>keine Kopfschmerzen</strong> im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
@@ -167,32 +159,25 @@
 
           </v-card-title>
           <v-card-text>
-            <v-sparkline :value="sympday"
-                         color="#FED37F"
-                         smooth
-                         fill
-                         auto-draw></v-sparkline>
-            <v-layout row>
-              <div class="caption grey--text text-uppercase ml-2" v-if="data && symptoms.length != 0">{{symptoms[0].startTime.toLocaleDateString('de-CH')}}</div>
-              <v-spacer></v-spacer>
-              <div class="caption grey--text text-uppercase mr-2" v-if="data && symptoms.length != 0">{{symptoms[symptoms.length-1].startTime.toLocaleDateString('de-CH')}}</div>
-            </v-layout>
+            <apexchart type=area height=250 :options="symoption" :series="sympday" />
           </v-card-text>
-          <v-card-text>
-            <div class="body-1" v-if="data && symptoms.length != 0 && this.dateentry.includes('alle')">
-              Für den Zeitraum vom {{symptoms[0].startTime.toLocaleDateString('de-CH')}} und dem {{symptoms[headaches.length-1].startTime.toLocaleDateString('de-CH')}}
+          <v-card-text v-if="data && symptoms.length != 0">
+            <div class="body-1" v-if="this.dateentry.includes('alle')">
+              Für den Zeitraum vom {{symptoms[0].startTime.toLocaleDateString('de-CH')}} und dem {{symptoms[symptoms.length-1].startTime.toLocaleDateString('de-CH')}}
               hast du {{symptoms.length}} sonstige Auffälligkeiten notiert. Das sind durchschnittlich {{symdayavg}} pro Tag.
               In der Grafik siehst du die Veränderung im Zeitverlauf*.
             </div>
-            <div class="body-1" v-if="data && symptoms.length != 0  && this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
+            <div class="body-1" v-if="this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
               Im {{this.currentmonth}} hast du {{symptoms.length}} sonstige Auffälligkeiten notiert. Das sind durchschnittlich {{symdayavg}}
               pro Tag. In der Grafik siehst du die Veränderung im Zeitverlauf*.
             </div>
-            <div class="body-1" v-if="data && symptoms.length != 0 && this.dateentry.includes('anderen')">
+            <div class="body-1" v-if="this.dateentry.includes('anderen')">
               Für den Zeitraum vom {{this.datestartFormatted}} und dem {{this.dateendFormatted}} hast du {{symptoms.length}} sonstige Auffälligkeiten
               notiert. Das sind durchschnittlich {{symdayavg}} pro Tag. In der Grafik siehst du die Veränderung im Zeitverlauf*.
             </div>
-            <div class="body-1" v-if="symptoms.length == 0">
+          </v-card-text>
+          <v-card-text v-if="symptoms.length == 0">
+            <div class="body-1">
               Du hast <strong>keine Auffälligkeiten</strong> im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
@@ -211,20 +196,7 @@
             </v-layout>
           </v-card-title>
           <v-card-text>
-            <v-sparkline :value="symin"
-                         color="#7AD6FD"
-                         auto-line-width
-                         type="bar"></v-sparkline>
-            <v-layout class="hidden-xs-only" wrap row v-if="data">
-              <v-flex v-for="sym in syminlabel" :key="sym.index">
-                <div class="body-2 text-truncate text-xs-center" :key="sym.index">{{sym.toString()}}</div>
-              </v-flex>
-            </v-layout>
-            <v-layout class="hidden-sm-and-up" wrap column v-if="data">
-              <v-flex v-for="sym in syminlabel" :key="sym.index">
-                <div class="body-2 text-truncate" :key="sym.index">{{sym.toString()}}</div>
-              </v-flex>
-            </v-layout>
+            <apexchart type=bar height=250 :options="syminoption" :series="symin" />
           </v-card-text>
           <v-card-text>
             <div class="body-1" v-if="syminheadache.length != 0">
@@ -249,20 +221,7 @@
             </v-layout>
           </v-card-title>
           <v-card-text>
-            <v-sparkline :value="symout"
-                         color="#FED37F"
-                         auto-line-width
-                         type="bar"></v-sparkline>
-            <v-layout class="hidden-xs-only" wrap row v-if="data">
-              <v-flex v-for="sym in symoutlabel" :key="sym.index">
-                <div class="body-2 text-truncate text-xs-center" :key="sym.index">{{sym.toString()}}</div>
-              </v-flex>
-            </v-layout>
-            <v-layout class="hidden-sm-and-up" wrap column v-if="data">
-              <v-flex v-for="sym in symoutlabel" :key="sym.index">
-                <div class="body-2 text-truncate" :key="sym.index">{{sym.toString()}}</div>
-              </v-flex>
-            </v-layout>
+            <apexchart type=bar height=250 :options="symoutoption" :series="symout" />
           </v-card-text>
           <v-card-text>
             <div class="body-1" v-if="symoutheadache.length != 0">
@@ -299,35 +258,27 @@
                 <strong>Stunden</strong>
               </div>
             </v-layout>
-
           </v-card-title>
           <v-card-text>
-            <v-sparkline :value="sleepduration"
-                         color="#921B51"
-                         smooth
-                         fill
-                         auto-draw></v-sparkline>
-            <v-layout row>
-              <div class="caption grey--text text-uppercase ml-2" v-if="data && sleeps.length != 0">{{sleeps[0].startTime.toLocaleDateString('de-CH')}}</div>
-              <v-spacer></v-spacer>
-              <div class="caption grey--text text-uppercase mr-2" v-if="data && sleeps.length != 0">{{sleeps[sleeps.length-1].startTime.toLocaleDateString('de-CH')}}</div>
-            </v-layout>
+            <apexchart type=area height=250 :options="sleepoption" :series="sleepduration" />
           </v-card-text>
-          <v-card-text>
-            <div class="body-1" v-if="data && symptoms.length != 0 && this.dateentry.includes('alle')">
-              Für den Zeitraum vom {{symptoms[0].startTime.toLocaleDateString('de-CH')}} und dem {{symptoms[headaches.length-1].startTime.toLocaleDateString('de-CH')}}
-              hast du {{symptoms.length}} Mal deinen Schlaf erfasst. Im Schnitt hast du {{sleepavg}} Stunden geschlafen. Die
+          <v-card-text v-if="data && sleeps.length != 0">
+            <div class="body-1" v-if="this.dateentry.includes('alle')">
+              Für den Zeitraum vom {{sleeps[0].startTime.toLocaleDateString('de-CH')}} und dem {{sleeps[sleeps.length-1].startTime.toLocaleDateString('de-CH')}}
+              hast du {{sleeps.length}} Mal deinen Schlaf erfasst. Im Schnitt hast du {{sleepavg}} Stunden geschlafen. Die
               Grafik zeigt dir den Verlauf deiner Einträge*.
             </div>
-            <div class="body-1" v-if="data && symptoms.length != 0  && this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
+            <div class="body-1" v-if="this.dateentry.includes('diesen') || this.dateentry.includes('letzten')">
               Im {{this.currentmonth}} hast du {{sleeps.length}} Mal deinen Schlaf erfasst. Im Schnitt hast du {{sleepavg}} Stunden geschlafen.
               Die Grafik zeigt dir den Verlauf deiner Einträge*.
             </div>
-            <div class="body-1" v-if="data && symptoms.length != 0 && this.dateentry.includes('anderen')">
-              Für den Zeitraum vom {{this.datestartFormatted}} und dem {{this.dateendFormatted}} hast du {{symptoms.length}} Mal deinen
-              Schlaf erfasst. Im Schnitt hast du {{sleepavg}} Stunden geschlafen. Die Grafik zeigt dir den Verlauf deiner Einträge*.
+            <div class="body-1" v-if="this.dateentry.includes('anderen')">
+              Für den Zeitraum vom {{this.datestartFormatted}} und dem {{this.dateendFormatted}} hast du {{sleeps.length}} Mal deinen Schlaf
+              erfasst. Im Schnitt hast du {{sleepavg}} Stunden geschlafen. Die Grafik zeigt dir den Verlauf deiner Einträge*.
             </div>
-            <div class="body-1" v-if="symptoms.length == 0">
+          </v-card-text>
+          <v-card-text v-if="sleeps.length == 0">
+            <div class="body-1">
               Du hast <strong>keine Auffälligkeiten</strong> im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
@@ -351,11 +302,14 @@
             </v-layout>
           </v-card-title>
           <v-card-text>
-            <apexchart type=bar height=350 :options="medoptions" :series="medeffect" />
+            <apexchart type=bar height=250 :options="medoptions" :series="medeffect" />
           </v-card-text>
           <v-card-text>
+            <div class="body-1" v-if="hasmed">
+              Die Grafik zeigt dir ob und wie oft die Medikamente im angegebenen Zeitraum gewirkt haben.
+            </div>
             <div class="body-1" v-if="!hasmed">
-              Du hast <strong>keine Medikamente</strong> im angegebenen Zeitraum erfasst.
+              Du hast <strong>keine Auffälligkeiten</strong> im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
         </v-card>
@@ -415,7 +369,17 @@
       syminheadachecount: [],
       sleeps: [],
       hasmed: false,
-      medicaments: null
+      medicaments: null,
+      chartOptions: {
+        chart: { stacked: true, toolbar: { show: false } },
+        colors: ['#FD978F'],
+        stroke: {
+          curve: 'smooth'
+        },
+        xaxis: {
+          categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+        }
+      }
     }),
 
     created() {
@@ -426,7 +390,7 @@
 
     computed: {
       headacheintens() {
-        let intensity = [0, 0]
+        let intensity = []
         if (this.data) {
           for (let i = 0; i < this.headaches.length; i++) {
             intensity[i] = this.headaches[i].quantity
@@ -435,17 +399,28 @@
             intensity[1] = this.headaches[0].quantity
           }
         }
-        return intensity
+        return [
+          {
+            name: 'Intensität',
+            data: intensity
+          }
+        ]
       },
-      headacheintenslabels() {
-        let values = []
+      headoption() {
+        let labels = []
         if (this.data) {
           for (let i = 0; i < this.headaches.length; i++) {
-            values[i] = this.headaches[i].startTime.toISOString().substr(8, 2)
+            labels[i] = this.headaches[i].startTime.toLocaleDateString('de-CH')
           }
         }
-        return values
+        return {
+          chart: { stacked: true, toolbar: { show: false } },
+          colors: ['#7AD6FD'],
+          stroke: { curve: 'smooth' },
+          xaxis: { categories: labels, labels: { show: false } }
+        }
       },
+
       headachintensavg() {
         let avg = 0
         let leng = this.headaches.length
@@ -457,19 +432,35 @@
         }
         return avg
       },
+
       sympday() {
-        let day = [0, 0]
+        let day = []
         if (this.data) {
           for (let i = 0; i < this.symptomscount.length; i++) {
             day[i] = this.symptomscount[i].count
           }
-          if (this.symptomscount.length == 1) {
-            day[1] = this.symptomscount[0].count
+        }
+        return [
+          {
+            name: 'Einträge',
+            data: day
+          }
+        ]
+      },
+      symoption() {
+        let labels = []
+        if (this.data) {
+          for (let i = 0; i < this.symptomscount.length; i++) {
+            labels[i] = new Date(this.symptomscount[i].date).toLocaleDateString('de-CH')
           }
         }
-        return day
+        return {
+          chart: { stacked: true, toolbar: { show: false } },
+          colors: ['#FED37F'],
+          stroke: { curve: 'smooth' },
+          xaxis: { categories: labels, labels: { show: false } }
+        }
       },
-
       symdayavg() {
         let count = 0
         let avg = 0
@@ -514,7 +505,7 @@
         return avg
       },
       symout() {
-        let sym = [0, 0]
+        let sym = []
         if (this.data) {
           if (this.symoutheadachecount.length < 3) {
             for (let i = 0; i < this.symoutheadachecount.length; i++) {
@@ -526,25 +517,35 @@
             }
           }
         }
-        return sym
+        return [
+          {
+            name: 'Anzahl',
+            data: sym
+          }
+        ]
       },
-      symoutlabel() {
-        let label = []
+      symoutoption() {
+        let labels = []
         if (this.data) {
           if (this.symoutheadachecount.length < 3) {
             for (let i = 0; i < this.symoutheadachecount.length; i++) {
-              label.push(' ' + this.symoutheadachecount[i].symptom + ' (' + this.symoutheadachecount[i].count + ')')
+              labels.push(this.symoutheadachecount[i].symptom)
             }
           } else {
             for (let i = 0; i <= 2; i++) {
-              label.push(' ' + this.symoutheadachecount[i].symptom + ' (' + this.symoutheadachecount[i].count + ')')
+              labels.push(this.symoutheadachecount[i].symptom)
             }
           }
         }
-        return label
+        return {
+          chart: { toolbar: { show: false } },
+          xaxis: { categories: labels },
+          dataLabels: { enabled: false },
+          colors: ['#FED37F']
+        }
       },
       symin() {
-        let sym = [0, 0]
+        let sym = []
         if (this.data) {
           if (this.syminheadachecount.length < 3) {
             for (let i = 0; i < this.syminheadachecount.length; i++) {
@@ -556,37 +557,68 @@
             }
           }
         }
-        return sym
+        return [
+          {
+            name: 'Anzahl',
+            data: sym
+          }
+        ]
       },
-      syminlabel() {
-        let label = []
+
+      syminoption() {
+        let labels = []
         if (this.data) {
           if (this.syminheadachecount.length < 3) {
             for (let i = 0; i < this.syminheadachecount.length; i++) {
-              label.push(' ' + this.syminheadachecount[i].symptom + ' (' + this.syminheadachecount[i].count + ')')
+              labels.push(this.syminheadachecount[i].symptom)
             }
           } else {
             for (let i = 0; i <= 2; i++) {
-              label.push(' ' + this.syminheadachecount[i].symptom + ' (' + this.syminheadachecount[i].count + ')')
+              labels.push(this.syminheadachecount[i].symptom)
             }
           }
         }
-        return label
+        return {
+          chart: { toolbar: { show: false } },
+          xaxis: { categories: labels },
+          dataLabels: { enabled: false },
+          colors: ['#7AD6FD']
+        }
       },
 
       sleepduration() {
-        let dur = [0, 0]
+        let dur = []
         if (this.data) {
           if (this.sleeps.length > 0) {
             for (let i = 0; i < this.sleeps.length; i++) {
-              dur[i] = (this.sleeps[i].endTime.getTime() - this.sleeps[i].startTime.getTime()) / 60 / 60 / 1000
+              dur[i] =
+                Math.round(
+                  ((this.sleeps[i].endTime.getTime() - this.sleeps[i].startTime.getTime()) / 60 / 60 / 1000) * 10
+                ) / 10
             }
           }
-          if (this.sleeps.length == 1) {
-            dur[1] = dur[0]
+        }
+        return [
+          {
+            name: 'Stunden',
+            data: dur
+          }
+        ]
+      },
+
+      sleepoption() {
+        let labels = []
+        if (this.data) {
+          for (let i = 0; i < this.sleeps.length; i++) {
+            labels[i] = this.sleeps[i].startTime.toLocaleDateString('de-CH')
           }
         }
-        return dur
+        return {
+          chart: { stacked: true, toolbar: { show: false } },
+          colors: ['#921B51'],
+          stroke: { curve: 'smooth' },
+          xaxis: { categories: labels, labels: { show: false } }
+        }
       },
 
       sleepavg() {
@@ -607,9 +639,8 @@
       medoptions() {
         let names = []
         let options = {
-          chart: { stacked: true, toolbar: { show: false}},
-          toolbar: { show: false,  tools: {download: false,}},
-          colors: ['#a3f7b5','#40c9a2','#664147'],
+          chart: { stacked: true, toolbar: { show: false } },
+          colors: ['#aee26a', '#f4d35e', '#ce4a2f'],
           dataLabels: { enabled: false },
           legend: { show: false },
           xaxis: { categories: names }
@@ -722,9 +753,9 @@
 
     methods: {
       /*
-                                                                          Convenience method for filtering an array with any criterium.
-                                                                          hessg1 / 2019-04-10
-                                                                          */
+                                                                                    Convenience method for filtering an array with any criterium.
+                                                                                    hessg1 / 2019-04-10
+                                                                                    */
       filterArray(filter, array) {
         let newArr = []
         for (var i in array) {
@@ -735,12 +766,12 @@
         return newArr
       },
       /*
-                                                                          Format a Date to string in Swiss standard DD.MM.YYYY
-                                                                          parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
-                                                                          returns:    - a date string in the format DD.MM.YYYY
-                                                                          author:     schwf3
-                                                                          version:    2019-03-26
-                                                                          */
+                                                                                    Format a Date to string in Swiss standard DD.MM.YYYY
+                                                                                    parameters: - date: a date as ISO8601-string (YYYY-MM-DD)
+                                                                                    returns:    - a date string in the format DD.MM.YYYY
+                                                                                    author:     schwf3
+                                                                                    version:    2019-03-26
+                                                                                    */
       formatDate(date) {
         if (!date) return null
 
@@ -749,12 +780,12 @@
       },
 
       /*
-                      Format a Date to string to ISO8601 (YYYY-MM-DD)
-                      parameters: - date: a date string in the format DD.MM.YYYY
-                      returns:    - a date as ISO-string (YYYY-MM-DD)
-                      author:     schwf3
-                      version:    2019-03-26
-                    */
+                                Format a Date to string to ISO8601 (YYYY-MM-DD)
+                                parameters: - date: a date string in the format DD.MM.YYYY
+                                returns:    - a date as ISO-string (YYYY-MM-DD)
+                                author:     schwf3
+                                version:    2019-03-26
+                              */
       parseDate(date) {
         if (!date) return null
 
@@ -894,8 +925,8 @@
             this.medicaments = this.filterArray(x => !x.meta.invalid, this.medicaments)
             if (this.medicaments.length != 0) {
               this.hasmed = true
-              for(let med in this.medicaments){
-                this.medicaments[med].de = this.medicaments[med].de.toUpperCase();
+              for (let med in this.medicaments) {
+                this.medicaments[med].de = this.medicaments[med].de.toUpperCase()
               }
               this.medicaments.sort((a, b) => (a.de > b.de ? 1 : b.de > a.de ? -1 : 0))
             } else {
@@ -915,12 +946,12 @@
       },
 
       /*
-                      Helper method for not showing software keyboard on smartphones, when a input-
-                      field is clicked (e.g. with date picker)
-                      usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
-                      author:     hessg1
-                      version:    2019-03-29
-                    */
+                                Helper method for not showing software keyboard on smartphones, when a input-
+                                field is clicked (e.g. with date picker)
+                                usage: put @focus="hideKeyboard()" into the keyboard-triggering elements properties
+                                author:     hessg1
+                                version:    2019-03-29
+                              */
       hideKeyboard() {
         document.activeElement.blur()
       }
