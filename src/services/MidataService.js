@@ -590,6 +590,11 @@ export default class MidataService {
           invalid = false;
         }
 
+        // again, catching inconsistent data from heMIgrania
+        if(med.de == undefined){
+          med.de = "unbekannt";
+          med.en = "unknown";
+        }
         // check if the name is a string with only digits - then we assume it's
         // a GTIN and resolve it to fetch the matching drug name
         if(/^\d+$/.test(med.en)){

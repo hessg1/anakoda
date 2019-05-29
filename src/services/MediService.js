@@ -19,7 +19,6 @@ export default class MediService {
     for(let i in this.medis){
       if(this.medis[i].gtin == gtin){
         retVal = this.medis[i];
-        console.log(retVal)
       }
     }
     if(retVal == null){
