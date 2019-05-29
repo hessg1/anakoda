@@ -5,6 +5,8 @@ const client = "anakoda";
 import $ from 'jquery';
 import SnomedService from '@/services/SnomedService';
 const sct = new SnomedService();
+import MediService from '@/services/MediService';
+const mediService = new MediService();
 
 export default class MidataService {
   /*
@@ -586,6 +588,18 @@ export default class MidataService {
           med.en = res.entry[i].resource.medicationCodeableConcept.coding[0].display;
           med.de = med.en;
           invalid = false;
+        }
+
+        // check if the name is a string with only digits - then we assume it's
+        // a GTIN and resolve it to fetch the matching drug name
+        if(/^\d+$/.test(med.en)){
+          try{
+            med.de = mediService.getMedName(med.en);
+          }
+          catch(err){
+            console.log(err);
+          }
+
         }
 
         if(res.entry[i].resource.dosage && res.entry[i].resource.dosage[0].doseQuantity){

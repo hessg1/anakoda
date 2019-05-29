@@ -18,6 +18,7 @@
         1.18 <v-btn small @click="midata.logout()">logout()</v-btn><br />
         <br />
         1.19 - 1.25<v-btn small @click="testPrepare()">prepareData()</v-btn><br />
+        1.26 - 1. <v-btn small @click="testFilterDate()">filterByDate()</v-btn><br />
       </v-tab-item>
       <v-tab>
         ResourceService
@@ -34,6 +35,12 @@
         3.1 - 3.15 <v-btn small @click="testSnomed()">test SnomedService dictionary lookup</v-btn> (input in method, results on console)<br />
         3.16 - 3.20 <v-btn small @click="testFiltered()">test getFiltered()</v-btn> (input in method, results on console)<br />
         3.21 - 3.28 <v-btn small @click="testFilteredProp()">test getFilteredProp()</v-btn> (input in method, results on console)<br />
+      </v-tab-item>
+      <v-tab>
+        MediService
+      </v-tab>
+      <v-tab-item>
+        x.1 <v-btn small @click="testMedi()">test MediService dictionary lookup</v-btn> (input in method, results on console)<br />
       </v-tab-item>
     </v-tabs>
 
@@ -52,7 +59,9 @@ date: 26.03.2019
 import MidataService from '@/services/MidataService';
 import SnomedService from '@/services/SnomedService';
 import { EatingHabit, SleepPattern, Complaint, Headache, Diagnosis, Condition } from '@/services/ResourceService';
-const sct = new SnomedService(); // initialisieren des snomedservices
+import MediService from '@/services/MediService';
+const sct = new SnomedService();
+const medi = new MediService();
 
 export default {
   name: 'midata-test',
@@ -230,6 +239,49 @@ export default {
       });
     },
 
+    // utility method for testing MidataService
+    testFilterDate(){
+      let that = this;
+      this.midata.getData("Observation")
+      .then(res =>{
+        // 1.30 date as correct string
+        that.tester("1.26: Filtern nach '2019-05-03', '2019-05-06', erwarte Resource mit entsprechenden Einträgen", function(){
+          return that.midata.filterByDate(res, '2019-05-03', '2019-05-06');
+        });
+
+        // 1.31 date as correct date
+        that.tester("1.27: Filtern nach Date-Objekten, erwarte Resource mit entsprechenden Einträgen", function(){
+          return that.midata.filterByDate(res, new Date('2019-05-03T00:00:00'), new Date('2019-05-06T06:00:00'));
+        });
+
+        // 1.32 wrong input
+        that.tester("1.28: Filtern nach falschen Strings, erwarte Fehler", function(){
+          return that.midata.filterByDate(res, "Hotdog", "Pommes");
+        });
+
+        // 1.33 correct dates in wrong order
+        that.tester("1.29: Filtern nach korrekten Datenstrings in verkehrter Reihenfolge, erwarte Fehler", function(){
+          return that.midata.filterByDate(res, "2019-05-10", "2019-05-01");
+        });
+
+        // 1.34 null input as array
+        that.tester("1.30: Eingabe null, erwarte Fehler", function(){
+          return that.midata.filterByDate(null, "2019-05-01", "2019-05-10");
+        });
+
+        // 1.35 null input as date
+        that.tester("1.31: Daten null, erwarte Fehler", function(){
+          return that.midata.filterByDate(res, null, null);
+        });
+
+        // 1.36 wrong array input
+        that.tester("1.32: Falsches Array als input, erwarte Fehler", function(){
+          return that.midata.filterByDate(["Hoi", "du", "Michi"], null, null);
+        });
+      });
+
+    },
+
 
 
     // utility method for testing ResourceService
@@ -311,6 +363,7 @@ export default {
 
     },
 
+    // utility method for testing ResourceService
     testResources(){
       this.tester("Complaint resource", function(){
         return new Complaint("2018-10-10T21:30:00", "2018-10-11T08:00:00+01:00" , 8, 409668002)
@@ -329,7 +382,7 @@ export default {
       });
     },
 
-
+    // utility method for testing SnomedService
     testSnomed(){
 
       this.tester("3.1 english - valid code", function(){
@@ -407,7 +460,7 @@ export default {
       // test = sct.getFiltered(x => x.category == "Headache") // gibt ein Array aller _objekte_ der Kategorie Headache zurück
       // console.log(test);
     },
-
+    // utility method for testing SnomedService
     testFiltered(){
       this.tester("3.16 getFiltered - valid filter", function(){
         return sct.getFiltered(x => (x.category == "Headache"));
@@ -429,7 +482,7 @@ export default {
         return sct.getFiltered("Category");
       });
     },
-
+    // utility method for testing SnomedService
     testFilteredProp(){
       this.tester("3.21 getFilteredProp - valid filter", function(){
         return sct.getFilteredProp(x => (x.category == "Headache"), "en");
@@ -464,6 +517,19 @@ export default {
       });
     },
 
+
+    // utility method for testing MediService
+    testMedi(){
+      this.tester("x.1 getMedName - valid GTIN as string", function(){
+        return medi.getMedName('7680528660141');
+      });
+      this.tester("x.2 getMedName - valid GTIN as integer", function(){
+        return medi.getMedName(7680528660141);
+      });
+      this.tester("x.3 getMedName - wrong GTIN as string", function(){
+        return medi.getMedName("7680528340141");
+      });
+    },
     /*
     Function for testing other functions, printed on the console.
     parameters:  - title: the title printed to the console
