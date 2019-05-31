@@ -207,7 +207,7 @@ export default class SnomedService {
       },
       {
         "code": 162308004,
-        "en": "Throbbing Headache",
+        "en": "Throbbing headache",
         "de": "Pulsierende Kopfschmerzen",
         "superCategory": "",
         "category": "Headache",
@@ -215,7 +215,7 @@ export default class SnomedService {
       },
       {
         "code": 162307009,
-        "en": "Aching Headache",
+        "en": "Aching headache",
         "de": "Stechende Kopfschmerzen",
         "superCategory": "",
         "category": "Headache",
@@ -223,7 +223,7 @@ export default class SnomedService {
       },
       {
         "code": 162309007,
-        "en": "Shooting Headache",
+        "en": "Shooting headache",
         "de": "Einschiessende Kopfschmerzen",
         "superCategory": "",
         "category": "Headache",
@@ -442,7 +442,7 @@ export default class SnomedService {
       },
       {
         "code": "74964007h",
-        "en": "Other Headache",
+        "en": "Other headache",
         "de": "Sonstige Kopfschmerzen",
         "superCategory": "",
         "category": "Headache",

@@ -13,7 +13,7 @@
 
     <v-divider></v-divider>
 
-    <v-form ref="form" id="feedback" action="http://anakoda.ch/app/backend/feedbackMailer.php" method="post">
+    <v-form ref="form" id="feedback" action="https://anakoda.ch/app/backend/feedbackMailer.php" method="post">
 
       <input type="hidden" name='page' :value="page">
       <input type="hidden" name='userID' :value="userID">
@@ -167,9 +167,19 @@
                 // reset form:
                 that.$refs.form.reset()
               } else {
-                console.log('Feedbackformular: Fehler (Status: ' + header.status + ')')
-                console.log(err)
-                alert('Ups, da ist etwas schiefgegangen.')
+                if(err.responseText == 'OK'){ // don't know why we still get an error, even it worked
+                that.show = false
+                that.feedbacks[that.page] = 'filled'
+                localStorage.setItem('feedback', JSON.stringify(that.feedbacks))
+
+                // reset form:
+                that.$refs.form.reset()
+                }
+                else {
+                  console.log('Feedbackformular: Fehler (Status: ' + header.status + ')')
+                  console.log(err)
+                  alert('Ups, da ist etwas schiefgegangen.')
+                }
               }
             })
         }

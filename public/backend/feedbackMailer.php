@@ -69,7 +69,7 @@ if(isset($_POST)) {
    if($mailSent == TRUE) {
       header($_SERVER["SERVER_PROTOCOL"]." 200 OK",true, 200);
       //header('Access-Control-Allow-Origin: *'); //enable this for testing from localhost
-      echo($mailText);
+      echo("OK");
    }
    // Wenn die Mail nicht versendet werden konnte:
    else {
