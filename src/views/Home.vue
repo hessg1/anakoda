@@ -50,7 +50,7 @@
               <v-flex xs12 md6>
                 <div class="headline"> <b>Ana</b>lysiere deine <b>Ko</b>pfschmerz-<b>Da</b>ten</div><br/>
 
-                <p class="subheading">Hallo<span v-if="name!=''">, {{name}}</span>!<br />Wir haben neue Funktionen für dich:</p><br/>
+                <p class="subheading">Hallo<span v-if="name!=''">, {{name}}</span>!<br />Hier eine Übersicht, was dir anakoda bietet:</p><br/>
               </v-flex>
               <v-flex xs12 md6>
                 <v-img :src="require('../assets/logo.png')"
@@ -59,6 +59,7 @@
                        height="100"></v-img>
               </v-flex>
             </v-layout>
+            </v-card-title>
             <v-card-text>
 
               <v-layout row wrap>
@@ -72,28 +73,24 @@
                 </v-flex>
                 <v-flex xs12 md4>
                   <div class="title">
-                    <v-icon color="primary">settings</v-icon>
-                    Einstellungen</div>
-                  <p>Ausserdem haben wir das Login-Verhalten von MIDATA verbessert: Du kannst nun einstellen, dass du mit anakoda
-                    bei MIDATA eingeloggt bleibst, auch wenn du dein Browser-Fenster schliesst. Beachte aber, dass spätere
-                    Benutzer des gleichen Computers Zugriff auf deine Daten haben, wenn du dich nicht ausloggst!
-                  </p>
+                    <v-icon color="primary">description</v-icon>
+                    Meine Daten</div>
+                  <p>Lasse dir all deine Daten anzeigen, unabhängig mit welcher Applikation du sie abgespeichert hast. So kannst
+                    du auf einen Blick kontrollieren, ob die Daten vollständig sind und ob sich Fehler bei der Eingabe ergeben
+                    haben. Findest du einen Fehler, so kannst du den Datensatz als Fehlerhaft markieren und er wird für die
+                    Analyse nicht mehr berücksichtigt.</p>
                 </v-flex>
                 <v-flex xs12 md4>
                   <div class="title">
-                    <v-icon color="primary">comment</v-icon>
-                    Dein Feedback</div>
-                  <p>Wusstest du, dass du auf verschiedenen Seiten Feedback zu den Funktionen von anakoda geben kann? Damit hilfst
-                    du uns bei der Entwicklung neuer Funktionen. Klicke dafür auf den Feedback-Button oben rechts im Dashboard
-                    oder bei Meine Daten.</p>
+                    <v-icon color="primary">create</v-icon>
+                    Eintrag erfassen</div>
+                  <p>Neben deinem täglichen Verhalten ist es für eine möglichst detaillierte Analyse wichtig, dass du all dein
+                    Symptome während und ausserhalb deiner Kopfschmerzen angibst. Dies ist nicht nur in anakoda, sondern auch
+                    mit der Hilfe unserer Partner-App heMIgrania auf Android und iOS möglich. Die App erhältst du auf Anfrage
+                    an <a href="mailto:migraine.i4mi@bfh.ch?subject=Informationen&body=Ich bin interessiert und würde mich über weitere Informationen freuen.">migraine.i4mi@bfh.ch</a>.</p>
                 </v-flex>
               </v-layout>
             </v-card-text>
-            <v-card-text>
-              <p>Ausserdem gibt es unsere Partner-App heMIgrania neu nicht nur für Android, sondern auch fürs iPhone. Mit heMIgrania
-                kannst du deine Kopfschmerz-Daten am Handy erfassen. Die App erhälst du auf Anfrage an <a href="mailto:migraine.i4mi@bfh.ch?subject=Informationen&body=Ich bin interessiert und würde mich über weitere Informationen freuen.">migraine.i4mi@bfh.ch</a>.</p>
-            </v-card-text>
-          </v-card-title>
         </v-card>
       </v-flex>
 
@@ -200,14 +197,15 @@
               }).done(function(warnings) {
                 // check if we have any warnings from study researchers
                 let id = that.$patient.meta.participantId
+                console.log("Vergleiche participant-name ID von MIDATA: " + that.$patient.meta.participantId + " ...");
                 warnings.forEach(warning => {
                   if (warning.patient == id) {
+                    console.log("... mit der JSON ID: " + warning.patient);
                     that.message = warning.message
                     that.contact = warning.contact
                   }
                 })
               })
-
             })
             .catch(err => {
               console.log('Fehler')
