@@ -3,6 +3,20 @@
   <v-container fluid grid-list-lg>
 
     <v-layout row wrap>
+      <!--message to user-->
+      <v-flex xs12 v-if="message">
+        <v-card>
+          <v-card-title class="headline red lighten-2" primary-title>
+            Achtung!
+          </v-card-title>
+          <v-card-text>
+            {{message}}
+          </v-card-text>
+          <v-card-text v-if="contact">
+            Bitte melde dich bei: {{contact}}
+          </v-card-text>
+        </v-card>
+      </v-flex>
       <!--is loading-->
       <v-flex xs12 v-if="loading">
         <v-card color="primary" class="white--text">
@@ -39,10 +53,10 @@
                 <p class="subheading">Hallo<span v-if="name!=''">, {{name}}</span>!<br />Wir haben neue Funktionen für dich:</p><br/>
               </v-flex>
               <v-flex xs12 md6>
-              <v-img :src="require('../assets/logo.png')"
-                     class="my-3"
-                     contain
-                     height="100"></v-img>
+                <v-img :src="require('../assets/logo.png')"
+                       class="my-3"
+                       contain
+                       height="100"></v-img>
               </v-flex>
             </v-layout>
             <v-card-text>
@@ -129,7 +143,8 @@
 </template>
 
 <script>
-  import $ from 'jquery';
+
+  import $ from 'jquery'
 
   export default {
     name: 'home',
@@ -139,28 +154,31 @@
       return {
         midata: '',
         name: '',
-        loading: false
-      };
+        loading: false,
+        contact: '',
+        message: ''
+      }
     },
+
     methods: {
       auth() {
         // create redirect uri fitting for productive or preview platform
-        let url = window.location.href;
+        let url = window.location.href
         if (!url.includes('localhost') && url.includes('/app/')) {
-          url = 'https://anakoda.ch/app/';
+          url = 'https://anakoda.ch/app/'
         } else if (!url.includes('localhost')) {
-          url = 'https://anakoda.ch/preview/';
+          url = 'https://anakoda.ch/preview/'
         } else {
           if (url.includes('#')) {
-            url = url.slice(0, url.indexOf('#'));
+            url = url.slice(0, url.indexOf('#'))
           }
           // url must end in an /
           if (url.charAt(url.length - 1) != '/') {
-            url = url + '/';
+            url = url + '/'
           }
         }
         // if everything is ok, we can call midata
-        this.midata.requestAuth(url);
+        this.midata.requestAuth(url)
       },
 
       // loads patient info from midata
@@ -170,74 +188,70 @@
           this.$midataService
             .getData('Patient')
             .then(res => {
-              this.$patient = this.$midataService.prepareData(res)[0];
-              this.name = this.$patient.firstName;
+              this.$patient = this.$midataService.prepareData(res)[0]
+              this.name = this.$patient.firstName
+
+              // get message informations
+              let that = this
+              $.ajax({
+                url: 'https://anakoda.ch/msg/data.json',
+                method: 'GET',
+                crossDomain: true
+              }).done(function(warnings) {
+                // check if we have any warnings from study researchers
+                let id = that.$patient.meta.participantId
+                warnings.forEach(warning => {
+                  if (warning.patient == id) {
+                    that.message = warning.message
+                    that.contact = warning.contact
+                  }
+                })
+              })
+
             })
             .catch(err => {
-              console.log('Fehler');
+              console.log('Fehler')
               console.log(err)
-            });
+            })
         }
       }
     },
     // mounted() is executed when the component is mounted
     mounted() {
       // link this.midata to app-wide midataService
-      this.midata = this.$midataService;
+      this.midata = this.$midataService
 
       // check if we got any parameters from MIDATA
       if (window.location.search) {
-        this.loading = true;
+        this.loading = true
         this.midata.fetchToken().then(() => {
-          this.getPatient();
-          this.loading = false;
+          this.getPatient()
+          this.loading = false
 
           // remove the parameters from the url
-          window.history.pushState('', document.title, window.location.toString().split('?')[0]);
-        });
+          window.history.pushState('', document.title, window.location.toString().split('?')[0])
+        })
       } else {
         if (this.$patient.firstName) {
-          this.name = this.$patient.firstName;
+          this.name = this.$patient.firstName
         } else {
-          this.getPatient();
+          this.getPatient()
         }
       }
-      // get message informations
-      let that = this;
-      $.ajax({
-        url: 'https://anakoda.ch/msg/data.json',
-        method: 'GET',
-        crossDomain: true,
-      }).done(function(warnings) {
-        //console.log(warnings);
-
-        if (that.patient) {
-          // check if we have any warnings from study researchers
-          let id = that.$patient.meta.participantId;
-          warnings.forEach(warning => {
-            if (warning.patient == id) {
-              console.log('WARNUNG');
-              console.log(warning.message);
-              console.log('Bitte kontaktieren Sie ' + warning.contact);
-            }
-          });
-        }
-      });
-
 
       if (this.midata.isReady()) {
         // cache all-observation query
         this.midata
           .getData('Observation')
           .then(() => {
-            console.log('Observation cached');
+            console.log('Observation cached')
           })
           .catch(err => {
-            console.log('Fehler: ' + err.responseText);
-          });
+            console.log('Fehler: ' + err.responseText)
+          })
       }
     }
-  };
+  }
 
 </script>
 

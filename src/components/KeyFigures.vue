@@ -279,7 +279,7 @@
           </v-card-text>
           <v-card-text v-if="sleeps.length == 0">
             <div class="body-1">
-              Du hast <strong>keine Auffälligkeiten</strong> im angegebenen Zeitraum erfasst.
+              Du hast <strong>keine Schlafangaben</strong> im angegebenen Zeitraum erfasst.
             </div>
           </v-card-text>
         </v-card>
@@ -306,10 +306,10 @@
           </v-card-text>
           <v-card-text>
             <div class="body-1" v-if="hasmed">
-              Die Grafik zeigt dir ob und wie oft die Medikamente im angegebenen Zeitraum gewirkt haben.
+              Die Grafik zeigt dir ob und wie oft die Medikamente gewirkt haben.
             </div>
             <div class="body-1" v-if="!hasmed">
-              Du hast <strong>keine Auffälligkeiten</strong> im angegebenen Zeitraum erfasst.
+              Du hast <strong>keine Medikamente</strong> erfasst.
             </div>
           </v-card-text>
         </v-card>
@@ -395,9 +395,6 @@
           for (let i = 0; i < this.headaches.length; i++) {
             intensity[i] = this.headaches[i].quantity
           }
-          if (this.headaches.length == 1) {
-            intensity[1] = this.headaches[0].quantity
-          }
         }
         return [
           {
@@ -442,7 +439,7 @@
         }
         return [
           {
-            name: 'Einträge',
+            name: 'Eintrags-Anzahl',
             data: day
           }
         ]
@@ -470,7 +467,7 @@
           for (let i = 0; i < this.symptomscount.length; i++) {
             count += this.symptomscount[i].count
           }
-          if (this.dateentry.includes('alle')) {
+          if (this.symptoms.length > 0 && this.dateentry.includes('alle')) {
             let dif = Math.round(
               (this.symptoms[this.symptoms.length - 1].startTime.getTime() - this.symptoms[0].startTime.getTime()) /
                 24 /
@@ -850,17 +847,20 @@
               })
 
               this.symptomscount = []
-              this.symptomscount.push({ date: this.symptoms[0].endTime.toISOString().substr(0, 10), count: 1 })
-              for (var i = 1; i < this.symptoms.length; i++) {
-                if (
-                  this.symptoms[i].endTime.toISOString().substr(0, 10) ==
-                  this.symptomscount[this.symptomscount.length - 1].date
-                ) {
-                  this.symptomscount[this.symptomscount.length - 1].count += 1
-                } else {
-                  this.symptomscount.push({ date: this.symptoms[i].endTime.toISOString().substr(0, 10), count: 1 })
+              if(this.symptoms.length != 0){
+                this.symptomscount.push({ date: this.symptoms[0].endTime.toISOString().substr(0, 10), count: 1 })
+                for (var i = 1; i < this.symptoms.length; i++) {
+                  if (
+                    this.symptoms[i].endTime.toISOString().substr(0, 10) ==
+                    this.symptomscount[this.symptomscount.length - 1].date
+                  ) {
+                    this.symptomscount[this.symptomscount.length - 1].count += 1
+                  } else {
+                    this.symptomscount.push({ date: this.symptoms[i].endTime.toISOString().substr(0, 10), count: 1 })
+                  }
                 }
               }
+
 
               this.symoutheadache = []
               for (let i = 0; i < this.symptoms.length; i++) {
@@ -910,6 +910,7 @@
               this.symoutheadachecount = []
               this.syminheadache = []
               this.syminheadachecount = []
+              this.sleeps = []
               this.data = false
             }
           })
