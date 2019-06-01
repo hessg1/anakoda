@@ -6,14 +6,13 @@
       <!--message to user-->
       <v-flex xs12 v-if="message">
         <v-card>
-          <v-card-title class="headline red lighten-2" primary-title>
-            Achtung!
+          <v-card-title class="headline red lighten-2" color="#664147" primary-title>
+            Wichtige Nachricht
           </v-card-title>
           <v-card-text>
-            {{message}}
-          </v-card-text>
-          <v-card-text v-if="contact">
-            Bitte melde dich bei: {{contact}}
+            <p><b>Du hast eine Mitteilung von den Forschern der anakoda-Studie:</b></p>
+            <p>{{message}}</p>
+            <p v-if="contact">Bitte melde dich bei: {{contact}}.</p>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -197,10 +196,8 @@
               }).done(function(warnings) {
                 // check if we have any warnings from study researchers
                 let id = that.$patient.meta.participantId
-                console.log("Vergleiche participant-name ID von MIDATA: " + that.$patient.meta.participantId + " ...");
                 warnings.forEach(warning => {
                   if (warning.patient == id) {
-                    console.log("... mit der JSON ID: " + warning.patient);
                     that.message = warning.message
                     that.contact = warning.contact
                   }
