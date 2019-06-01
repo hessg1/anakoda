@@ -839,7 +839,7 @@ export default class MidataService {
     let that = this;
 
     return new Promise(function(resolve, reject){
-      if(!id || id == ''){
+      if(!id || id == '' || !(typeof id === 'string') ){
         reject("Fehlerhafte ID, kann Resource nicht als gelöscht markieren.")
       }
       that.getValidToken().then(token => {

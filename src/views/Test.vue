@@ -17,8 +17,9 @@
         <br />
         1.18 <v-btn small @click="midata.logout()">logout()</v-btn><br />
         <br />
-        1.19 - 1.25<v-btn small @click="testPrepare()">prepareData()</v-btn><br />
-        1.26 - 1. <v-btn small @click="testFilterDate()">filterByDate()</v-btn><br />
+        1.19 - 1.25 <v-btn small @click="testPrepare()">prepareData()</v-btn><br />
+        1.30 - 1.36 <v-btn small @click="testFilterDate()">filterByDate()</v-btn><br />
+        1.37 - 1.41 <v-btn small @click="testRemove(input)">deleteResource({{input}})</v-btn><br />
       </v-tab-item>
       <v-tab>
         ResourceService
@@ -40,7 +41,7 @@
         MediService
       </v-tab>
       <v-tab-item>
-        x.1 <v-btn small @click="testMedi()">test MediService dictionary lookup</v-btn> (input in method, results on console)<br />
+        4.1-4.7 <v-btn small @click="testMedi()">test MediService dictionary lookup</v-btn> (input in method, results on console)<br />
       </v-tab-item>
     </v-tabs>
 
@@ -279,7 +280,17 @@ export default {
           return that.midata.filterByDate(["Hoi", "du", "Michi"], null, null);
         });
       });
+    },
 
+    testRemove(id){
+      console.log("1.37: mark id=" + id + " as entered-in-error");
+      this.midata.markAsEnteredInError(id).then(res =>  {
+        console.log("1.37 OK");
+        console.log(res)
+      }).catch(err => {
+        console.log("1.37 not OK");
+        console.log(err);
+      })
     },
 
 
@@ -520,14 +531,26 @@ export default {
 
     // utility method for testing MediService
     testMedi(){
-      this.tester("x.1 getMedName - valid GTIN as string", function(){
+      this.tester("x.1 getMedName() - valid GTIN as string", function(){
         return medi.getMedName('7680528660141');
       });
-      this.tester("x.2 getMedName - valid GTIN as integer", function(){
+      this.tester("x.2 getMedName() - valid GTIN as integer", function(){
         return medi.getMedName(7680528660141);
       });
-      this.tester("x.3 getMedName - wrong GTIN as string", function(){
+      this.tester("x.3 getMedName() - wrong GTIN as string", function(){
         return medi.getMedName("7680528340141");
+      });
+      this.tester("x.4 getMed() - valid GTIN as string", function(){
+        return medi.getMed("7680658610016");
+      });
+      this.tester("x.5 getMed() -  valid GTIN as number", function(){
+        return medi.getMed(7680658610016);
+      });
+      this.tester("x.6 getMed() - wrong GTIN as number", function(){
+        return medi.getMed(768340141);
+      });
+      this.tester("x.7 version() ", function(){
+        return medi.version();
       });
     },
     /*
