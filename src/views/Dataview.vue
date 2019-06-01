@@ -33,10 +33,13 @@
                 {{ sleep.quantity}}/10
               </td>
             </tr>
-            <tr>
+            <tr v-for="eat in activeItem.eat" :key="eat.index">
               <td>Essverhalten:</td>
-              <td v-if="activeItem.eat != ''">{{activeItem.eat.de}}</td>
-              <td v-else>Noch unbekannteres Essverhalten</td>
+              <td>{{eat.de}}</td>
+            </tr>
+            <tr v-if="activeItem.eat.length == 0">
+              <td>Essverhalten:</td>
+              <td>nicht bekannt</td>
             </tr>
 
           </table>
@@ -82,15 +85,39 @@
 
 
     <!-- DELETE PROMPT-->
-    <v-dialog v-model="deletePrompt" lazy max-width="450">
+    <v-dialog v-model="deletePrompt" lazy max-width="500" scrollable>
       <v-card>
         <v-card-title   class="headline primary lighten-2"
           primary-title>
           Eintrag löschen
         </v-card-title>
         <v-card-text v-if="activeItem">
-          <span v-if="activeItem.category == 'dayEntry'">Möchtest du den Tageseintrag vom {{ activeItem.date }} wirklich löschen?</span>
+          <span v-if="activeItem.category == 'dayEntry'">Welche Elemente des Tageseintrags vom {{ activeItem.date }} möchtest du löschen?</span>
           <span v-else>Möchtest du "{{ activeItem.de }}" vom {{ activeItem.startTime.toLocaleDateString() }} wirklich löschen?</span>
+          <v-divider v-if="activeItem.category == 'dayEntry'"/>
+          <table v-if="activeItem.category == 'dayEntry'" >
+            <tr v-for="sleep in activeItem.sleep" :key="sleep.index">
+              <td>
+                <v-checkbox v-model="deleteSleep" :value="sleep.meta.id" color="#664147"/>
+              </td>
+              <td>
+                Schlaf:
+              </td>
+              <td>
+                {{ sleep.startTime.toLocaleTimeString().slice(0,5) }} - {{ sleep.endTime.toLocaleTimeString().slice(0,5) }} ({{calcDuration(sleep.endTime, sleep.startTime)}})
+                ({{ sleep.quantity}}/10)
+              </td>
+            </tr>
+            <tr v-for="eat in activeItem.eat" :key="eat.index">
+              <td><v-checkbox v-model="deleteEat" :value="eat.meta.id" color="#664147"/></td>
+              <td>Essen:</td>
+              <td>{{eat.de}}</td>
+            </tr>
+            <tr v-if="activeItem.eat.length == 0">
+              <td>Essverhalten:</td>
+              <td>nicht bekannt</td>
+            </tr>
+          </table>
 
         </v-card-text>
         <v-divider />
@@ -201,7 +228,8 @@
             <td>{{ props.item.date }}</td>
             <td v-if="props.item.sleep.length > 0">{{ calcDuration(props.item.sleep[0].startTime, props.item.sleep[0].endTime)}}</td>
             <td v-else>unbekannt</td>
-            <td>{{ props.item.eat.de }}</td>
+            <td v-if="props.item.eat.length > 0">{{ props.item.eat[0].de }}</td>
+            <td v-else>nicht bekannt</td>
         </tr>
         </template>
         <template v-slot:no-data>
@@ -245,6 +273,8 @@ export default {
       relatedItems: null,
       dialog: false,
       deletePrompt: false,
+      deleteSleep: [],
+      deleteEat: [],
       symptomTab: 'Symptome & Auffälligkeiten',
       dayTab: 'Tageseinträge',
       headacheHeaders: [
@@ -428,14 +458,37 @@ export default {
     */
     markAsError(item){
       if(item.category == 'dayEntry'){
-        // TODO
-        alert("Tageseinträge löschen ist noch Work in Progress")
+        let promises = [];
+        for(let i in this.deleteSleep){
+          promises.push(this.$midataService.markAsEnteredInError(this.deleteSleep[i]));
+        }
+        for(let i in this.deleteEat){
+          promises.push(this.$midataService.markAsEnteredInError(this.deleteEat[i]));
+        }
+                let that = this;
+        if(promises.length > 0){
+          Promise.all(promises).then(() => {
+            that.deletePrompt = false;
+            that.dialog = false;
+            that.deleteEat = [];
+            that.deleteSleep = [];
+            that.activeItem = null;
+            that.days = [];
+            that.$midataService.removeFromCache('Observation');
+            that.loadData();
+          }).catch(err => {
+            that.deletePrompt = false;
+            that.deleteEat = [];
+            that.deleteSleep = [];
+            alert("Beim Löschen ist ein Fehler aufgetreten. (" + err + ")");
+          });
+        }
       }
       else {
-        this.$midataService.markAsEnteredInError(item.meta.id).then(message => {
-          console.log(message)
+        this.$midataService.markAsEnteredInError(item.meta.id).then(() => {
           this.deletePrompt = false;
           this.dialog = false;
+          this.activeItem = null;
           // clear Observation query from cache, so we can reload
           this.$midataService.removeFromCache('Observation');
           this.loadData();
@@ -482,7 +535,7 @@ export default {
                 sortableDate: sleep[i].endTime.getTime(),
                 category: "dayEntry",
                 sleep: [sleep[i]],
-                eat: {de: "Unbekanntes Essverhalten"},
+                eat: [],
                 meta: sleep[i].meta
               })
             }
@@ -513,13 +566,13 @@ export default {
                 date: eat[i].date.toLocaleDateString(),
                 sortableDate: eat[i].date.getTime(),
                 category: "dayEntry",
-                eat: eat[i],
+                eat: [eat[i]],
                 sleep: [],
                 meta: eat[i].meta
               })
             }
             else{
-              this.days[j].eat = eat[i];
+              this.days[dayEntry].eat.push(eat[i]);
             }
           }
         });

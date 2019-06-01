@@ -77,8 +77,8 @@
                     Meine Daten</div>
                   <p>Lasse dir all deine Daten anzeigen, unabhängig mit welcher Applikation du sie abgespeichert hast. So kannst
                     du auf einen Blick kontrollieren, ob die Daten vollständig sind und ob sich Fehler bei der Eingabe ergeben
-                    haben. Findest du einen Fehler, so kannst du den Datensatz als Fehlerhaft markieren und er wird für die
-                    Analyse nicht mehr berücksichtigt.</p>
+                    haben. <br />
+                    <b>Neu:</b> Du kannst fehlerhafte Einträge löschen. Klicke sie dazu bei "Meine Daten" an und wähle dann im Popup unten links das Löschen-Icon.</p>
                 </v-flex>
                 <v-flex xs12 md4>
                   <div class="title">
