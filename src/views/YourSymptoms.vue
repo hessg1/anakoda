@@ -170,7 +170,7 @@
                         <v-subheader>Intensität</v-subheader>
                         <v-slider v-model="quality"
                                   thumb-label="always"
-                                  :rules="[v => v >= 1 || 'Bitte eine Intesität angeben']"
+                                  :rules="[v => v >= 1 || 'Bitte eine Intensität angeben']"
                                   min="0"
                                   max="10"
                                   append-icon="mood_bad"

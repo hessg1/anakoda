@@ -226,6 +226,14 @@ export default class MidataService {
         query += '?patient=' + this.patient;
       }
     }
+    if(query.includes('Observation')){
+      if(query.includes('?')){
+        query += '&status=preliminary';
+      }
+      else{
+        query += '?status=preliminary';
+      }
+    }
 
     for(let i in this.queryCache){
       if(this.queryCache[i][0] == query){
@@ -233,6 +241,38 @@ export default class MidataService {
       }
     }
     return null;
+  }
+
+  /*
+    This method deletes an query from the cache.
+    parameters  - query: the query that shall be deleted from the cache (if in cache)
+    returns     nothing
+    author      hessg1
+    version     2019-06-01
+  */
+  removeFromCache(query){
+    // prepare query string
+    if(!query.includes('atient')){ // so we cover 'Patient' and 'patient'
+      if(query.includes('?')){
+        query += '&patient=' + this.patient;
+      }
+      else{
+        query += '?patient=' + this.patient;
+      }
+    }
+    if(query.includes('Observation')){
+      if(query.includes('?')){
+        query += '&status=preliminary';
+      }
+      else{
+        query += '?status=preliminary';
+      }
+    }
+    for(let i in this.queryCache){
+      if(this.queryCache[i][0] == query){
+        this.queryCache.splice(i,1)
+      }
+    }
   }
 
   /*
@@ -260,6 +300,16 @@ export default class MidataService {
         }
         else{
           query += '?patient=' + this.patient;
+        }
+      }
+      // we only want the preliminary Observations, and not the ones that
+      // are entered-in-error (FHIR API does not allow for status!=entered-in-error)
+      if(query.includes('Observation')){
+        if(query.includes('?')){
+          query += '&status=preliminary';
+        }
+        else{
+          query += '?status=preliminary';
         }
       }
 
@@ -773,6 +823,64 @@ export default class MidataService {
       else {
         resolve(that.token);
       }
+    });
+  }
+
+  /*
+    This method marks a resource as "Entered In Error" on MIDATA. Resources that are
+    "Entered in Error" are not displayed in anakoda, so this is nearly equivalent
+    to deleting an item (actually deleting resources is not supported in MIDATA)
+    parameters  - id: the FHIR id of the resource to be marked
+    returns     a promise with a german message for success or error
+    author      hessg1
+    version     2019-06-01
+  */
+  markAsEnteredInError(id){
+    let that = this;
+
+    return new Promise(function(resolve, reject){
+      if(!id || id == ''){
+        reject("Fehlerhafte ID, kann Resource nicht als gelöscht markieren.")
+      }
+      that.getValidToken().then(token => {
+        that.token = token;
+        // first, get the resource from midata to make sure it's correct
+        $.ajax({
+          url: that.uri.service + "/Observation/" + id,
+          type: "GET",
+          dataType: "json",
+          headers: {
+            "Authorization": "Bearer " + that.token
+          },
+        }).done(res => {
+          // change status
+          res.status = 'entered-in-error';
+          // and update changed resource on midata
+          $.ajax({
+            "async": true,
+            "crossDomain": true,
+            "url": that.uri.service + '/Observation/' + id,
+            "method": "PUT",
+            "headers": {
+              "Content-Type": "application/fhir+json",
+              "Authorization": "Bearer " + that.token,
+              "cache-control": "no-cache"
+            },
+            "data": JSON.stringify(res),
+            "error": function(err){
+              console.log(err);
+              reject("Fehler beim Updaten der Resource (" + err.status + "): " + err.statusText );
+            },
+            "success": function(){
+              resolve("Eintrag erfolgreich gelöscht.");
+            }
+          })
+        })
+        .catch(err => {
+          reject("Resource mit der id " + id + " konnte nicht verarbeitet werden.")
+          console.log(err)
+        })
+      });
     });
   }
 

@@ -70,10 +70,36 @@
         </v-card-text>
         <v-divider />
         <v-card-actions>
+          <v-btn  @click="deletePrompt = true" icon><v-icon>delete</v-icon></v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" flat
             @click="activeItem = null; dialog = false">
             OK
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+
+    <!-- DELETE PROMPT-->
+    <v-dialog v-model="deletePrompt" lazy max-width="450">
+      <v-card>
+        <v-card-title   class="headline primary lighten-2"
+          primary-title>
+          Eintrag löschen
+        </v-card-title>
+        <v-card-text v-if="activeItem">
+          <span v-if="activeItem.category == 'dayEntry'">Möchtest du den Tageseintrag vom {{ activeItem.date }} wirklich löschen?</span>
+          <span v-else>Möchtest du "{{ activeItem.de }}" vom {{ activeItem.startTime.toLocaleDateString() }} wirklich löschen?</span>
+
+        </v-card-text>
+        <v-divider />
+        <v-card-actions>
+          <v-btn  @click="deletePrompt = false" flat>abbrechen</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" flat
+            @click="markAsError(activeItem)">
+            löschen
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -218,6 +244,7 @@ export default {
       activeItem: null,
       relatedItems: null,
       dialog: false,
+      deletePrompt: false,
       symptomTab: 'Symptome & Auffälligkeiten',
       dayTab: 'Tageseinträge',
       headacheHeaders: [
@@ -393,83 +420,115 @@ export default {
     */
     onResize(){
       this.isMobile = window.innerWidth < 600;
+    },
+
+    /*
+      "Deletes" an item by marking the resource as "entered in error" on midata
+      hessg1 / 2019-06-01
+    */
+    markAsError(item){
+      if(item.category == 'dayEntry'){
+        // TODO
+        alert("Tageseinträge löschen ist noch Work in Progress")
+      }
+      else {
+        this.$midataService.markAsEnteredInError(item.meta.id).then(message => {
+          console.log(message)
+          this.deletePrompt = false;
+          this.dialog = false;
+          // clear Observation query from cache, so we can reload
+          this.$midataService.removeFromCache('Observation');
+          this.loadData();
+        }).catch(err => {
+          this.deletePrompt = false;
+          alert(item.de + " konnte nicht gelöscht werden. (" + err + ")");
+        });
+      }
+    },
+
+    /*
+      Fetches the data from MIDATA.
+      hessg1 / 2019-06-01
+    */
+    loadData(){
+      if(this.$midataService.isReady()){
+        this.$midataService.getData('Observation').then(res => { //'Observation?date=ge2019-03-01&date=le2019-04-30'
+          observations = this.$midataService.prepareData(res);
+          // only display valid entries
+          if(!JSON.parse(localStorage.getItem("showInvalid"))){
+            observations = this.filterArray(x => (!x.meta.invalid), observations);
+          }
+
+          // get the SCT codes for headaches from SnomedService
+          let headacheCodes = sct.getFilteredProp(x => (x.category == 'Headache'), 'code');
+          // and filter all the headache objects in observations
+          this.headaches = this.filterArray(x => (headacheCodes.includes(x.code)), observations);
+
+          this.symptoms = this.filterArray(x => ((x.category == 'VariousComplaint' || x.category == 'Condition') && x.code != 216299002), observations);
+
+          // get all sleep patterns and write them to the days array
+          let sleep = this.filterArray(x => (x.category == 'SleepPattern'), observations);
+          for(let i in sleep){
+            let dayEntry = null;
+            // check if there is already an array entry for this day
+            for(var j in this.days) {
+              if(sleep[i].endTime.toLocaleDateString() == this.days[j].date){
+                dayEntry = j;
+              }
+            }
+            if(dayEntry == null){
+              this.days.push({
+                date: sleep[i].endTime.toLocaleDateString(),
+                sortableDate: sleep[i].endTime.getTime(),
+                category: "dayEntry",
+                sleep: [sleep[i]],
+                eat: {de: "Unbekanntes Essverhalten"},
+                meta: sleep[i].meta
+              })
+            }
+            else{
+              if(this.days[j].meta.invalid && this.days[j].sleep.length == 1){
+                // check if it's invalid because only eating habit was created yet
+                if(this.days[j].sleep[0].quantity == -1 ){
+                  this.days[j].meta.invalid = sleep[i].meta.invalid;
+                  this.days[j].sleep[0] = sleep[i];
+                }
+              }
+              this.days[j].sleep.push(sleep[i]);
+            }
+          }
+
+          // get all eating habits and write them to the days array
+          let eat = this.filterArray(x => (x.category == 'EatingHabit'), observations);
+          for(let i in eat){
+            let dayEntry = null;
+            // check if there is already an array entry for this day
+            for(j in this.days) {
+              if(eat[i].date.toLocaleDateString() == this.days[j].date){
+                dayEntry = j;
+              }
+            }
+            if(dayEntry == null){
+              this.days.push({
+                date: eat[i].date.toLocaleDateString(),
+                sortableDate: eat[i].date.getTime(),
+                category: "dayEntry",
+                eat: eat[i],
+                sleep: [],
+                meta: eat[i].meta
+              })
+            }
+            else{
+              this.days[j].eat = eat[i];
+            }
+          }
+        });
+      }
     }
 
   },
   mounted(){
-    if(this.$midataService.isReady()){
-      this.$midataService.getData('Observation').then(res => { //'Observation?date=ge2019-03-01&date=le2019-04-30'
-        observations = this.$midataService.prepareData(res);
-        // only display valid entries
-        if(!JSON.parse(localStorage.getItem("showInvalid"))){
-          observations = this.filterArray(x => (!x.meta.invalid), observations);
-        }
-
-        // get the SCT codes for headaches from SnomedService
-        let headacheCodes = sct.getFilteredProp(x => (x.category == 'Headache'), 'code');
-        // and filter all the headache objects in observations
-        this.headaches = this.filterArray(x => (headacheCodes.includes(x.code)), observations);
-
-        this.symptoms = this.filterArray(x => ((x.category == 'VariousComplaint' || x.category == 'Condition') && x.code != 216299002), observations);
-
-        // get all sleep patterns and write them to the days array
-        let sleep = this.filterArray(x => (x.category == 'SleepPattern'), observations);
-        for(let i in sleep){
-          let dayEntry = null;
-          // check if there is already an array entry for this day
-          for(var j in this.days) {
-            if(sleep[i].endTime.toLocaleDateString() == this.days[j].date){
-              dayEntry = j;
-            }
-          }
-          if(dayEntry == null){
-            this.days.push({
-              date: sleep[i].endTime.toLocaleDateString(),
-              sortableDate: sleep[i].endTime.getTime(),
-              category: "dayEntry",
-              sleep: [sleep[i]],
-              eat: {de: "Unbekanntes Essverhalten"},
-              meta: sleep[i].meta
-            })
-          }
-          else{
-            if(this.days[j].meta.invalid && this.days[j].sleep.length == 1){
-              // check if it's invalid because only eating habit was created yet
-              if(this.days[j].sleep[0].quantity == -1 ){
-                this.days[j].meta.invalid = sleep[i].meta.invalid;
-                this.days[j].sleep[0] = sleep[i];
-              }
-            }
-            this.days[j].sleep.push(sleep[i]);
-          }
-        }
-
-        // get all eating habits and write them to the days array
-        let eat = this.filterArray(x => (x.category == 'EatingHabit'), observations);
-        for(let i in eat){
-          let dayEntry = null;
-          // check if there is already an array entry for this day
-          for(j in this.days) {
-            if(eat[i].date.toLocaleDateString() == this.days[j].date){
-              dayEntry = j;
-            }
-          }
-          if(dayEntry == null){
-            this.days.push({
-              date: eat[i].date.toLocaleDateString(),
-              sortableDate: eat[i].date.getTime(),
-              category: "dayEntry",
-              eat: eat[i],
-              sleep: [],
-              meta: eat[i].meta
-            })
-          }
-          else{
-            this.days[j].eat = eat[i];
-          }
-        }
-      });
-    }
+    this.loadData();
   },
 
   watch: {

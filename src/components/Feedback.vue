@@ -13,7 +13,7 @@
 
     <v-divider></v-divider>
 
-    <v-form ref="form" id="feedback" action="https://anakoda.ch/app/backend/feedbackMailer.php" method="post">
+    <v-form ref="form" id="feedback" action="https://anakoda.ch/backend/feedbackMailer.php" method="post">
 
       <input type="hidden" name='page' :value="page">
       <input type="hidden" name='userID' :value="userID">
@@ -140,7 +140,7 @@
           let that = this
           $.ajax({
             type: 'POST',
-            url: 'https://anakoda.ch/preview/backend/feedbackMailer.php',
+            url: 'https://anakoda.ch/backend/feedbackMailer.php',
             data: $('form').serialize(),
             dataType: 'json'
           })
