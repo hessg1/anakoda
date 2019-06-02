@@ -42,7 +42,7 @@
                              @input="datestartmenu = false"
                              locale="de-ch"
                              first-day-of-week="1"
-                             :max="today" />
+                             :max="dateenddesired" />
             </v-menu>
           </v-flex>
           <v-flex md3>
@@ -72,6 +72,7 @@
                              @input="dateendmenu = false"
                              locale="de-ch"
                              first-day-of-week="1"
+                             :min="datestartdesired"
                              :max="today" />
             </v-menu>
           </v-flex>
