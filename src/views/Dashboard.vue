@@ -34,7 +34,7 @@
 
     <v-tab>Zeitstrahl</v-tab>
     <v-tab-item lazy>
-        <OverallChart />
+        <Timeline />
     </v-tab-item>
   </v-tabs>
 
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import OverallChart from '@/components/OverallChart';
+import Timeline from '@/components/Timeline';
 import KeyFigures from '@/components/KeyFigures';
 import Login from '@/components/Login';
 import Feedback from '@/components/Feedback';
@@ -54,15 +54,15 @@ export default {
         dialog: true,
         openFeedback: false,
         questions: [
-          { question: "Findest du die Übersichts-Grafik übersichtlich und verständlich?",
+          { question: "Findest du die Zeitstrahl-Grafik übersichtlich und verständlich?",
             answers: ["Ja", "Nein"],
-            modelname: "overallChart",
+            modelname: "overallchart",
             model: "",
             questiontext: false,
             questiontextrule: "",
             type: "select"
           },
-          { question: "Hast du Anregungen zur Übersichts-Grafik?",
+          { question: "Hast du Anregungen zur Zeitstrahl-Grafik?",
             answers: ["Ja", "Nein"],
             modelname: "overallChartInput",
             model: "",
@@ -98,7 +98,7 @@ export default {
       }
     },
   components: {
-    OverallChart,
+    Timeline,
     KeyFigures,
     Login,
     Feedback

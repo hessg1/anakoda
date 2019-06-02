@@ -69,6 +69,7 @@
               <v-date-picker v-model="displayRange[1]"
                              @input="menu2 = false"
                              :min="displayRange[0]"
+                             :max="today"
                              color="#0a967a"
                              no-title
                              locale="de-ch"
@@ -220,6 +221,7 @@
         daysWithEntry: [],
         numberOfDays: 7,
         isPortrait: false,
+        today: new Date().toISOString(),
         isMobile: false,
         showTitles: false,
         observations: [],
@@ -230,8 +232,8 @@
         chartOptions: {
           timeline: {
             groupByRowLabel: true,
-            rowLabelStyle: { fontName: 'Helvetica' },
-            barLabelStyle: { fontName: 'Helvetica' }
+            rowLabelStyle: { fontName: 'Roboto' },
+            barLabelStyle: { fontName: 'Roboto' }
           },
           tooltip: {
             isHtml: true
