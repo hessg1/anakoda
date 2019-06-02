@@ -83,7 +83,7 @@
     <v-toolbar app clipped-left color="primary">
       <v-btn icon @click="drawer = !drawer"><v-icon>menu</v-icon></v-btn>
       <v-toolbar-title class="headline">
-        <span class="font-weight-light">anakoda <i>preview 0.4&nbsp;</i></span>
+        <span class="font-weight-light">anakoda</span>
       </v-toolbar-title>
     </v-toolbar>
 

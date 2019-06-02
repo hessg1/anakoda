@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/preview/' // change to '/app/' for productive
+  publicPath: '/app/' // change to '/app/' for productive
 }

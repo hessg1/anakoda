@@ -1,4 +1,4 @@
-const serviceUri = "https://test.midata.coop/fhir/";
+const serviceUri = "https://ch.midata.coop/fhir/";
 const cutOffDate = new Date("2019-02-01") // resources saved before this date will not be processed
 const client = "anakoda";
 
