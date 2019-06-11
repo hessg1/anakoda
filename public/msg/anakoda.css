@@ -1,0 +1,121 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+/* Move down content because we have a fixed navbar that is 3.5rem tall */
+body {
+  padding-top: 3.5rem;
+  background-color: #e5f9e0;
+  padding-bottom: 60px;
+}
+
+hr {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background-color: #664147;
+}
+
+h1{
+  color: #0a967a;
+}
+
+h2{
+  color: #0a967a;
+}
+
+h3{
+  font-size: 120%;
+}
+
+
+a{
+  color: #0a967a;
+  cursor: pointer;
+}
+
+a:hover{
+  color: #664147;
+  cursor: pointer;
+}
+
+.navbar{
+  background-color: #0a967a;
+}
+
+.navbar-brand{
+  color: #e5f9e0;
+}
+
+.nav-link{
+  color: #e5f9e0;
+}
+
+.jumbotron{
+  background-color: #e5f9e0;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px; /* Set the fixed height of the footer here */
+  line-height: 60px; /* Vertically center the text there */
+  background-color: #0a967a;
+  color: #e5f9e0;
+}
+
+.footer-text{
+  padding-left: 16px;
+  color: #e5f9e0;
+}
+
+.min-height{
+  height: 100px;
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+
+.content{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.btn-secondary{
+  background-color: #664147;
+}
+
+.btn-secondary:visited{
+  background-color: #664147;
+}
+
+.btn:visited{
+  background-color: #664147;
+  color: #FFFFFF;
+}
+
+.btn-secondary:hover{
+  background-color: #0a967a;
+}
+
+
+textarea {
+  width: 300px;
+  height: 150px;
+}
+input {
+  width: 300px;
+}
+
+li.message {
+  background-color: #40c9a2;
+  list-style-type: none;
+  margin-block-start: 10px;
+}
+li li {
+  list-style-type: none;
+  margin-block-start: 0px;
+}
+
+ul {
+  padding-left: 3px;
+}
