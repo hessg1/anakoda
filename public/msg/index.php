@@ -44,8 +44,8 @@
             session_start();
 
             // of course, this is not the way to do user management, but it's just a quick & dirty proof of concept
-            $loginPass = "MiAnakoda1";
-            $loginUser = "hessg1@bfh.ch";
+            $loginPass = "*******";
+            $loginUser = "research@anakoda.ch";
 
             if(isset($_SESSION['user']) && $_SESSION['user'] == $loginUser){
               // Read the file contents into a string variable,
