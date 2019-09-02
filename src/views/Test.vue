@@ -6,6 +6,14 @@
       <v-textarea rows="1" box auto-grow v-model="input"></v-textarea></p>
     <v-tabs>
       <v-tab>
+        Generator
+      </v-tab>
+      <v-tab-item>
+        <input v-model="day" />
+        <v-btn small @click="generateDayEntry()">Tag generieren</v-btn>
+        <v-btn small @click="">Kopfschmerz generieren</v-btn>
+      </v-tab-item>
+      <v-tab>
         MidataService
       </v-tab>
       <v-tab-item>
@@ -74,11 +82,37 @@ export default {
     return {
       midata: "",
       input: "",
-      error: "(see console)"
+      error: "(see console)",
+      day: null
     }
   },
 
   methods: {
+
+    generateDayEntry(){
+      let eatcodes = [702970004, 289141003, 225526009];
+
+      let random = Math.floor(Math.random() * 3)
+      let eat = new EatingHabit(this.day, eatcodes[random]);
+
+      let quality =  Math.floor(Math.random() * 10) + 1;
+      let nextDay = new Date(this.day);
+      nextDay.setDate(new Date(this.day).getDate()+1);
+      nextDay = nextDay.toISOString().substr(0, 10);
+      let sleep = new SleepPattern(this.day + "T22:00", nextDay + "T06:00", quality);
+      this.day = nextDay;
+      console.log(sleep, eat);
+
+      this.midata.saveData(this.midata.bundle([sleep, eat]))
+        .then(res => {
+          console.log("saving resource OK");
+          console.log(res);
+        })
+        .catch(err => {
+          console.log("saving resource not OK");
+          console.log(err);
+        });
+    },
 
     // utility method for testing midata service
     testBundle(){
@@ -583,6 +617,8 @@ export default {
     if(this.midata == "" || this.midata == null) {
       this.midata = new MidataService();
     }
+
+    this.day = new Date().toISOString().substr(0, 10);
 
   }
 }
