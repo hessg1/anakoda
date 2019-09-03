@@ -333,12 +333,18 @@
       },
 
       timestart() {
-        if (this.timestart >= '17:00' && this.timestart <= '23:59') {
-          var date1 = this.date
-          this.datestart = this.generateDate(date1, -1)
+        if (this.entry == 'heute' && this.timestart >= '17:00' && this.timestart <= '23:59') {
+          this.datestart = this.generateDate(this.date, -1)
         } else {
-          var date0 = this.date
-          this.datestart = date0
+          this.datestart = this.date;
+        }
+      },
+
+      timeend(){
+        if(this.entry != 'heute' && this.timeend >= '00:00' && this.timeend <= '17:00'){
+          this.dateend = this.generateDate(this.date, 1);
+        } else {
+          this.dateend = this.date;
         }
       }
     },
