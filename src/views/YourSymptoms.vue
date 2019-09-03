@@ -772,6 +772,7 @@
       this.snomedservice = new SnomedService()
       this.symoption = this.snomedservice.getFiltered(x => x.category == 'VariousComplaint' || x.category == 'Condition')
       this.headoption = this.snomedservice.getFiltered(y => y.category == 'Headache')
+      this.headoption = this.headoption.slice(0,3) // bugfix: remove "sonstige kopfschmerzen"
       for (var i in this.symoption) {
         this.symoption[i].flag = false
       }
