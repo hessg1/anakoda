@@ -19,7 +19,11 @@ const sleepQualityRange = [0,10];
 // range of intensity accepted by Complaint resources (lowest to highest)
 const intensityRange = [0,10];
 
-
+let prepareTime = function(time){
+  var offset = -1 * new Date().getTimezoneOffset()/60;
+  time = time + "+0" + offset + ":00";
+  return time;
+}
 
 /*
 This is the default type of a FhirResource, that should not be initialized. It
@@ -58,7 +62,6 @@ version     2019-03-19
 */
 export class EatingHabit extends FhirResource {
   constructor(date, code){
-
     // check for undefined values
     if(!date || !code){
       throw("Fehler: Nullwert eingegeben.");
@@ -116,8 +119,8 @@ export class SleepPattern extends FhirResource {
       throw("Fehler: Qualität muss zwischen " + sleepQualityRange[0] + " und " + sleepQualityRange[1] + " liegen.");
     }
 
-    startTime = new Date(startTime);
-    endTime = new Date(endTime);
+    startTime = new Date(prepareTime(startTime));
+    endTime = new Date(prepareTime(endTime));
     // check if date is in future
     if(startTime.getTime() > Date.now() || endTime.getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
@@ -169,8 +172,8 @@ export class Complaint extends FhirResource {
       throw("Fehler: Nullwert eingegeben.");
     }
 
-    startTime = new Date(startTime);
-    endTime = new Date(endTime);
+    startTime = new Date(prepareTime(startTime));
+    endTime = new Date(prepareTime(endTime));
 
     if(startTime.getTime() > Date.now() || endTime.getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
@@ -249,8 +252,8 @@ export class Condition extends FhirResource {
       throw("Fehler: Nullwert eingegeben.");
     }
 
-    startTime = new Date(startTime);
-    endTime = new Date(endTime);
+    startTime = new Date(prepareTime(startTime));
+    endTime = new Date(prepareTime(endTime));
     if(startTime.getTime() > Date.now() || endTime.getTime() > Date.now() + 2*60*60*1000){
       throw("Fehler: Kann keine Observation mit Datum in der Zukunft erstellen.");
     }
