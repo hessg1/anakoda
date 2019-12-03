@@ -21,6 +21,7 @@ const intensityRange = [0,10];
 
 let prepareTime = function(time){
   var offset = -1 * new Date().getTimezoneOffset()/60;
+  time = time.split('Z')[0];
   time = time + "+0" + offset + ":00";
   return time;
 }
